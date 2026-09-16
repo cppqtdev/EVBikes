@@ -277,7 +277,10 @@ def make_glows():
     def mirrored(path):
         return [path, mirror_x(path)]
 
-    main_line = draw_glow(mirrored(left), 2.4, 7, 5)
+    # The reference contour is tight: a horizontal cut through it is about
+    # eight pixels wide in total, where a blur of 7 and a spread of 5 gave ours
+    # nearly twenty and washed into the bar beside it.
+    main_line = draw_glow(mirrored(left), 2.4, 3, 3)
     second = scale_mask(stroke(mirrored(inner[:-1]), 1.2), 0.55)
     glow = ImageChops.multiply(ImageChops.lighter(main_line, second), fades)
     glow = ImageChops.multiply(ImageChops.multiply(glow, end_fade), backing)

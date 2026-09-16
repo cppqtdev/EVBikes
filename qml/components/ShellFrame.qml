@@ -96,13 +96,6 @@ Item {
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/bar_edge.png"
-        color: frame.glowColor
-        opacity: 0.45
-        visible: frame.glowStyle === 1 && frame.showChannel
-    }
-
-    ColorizedImage {
         source: "qrc:/assets/cluster/glow_alert.png"
         color: frame.glowColor
         visible: frame.glowStyle === 2
