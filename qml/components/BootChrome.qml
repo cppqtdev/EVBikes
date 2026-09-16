@@ -38,33 +38,40 @@ Item {
         opacity: 0.45 * chrome.progress
     }
 
-    Rectangle {
-        x: 414
-        y: 434
-        width: 449
-        height: 16
-        radius: 8
-        color: "#1E3A2A"
-    }
-
+    // Measured on the reference: the track is a lit pill from x 415 to 862,
+    // rows 435 to 448, and the fill runs to about 838 - the bar reads as
+    // finished because the unfilled remainder keeps its bright outline, not
+    // because the fill reaches the end.
     Rectangle {
         x: 415
         y: 435
-        width: 447
+        width: 448
         height: 14
         radius: 7
-        color: "#0D0D0D"
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#5F8E6F" }
+            GradientStop { position: 1.0; color: "#7AB08D" }
+        }
     }
 
     Rectangle {
-        x: 417
-        y: 437
-        width: Math.max(10, 443 * chrome.progress)
-        height: 10
-        radius: 5
+        x: 418
+        y: 438
+        width: 442
+        height: 8
+        radius: 4
+        color: "#132316"
+    }
+
+    Rectangle {
+        x: 416
+        y: 435
+        width: Math.max(14, 446 * chrome.progress)
+        height: 14
+        radius: 7
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#A8FFC0" }
-            GradientStop { position: 1.0; color: "#6ADF8A" }
+            GradientStop { position: 0.0; color: "#91E4C3" }
+            GradientStop { position: 1.0; color: "#7FF074" }
         }
     }
 }
