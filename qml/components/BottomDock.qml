@@ -18,6 +18,12 @@ Item {
     readonly property bool alertFocus: focusIndex === Router.dockAlerts
     readonly property bool settingsFocus: focusIndex === Router.dockSettings
 
+    // The mode word has to sit inside its 96 px chip. NORMAL at 22 measured 95
+    // wide, edge to edge with no room either side; the reference's ECO is 51.
+    readonly property int modeSize: Theme.alertMode ? 22
+                                  : (VehicleData.rideMode === VehicleData.Eco ? 26
+                                  : (VehicleData.rideMode === VehicleData.Sport ? 19 : 18))
+
     width: Theme.screenWidth
     height: 60
 
@@ -68,6 +74,21 @@ Item {
         color: dock.mapActive || dock.mapFocus ? Theme.textPrimary : "#C3C8CA"
     }
 
+    // The design carries a soft halo behind the mode word - between the letters
+    // the reference sits about twenty levels above its plate - and it lifts
+    // further when the keys are on it.
+    ColorizedImage {
+        x: 638 - 70
+        y: 24 - 32
+        source: "qrc:/assets/images/glow_blob_140x64.png"
+        color: Theme.accent
+        opacity: dock.modeFocus ? 0.42 : 0.16
+
+        Behavior on opacity {
+            NumberAnimation { duration: Theme.animNormal }
+        }
+    }
+
     ColorizedImage {
         x: 590
         y: 0
@@ -91,15 +112,17 @@ Item {
 
     Text {
         x: 590
-        y: 10
+        y: 6
         width: 96
+        height: 40
         horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
         text: Theme.alertMode ? qsTr("ALERT")
                               : (VehicleData.rideMode === VehicleData.Sport ? qsTr("SPORTS")
                                                                             : (VehicleData.rideMode === VehicleData.Normal ? qsTr("NORMAL") : qsTr("ECO")))
         color: Theme.alertMode || Theme.sport ? Theme.textPrimary : Theme.teal
         font.family: Theme.fontFamily
-        font.pixelSize: VehicleData.rideMode === VehicleData.Eco || Theme.alertMode ? 26 : 22
+        font.pixelSize: dock.modeSize
         font.bold: true
         font.italic: true
     }
