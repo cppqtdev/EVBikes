@@ -32,10 +32,21 @@ Item {
         color: bars.battery <= 15 ? Theme.red : "#77706E"
     }
 
-    Text {
+    NumberReadout {
+        id: batteryValue
         x: 404
+        y: 0
+        value: bars.battery
+        fit: true
+        pixelSize: 14
+        widthFactor: 0.58
+        italic: true
+    }
+
+    Text {
+        x: batteryValue.x + batteryValue.width
         y: 2
-        text: bars.battery + "%"
+        text: "%"
         color: Theme.textPrimary
         font.family: Theme.fontFamily
         font.pixelSize: 14
@@ -89,10 +100,21 @@ Item {
         }
     }
 
+    NumberReadout {
+        id: tempValue
+        x: 852 - width
+        y: -2
+        value: bars.temperature
+        fit: true
+        pixelSize: 16
+        widthFactor: 0.58
+        italic: true
+    }
+
     Text {
-        x: 870 - width
+        x: 852
         y: 0
-        text: bars.temperature + "°c"
+        text: "°c"
         color: Theme.textPrimary
         font.family: Theme.fontFamily
         font.pixelSize: 16

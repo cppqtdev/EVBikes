@@ -973,12 +973,17 @@ def make_fingerprint():
 
 
 def make_avatar(size=106):
+    # Every coordinate is a fraction of the 106 px drawing, so the smaller
+    # avatar is the same picture rather than the same shapes on a smaller ring.
     s = 4
+    k = size * s / 106.0
     img = Image.new("L", (size * s, size * s), 0)
     d = ImageDraw.Draw(img)
-    d.ellipse([3 * s, 3 * s, (size - 3) * s, (size - 3) * s], outline=255, width=int(3 * s))
-    d.ellipse([38 * s, 20 * s, 68 * s, 50 * s], outline=255, width=int(3 * s))
-    d.rounded_rectangle([24 * s, 62 * s, 82 * s, 88 * s], radius=12 * s, outline=255, width=int(3 * s))
+    stroke = max(1, int(round(3 * k)))
+    d.ellipse([3 * k, 3 * k, 103 * k, 103 * k], outline=255, width=stroke)
+    d.ellipse([38 * k, 20 * k, 68 * k, 50 * k], outline=255, width=stroke)
+    d.rounded_rectangle([24 * k, 62 * k, 82 * k, 88 * k], radius=12 * k,
+                        outline=255, width=stroke)
     save(alpha_layer(img.resize((size, size), Image.LANCZOS)), f"avatar_{size}")
 
 

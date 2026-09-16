@@ -22,6 +22,7 @@ Project {
             "MenuLockHint.qml",
             "MenuRow.qml",
             "NotificationToast.qml",
+            "NumberReadout.qml",
             "PowerBar.qml",
             "RangeOdoRow.qml",
             "Ribbon.qml",

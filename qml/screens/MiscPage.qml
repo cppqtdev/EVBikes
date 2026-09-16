@@ -26,7 +26,7 @@ PageBase {
     }
 
     TabStrip {
-        x: 500
+        x: (Theme.screenWidth - width) / 2
         y: 92
         first: qsTr("message")
         second: qsTr("music")

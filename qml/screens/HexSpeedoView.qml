@@ -35,15 +35,16 @@ Item {
         opacity: 0.2
     }
 
-    Text {
+    NumberReadout {
         id: socText
         x: 223
         y: 186
-        text: "" + VehicleData.batteryPercent
+        value: VehicleData.batteryPercent
+        fit: true
+        pixelSize: 57
+        widthFactor: 0.63
         color: "#A8F0D8"
-        font.family: Theme.fontFamily
-        font.pixelSize: 57
-        font.bold: true
+        bold: true
     }
 
     Text {
@@ -64,14 +65,15 @@ Item {
         font.pixelSize: 22
     }
 
-    Text {
+    NumberReadout {
         x: 321
         y: 248
-        text: "" + VehicleData.rangeKm
+        value: VehicleData.rangeKm
+        fit: true
+        pixelSize: 48
+        widthFactor: 0.55
         color: "#D8B3AA"
-        font.family: Theme.fontFamily
-        font.pixelSize: 48
-        font.bold: true
+        bold: true
     }
 
     ColorizedImage {
@@ -116,20 +118,22 @@ Item {
         speed: hex.speed
     }
 
-    Text {
-        x: 540
+    // Centred on 640 with a fixed 37 px cell per digit, the pitch measured on
+    // the reference, so the reading counts without shifting under itself.
+    NumberReadout {
+        x: 640 - width / 2
         y: 272
-        width: 200
-        horizontalAlignment: Text.AlignHCenter
-        text: "" + hex.speed
-        color: "#45F2C8"
-        font.family: Theme.fontFamily
-        font.pixelSize: 64
+        value: hex.speed
+        digits: 3
+        centered: true
+        pixelSize: 64
+        widthFactor: 0.58
+        color: "#2EFED8"
     }
 
     Text {
         x: 683
-        y: 306
+        y: 304
         text: qsTr("Kmph")
         color: "#5FE8BE"
         font.family: Theme.fontFamily

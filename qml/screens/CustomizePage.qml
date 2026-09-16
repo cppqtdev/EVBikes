@@ -13,7 +13,7 @@ PageBase {
     property int row: Router.subLevel - 1
 
     TabStrip {
-        x: 505
+        x: (Theme.screenWidth - width) / 2
         y: 80
         first: qsTr("help")
         second: qsTr("Shortcut keys")

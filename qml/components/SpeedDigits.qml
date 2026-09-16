@@ -11,6 +11,15 @@ Item {
     property color bodyColor: Theme.digitGrey
     property color tailColor: Theme.sport || Theme.alertMode ? "#E7B3A6" : Theme.digitShade
 
+    // The raw speed steps in whole km/h, which reads as the number flickering.
+    // Follow it instead, and draw the rounded position.
+    property real shown: value
+    readonly property int shownValue: Math.round(shown)
+
+    Behavior on shown {
+        NumberAnimation { duration: Theme.animSlow }
+    }
+
     // Fade band measured on the reference frames: 18 rows, then a flat tail.
     readonly property int fadeTop: 104
     readonly property int fadeSteps: 6
@@ -26,7 +35,7 @@ Item {
         y: 0
         width: 390
         horizontalAlignment: Text.AlignRight
-        text: "" + speed.value
+        text: "" + speed.shownValue
         color: speed.bodyColor
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSpeed

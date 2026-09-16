@@ -2,6 +2,8 @@ import QtQuick
 import ClusterCore
 
 // Three-part tab strip (e.g. message | music | reminder).
+// Each cell is as wide as its own label plus padding, so a long label such as
+// "Shortcut keys" is not cut by a fixed cell width.
 Item {
     id: tabs
 
@@ -10,8 +12,23 @@ Item {
     property string third: ""
     property int current: 0
 
-    width: 290
-    height: 32
+    property int padding: 16
+    property int cellHeight: 30
+    property int inset: 3
+    property int labelSize: 15
+
+    readonly property int firstWidth: Math.round(firstLabel.contentWidth) + padding * 2
+    readonly property int secondWidth: Math.round(secondLabel.contentWidth) + padding * 2
+    readonly property int thirdWidth: Math.round(thirdLabel.contentWidth) + padding * 2
+
+    readonly property int currentX: tabs.current === 0 ? 0
+                                  : (tabs.current === 1 ? tabs.firstWidth
+                                                        : tabs.firstWidth + tabs.secondWidth)
+    readonly property int currentWidth: tabs.current === 0 ? tabs.firstWidth
+                                      : (tabs.current === 1 ? tabs.secondWidth : tabs.thirdWidth)
+
+    width: firstWidth + secondWidth + thirdWidth + inset * 2
+    height: cellHeight + inset * 2
 
     Rectangle {
         anchors.fill: parent
@@ -20,10 +37,10 @@ Item {
     }
 
     Rectangle {
-        x: 2 + tabs.current * 96
-        y: 2
-        width: 94
-        height: 28
+        x: tabs.inset + tabs.currentX
+        y: tabs.inset
+        width: tabs.currentWidth
+        height: tabs.cellHeight
         radius: 5
         gradient: Gradient {
             GradientStop { position: 0.0; color: "#2F8A6C" }
@@ -33,25 +50,45 @@ Item {
         Behavior on x {
             NumberAnimation { duration: Theme.animNormal }
         }
+
+        Behavior on width {
+            NumberAnimation { duration: Theme.animNormal }
+        }
     }
 
-    Row {
-        x: 2
-        y: 2
+    Text {
+        id: firstLabel
+        x: tabs.inset + (tabs.firstWidth - contentWidth) / 2
+        y: tabs.inset
+        height: tabs.cellHeight
+        verticalAlignment: Text.AlignVCenter
+        text: tabs.first
+        color: tabs.current === 0 ? Theme.textPrimary : Theme.textSecondary
+        font.family: Theme.fontFamily
+        font.pixelSize: tabs.labelSize
+    }
 
-        Repeater {
-            model: 3
+    Text {
+        id: secondLabel
+        x: tabs.inset + tabs.firstWidth + (tabs.secondWidth - contentWidth) / 2
+        y: tabs.inset
+        height: tabs.cellHeight
+        verticalAlignment: Text.AlignVCenter
+        text: tabs.second
+        color: tabs.current === 1 ? Theme.textPrimary : Theme.textSecondary
+        font.family: Theme.fontFamily
+        font.pixelSize: tabs.labelSize
+    }
 
-            Text {
-                width: 96
-                height: 28
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                text: index === 0 ? tabs.first : (index === 1 ? tabs.second : tabs.third)
-                color: index === tabs.current ? Theme.textPrimary : Theme.textSecondary
-                font.family: Theme.fontFamily
-                font.pixelSize: 15
-            }
-        }
+    Text {
+        id: thirdLabel
+        x: tabs.inset + tabs.firstWidth + tabs.secondWidth + (tabs.thirdWidth - contentWidth) / 2
+        y: tabs.inset
+        height: tabs.cellHeight
+        verticalAlignment: Text.AlignVCenter
+        text: tabs.third
+        color: tabs.current === 2 ? Theme.textPrimary : Theme.textSecondary
+        font.family: Theme.fontFamily
+        font.pixelSize: tabs.labelSize
     }
 }
