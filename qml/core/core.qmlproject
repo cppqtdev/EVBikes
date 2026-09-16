@@ -1,0 +1,15 @@
+import QmlProject 1.3
+
+Project {
+    MCU.Module {
+        uri: "ClusterCore"
+    }
+
+    QmlFiles {
+        files: [
+            "Theme.qml",
+            "Router.qml",
+            "Format.qml"
+        ]
+    }
+}

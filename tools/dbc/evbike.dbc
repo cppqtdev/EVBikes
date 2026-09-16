@@ -1,0 +1,68 @@
+VERSION "1.0"
+
+NS_ :
+
+BS_:
+
+BU_: VCU MCU BMS BCM ABS TPMS CLUSTER
+
+BO_ 257 VCU_Status: 4 VCU
+ SG_ VehicleSpeed : 0|16@1+ (0.1,0) [0|250] "km/h" CLUSTER
+ SG_ RideMode : 16|3@1+ (1,0) [0|2] "" CLUSTER
+ SG_ DriveState : 19|2@1+ (1,0) [0|3] "" CLUSTER
+ SG_ ReadyToRide : 21|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ SideStandDown : 22|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ CrashDetected : 23|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ AmbientTemp : 24|8@1+ (1,-40) [-40|85] "degC" CLUSTER
+
+BO_ 258 MCU_Status: 6 MCU
+ SG_ MotorSpeed : 0|16@1+ (1,0) [0|15000] "rpm" CLUSTER
+ SG_ PhaseCurrent : 16|16@1- (0.1,0) [-500|500] "A" CLUSTER
+ SG_ MotorTemp : 32|8@1+ (1,-40) [-40|200] "degC" CLUSTER
+ SG_ ControllerTemp : 40|8@1+ (1,-40) [-40|200] "degC" CLUSTER
+
+BO_ 513 BMS_Status: 8 BMS
+ SG_ StateOfCharge : 0|10@1+ (0.1,0) [0|100] "%" CLUSTER
+ SG_ ChargingState : 10|2@1+ (1,0) [0|3] "" CLUSTER
+ SG_ PackVoltage : 16|16@1+ (0.1,0) [0|120] "V" CLUSTER
+ SG_ PackCurrent : 32|16@1- (0.1,0) [-300|300] "A" CLUSTER
+ SG_ PackTemp : 48|8@1+ (1,-40) [-40|100] "degC" CLUSTER
+
+BO_ 514 BMS_Range: 2 BMS
+ SG_ RangeEstimate : 0|16@1+ (1,0) [0|500] "km" CLUSTER
+
+BO_ 769 BCM_Lamps: 1 BCM
+ SG_ IndicatorLeft : 0|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ IndicatorRight : 1|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ HighBeam : 2|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ LowBeam : 3|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ Hazard : 4|1@1+ (1,0) [0|1] "" CLUSTER
+
+BO_ 770 ABS_Status: 1 ABS
+ SG_ AbsFault : 0|1@1+ (1,0) [0|1] "" CLUSTER
+ SG_ AbsActive : 1|1@1+ (1,0) [0|1] "" CLUSTER
+
+BO_ 1025 TPMS_Status: 4 TPMS
+ SG_ FrontPressure : 0|16@1+ (0.1,0) [0|60] "psi" CLUSTER
+ SG_ RearPressure : 16|16@1+ (0.1,0) [0|60] "psi" CLUSTER
+
+BO_ 1281 VCU_Odometer: 8 VCU
+ SG_ Odometer : 0|32@1+ (0.1,0) [0|999999] "km" CLUSTER
+ SG_ TripA : 32|32@1+ (0.1,0) [0|9999] "km" CLUSTER
+
+BO_ 1952 VCU_Faults: 2 VCU
+ SG_ FaultCode : 0|16@1+ (1,0) [0|65535] "" CLUSTER
+
+CM_ BO_ 257 "Period 20 ms";
+CM_ BO_ 258 "Period 20 ms";
+CM_ BO_ 513 "Period 100 ms";
+CM_ BO_ 514 "Period 1000 ms";
+CM_ BO_ 769 "Period 50 ms, and on change";
+CM_ BO_ 770 "Period 100 ms";
+CM_ BO_ 1025 "Period 1000 ms";
+CM_ BO_ 1281 "Period 1000 ms";
+CM_ BO_ 1952 "On change";
+
+VAL_ 257 RideMode 0 "Eco" 1 "Normal" 2 "Sport" ;
+VAL_ 257 DriveState 0 "Park" 1 "Reverse" 2 "Neutral" 3 "Drive" ;
+VAL_ 513 ChargingState 0 "NotCharging" 1 "Charging" 2 "Complete" 3 "Fault" ;
