@@ -122,27 +122,34 @@ both the same. Override removed; both take `Theme.segLow` / `segHigh`.
 `"#DDEFEA"` and `"#121617"`. These are now `Theme.surface`,
 `Theme.labelTeal` and `Theme.surfaceSunken`.
 
+## The screenshot is older than the build
+
+`Claude outputs/ride-layout-vs-reference.png` was captured at 12:22 and the
+art was regenerated at 14:28. Several glyph differences read off it are
+already gone: the assets on disk now draw the beam-and-D headlight, the
+doubled chevrons, the battery body around the bolt and the outline
+thermometer with its degree circle, all of which match the reference.
+`python3 tools/generate_assets.py` rewrites nothing, so the art and the
+generator agree.
+
+Everything fixed above was read out of the source, not the screenshot, so
+none of it depends on that picture. Everything left below was read off the
+screenshot and wants a fresh one before anyone acts on it.
+
 ## Still open
 
-Not fixable from measurement alone; each needs new artwork or a decision.
-
-- **The bike render.** Ours is a different motorcycle from the reference's -
-  a heavier, more upright silhouette against a slim faired sportbike. It is
-  also 13 px wider and sits 6 px left. New art.
-- **Telltale glyphs.** The reference headlight is the standard beam-and-D
-  symbol; ours is a circle with a bar. The reference chevrons are doubled,
-  ours single. The reference signal meter is a solid triangle, ours is four
-  bars. All in `tools/generate_assets.py`.
-- **The battery glyph** beside the 40 % bar is a bolt only; the reference has
-  a battery body around it, and it renders orange where the source asks for
-  `#77706E`, so the asset is probably not Alpha8.
-- **The compass glyph** in the dock is a different shape from the reference's
-  north arrow.
+- **The bike render.** Ours looked like a different motorcycle from the
+  reference's - a heavier, more upright silhouette against a slim faired
+  sportbike - and 13 px wider, 6 px left. New art if it still does.
+- **The compass glyph** in the dock is a diamond in an ellipse; the reference
+  is a north arrow.
 - **Soft shadows.** The reference puts a soft glow behind the speed digits and
   a vertical lift across the housing interior. Ours is flat. Both want
   pre-rendered art rather than a runtime blur.
-- **The bar knee.** `BAR_KNEE_RADIUS` is 30 but the rendered bend is square
-  against the reference's rounded one.
+- **The bar knee.** `BAR_KNEE_RADIUS` is 30 but the rendered bend looked
+  square against the reference's rounded one.
+- **The ride-mode chip** under ECO read harder-edged and lighter than the
+  reference's, which is nearly invisible against the dock.
 
 ## Re-measuring after a change
 
