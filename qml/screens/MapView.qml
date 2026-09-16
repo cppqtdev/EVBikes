@@ -19,10 +19,70 @@ Item {
         opacity: 0.6
     }
 
+    // The route is drawn, not picked from a set of pictures, so it can move
+    // while the trip runs. Lateral says which way the road goes; nearness is
+    // how close the turn is, and pulls the bend down towards the rider.
+    readonly property int startX: 640
+    readonly property int startY: 316
+    readonly property int endY: 112
+
+    readonly property int lateral: {
+        var m = NavigationData.maneuver
+        if (m === NavigationData.SlightLeft || m === NavigationData.ForkLeft || m === NavigationData.MergeLeft)
+            return -90
+        if (m === NavigationData.SlightRight || m === NavigationData.ForkRight || m === NavigationData.MergeRight)
+            return 90
+        if (m === NavigationData.Left) return -190
+        if (m === NavigationData.Right) return 190
+        if (m === NavigationData.SharpLeft) return -250
+        if (m === NavigationData.SharpRight) return 250
+        if (m === NavigationData.UTurnLeft) return -270
+        if (m === NavigationData.UTurnRight) return 270
+        if (m === NavigationData.RoundaboutEnter || m === NavigationData.RoundaboutExit) return 150
+        return 0
+    }
+
+    readonly property real nearness: Math.max(0, Math.min(1, 1 - NavigationData.distanceToManeuverM / 800))
+
+    property real routeLateral: map.lateral
+    property real routeNearness: map.nearness
+
+    Behavior on routeLateral {
+        NumberAnimation { duration: Theme.animSlow }
+    }
+
+    Behavior on routeNearness {
+        NumberAnimation { duration: Theme.animNormal }
+    }
+
+    Shape {
+        width: Theme.screenWidth
+        height: Theme.screenHeight
+        visible: NavigationData.active
+
+        ShapePath {
+            strokeColor: Theme.white
+            strokeWidth: 3
+            capStyle: ShapePath.RoundCap
+            fillColor: "transparent"
+            startX: map.startX
+            startY: map.startY
+
+            PathCubic {
+                x: map.startX + map.routeLateral
+                y: map.endY
+                control1X: map.startX
+                control1Y: map.startY - 200 * (1 - 0.55 * map.routeNearness)
+                control2X: map.startX + map.routeLateral
+                control2Y: map.endY + 80
+            }
+        }
+    }
+
     ColorizedImage {
-        x: 310
-        y: 55
-        source: Format.routeImage(NavigationData.maneuver)
+        x: map.startX + map.routeLateral - 11
+        y: map.endY - 26
+        source: "qrc:/assets/icons/30/pin.png"
         color: Theme.white
         visible: NavigationData.active
     }
@@ -32,6 +92,14 @@ Item {
         y: 295
         source: "qrc:/assets/cluster/nav_cursor.png"
         color: Theme.white
+
+        // The rider turns into the bend as it arrives, the way a real heading
+        // marker swings before the junction.
+        transform: Rotation {
+            origin.x: 24
+            origin.y: 24
+            angle: map.routeLateral * map.routeNearness * 0.05
+        }
     }
 
     Item {
@@ -75,9 +143,33 @@ Item {
             color: Theme.textPrimary
         }
 
+        // Under a kilometre the metres count down digit by digit; above it the
+        // reading changes slowly enough to be plain text.
+        NumberReadout {
+            id: turnDistance
+            x: 620
+            y: 88
+            visible: NavigationData.distanceToManeuverM < 1000
+            value: NavigationData.distanceToManeuverM
+            fit: true
+            pixelSize: 26
+            widthFactor: 0.58
+        }
+
+        Text {
+            x: turnDistance.x + turnDistance.width + 5
+            y: 96
+            visible: turnDistance.visible
+            text: qsTr("m")
+            color: Theme.textPrimary
+            font.family: Theme.fontFamily
+            font.pixelSize: 17
+        }
+
         Text {
             x: 620
             y: 92
+            visible: NavigationData.distanceToManeuverM >= 1000
             text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
                   + Format.distanceUnit(NavigationData.distanceToManeuverM)
             color: Theme.textPrimary
