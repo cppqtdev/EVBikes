@@ -2,12 +2,20 @@ import QtQuick
 import ClusterCore
 import ClusterBackend
 
-// "57 KPH" with a light top and a mint lower part (two clipped copies).
+// "57 KPH" as one grey number whose last rows fade to mint over a short band.
 Item {
     id: speed
 
     property int value: VehicleData.speedKmh
     property string unit: "KPH"
+    property color bodyColor: Theme.digitGrey
+    property color tailColor: Theme.sport || Theme.alertMode ? "#E7B3A6" : Theme.digitShade
+
+    // Fade band measured on the reference frames: 18 rows, then a flat tail.
+    readonly property int fadeTop: 104
+    readonly property int fadeSteps: 6
+    readonly property int stepHeight: 3
+    readonly property int tailTop: fadeTop + fadeSteps * stepHeight
 
     width: 460
     height: 200
@@ -19,65 +27,58 @@ Item {
         width: 390
         horizontalAlignment: Text.AlignRight
         text: "" + speed.value
-        color: Theme.digitGrey
+        color: speed.bodyColor
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSpeed
         font.bold: true
         font.italic: true
     }
 
-    Item {
-        x: 0
-        y: 0
-        width: 420
-        height: 72
-        clip: true
+    Repeater {
+        model: speed.fadeSteps
 
-        Text {
-            width: 390
-            horizontalAlignment: Text.AlignRight
-            text: base.text
-            color: "#F1F3F3"
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSpeed
-            font.bold: true
-            font.italic: true
+        Item {
+            id: band
+
+            readonly property real mix: (index + 1) / speed.fadeSteps
+
+            x: 0
+            y: speed.fadeTop + index * speed.stepHeight
+            width: 420
+            height: speed.stepHeight
+            clip: true
+
+            Text {
+                y: -band.y
+                width: 390
+                horizontalAlignment: Text.AlignRight
+                text: base.text
+                color: Qt.rgba(speed.bodyColor.r + (speed.tailColor.r - speed.bodyColor.r) * band.mix,
+                               speed.bodyColor.g + (speed.tailColor.g - speed.bodyColor.g) * band.mix,
+                               speed.bodyColor.b + (speed.tailColor.b - speed.bodyColor.b) * band.mix, 1)
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.fontSpeed
+                font.bold: true
+                font.italic: true
+            }
         }
     }
 
     Item {
+        id: tail
+
         x: 0
-        y: 104
+        y: speed.tailTop
         width: 420
-        height: 12
+        height: speed.height - speed.tailTop
         clip: true
 
         Text {
-            y: -104
+            y: -tail.y
             width: 390
             horizontalAlignment: Text.AlignRight
             text: base.text
-            color: "#C2DED6"
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSpeed
-            font.bold: true
-            font.italic: true
-        }
-    }
-
-    Item {
-        x: 0
-        y: 116
-        width: 420
-        height: 60
-        clip: true
-
-        Text {
-            y: -116
-            width: 390
-            horizontalAlignment: Text.AlignRight
-            text: base.text
-            color: Theme.sport || Theme.alertMode ? "#E7B3A6" : Theme.digitShade
+            color: speed.tailColor
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSpeed
             font.bold: true
@@ -89,7 +90,7 @@ Item {
         x: 382
         y: 116
         text: speed.unit
-        color: Theme.sport || Theme.alertMode ? "#F0C2B5" : "#B6F2E0"
+        color: Theme.sport || Theme.alertMode ? "#F0C2B5" : Theme.digitUnit
         font.family: Theme.fontFamily
         font.pixelSize: 20
         font.bold: true

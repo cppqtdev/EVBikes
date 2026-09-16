@@ -15,7 +15,7 @@ Item {
         y: 0
         width: 108
         height: 34
-        color: "#15191B"
+        color: "#181818"
         opacity: 0.8
     }
 
@@ -57,7 +57,7 @@ Item {
         y: 0
         width: 108
         height: 34
-        color: "#15191B"
+        color: "#181818"
         opacity: 0.8
     }
 

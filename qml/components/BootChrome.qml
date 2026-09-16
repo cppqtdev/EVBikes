@@ -16,7 +16,7 @@ Item {
         x: 602
         y: 295
         source: "qrc:/assets/cluster/fingerprint_disc.png"
-        color: "#1A1E20"
+        color: "#1D1D1D"
     }
 
     ColorizedImage {
@@ -53,7 +53,7 @@ Item {
         width: 447
         height: 14
         radius: 7
-        color: "#0A0F0C"
+        color: "#0D0D0D"
     }
 
     Rectangle {

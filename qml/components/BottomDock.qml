@@ -45,7 +45,7 @@ Item {
         x: 483
         y: 3
         source: "qrc:/assets/cluster/tile_slant.png"
-        color: "#20262A"
+        color: Theme.surface
         visible: dock.mapActive
     }
 
@@ -61,7 +61,7 @@ Item {
         x: 590
         y: 0
         source: "qrc:/assets/cluster/chip.png"
-        color: "#4A4F52"
+        color: "#4E4E4E"
         visible: Theme.alertMode
     }
 
@@ -101,7 +101,7 @@ Item {
         x: 770
         y: 5
         source: "qrc:/assets/cluster/band_right.png"
-        color: "#1C2123"
+        color: "#202020"
         visible: dock.menuActive
     }
 

@@ -9,8 +9,8 @@ Item {
     property string text: ""
     property bool selected: false
     property color glowColor: Theme.goldTop
-    property color topColor: "#3C4144"
-    property color bottomColor: "#26292B"
+    property color topColor: "#404040"
+    property color bottomColor: "#282828"
     property int fontSize: 22
 
     width: 260

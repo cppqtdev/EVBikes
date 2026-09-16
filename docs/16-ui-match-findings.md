@@ -1,116 +1,152 @@
 # Matching the cluster to the reference frames
 
-There is no Figma for this project. The reference is the frames pulled out
-of the design video, in `screens/` and `screen2/`. Comparing a 1280 x 480
-cluster against a frame by eye is how padding drifts four pixels everywhere
-and nobody can say by how much, so this is measured instead.
+There is no Figma for this project. The reference is the frames pulled out of
+the design video: `all_frames/` (1355 frames), plus the earlier `screens/`,
+`screen2/` and `screens3/` sets. Comparing a 1280 x 480 cluster against a
+1920 x 1080 frame by eye is how padding drifts four pixels everywhere and
+nobody can say by how much, so this is measured instead.
 
 ## The mapping
 
-`screens/frame_NNN.png` is 1920 x 1080. The cluster is drawn in it at
+A frame is 1920 x 1080. The cluster is drawn in it at
 
     frame_x = cluster_x * 1.5
-    frame_y = cluster_y * 1.5 + 195
+    frame_y = cluster_y * 1.5 + 187.5
 
-Checked on `frame_022`: the cluster is exactly 1.5 times its 1280 px width,
-and the top of the housing lands 195 px down the frame.
+The horizontal half of that is exact: the teal ink in a clean ride frame runs
+x 138 .. 1782, centred on 960.0, which is 92 .. 1188 in cluster pixels,
+centred on 640. The vertical offset is the calibration
+`tools/generate_cluster_art.py` was drawn from, and the housing top edge
+lands where it predicts to within two rows, so the art is not systematically
+high or low.
 
-## The tool
+## The tools
 
-`tools/uicompare/measure.py` reads a screenshot and a reference frame and
-prints the difference in numbers: the ink box, where the bright things start
-and stop across and down the screen, and the colour at a set of probes.
+- `tools/uicompare/refcluster.py frame.png out.png` crops a reference frame to
+  the cluster rectangle and scales it to 1280 x 480, so a reference and a
+  screenshot can be compared pixel for pixel with no arithmetic in between.
+- `tools/uicompare/measure.py shot.png reference.png` prints the difference in
+  numbers: ink box, bright bands across and down, colour probes.
+- `tools/color_check.py` fails the build on the colour-cast fault below.
 
-    tools/uicompare/measure.py shot.png screens/frame_022.png
-    tools/uicompare/measure.py --split stacked.png
-
-Everything below came out of it.
+`frame_0542.png` is the cleanest ECO ride frame and is the reference used for
+every number here.
 
 ## Reference numbers, in cluster coordinates
 
-Measured from `screens/frame_022.png`, the cleanest ECO ride frame:
-
 | element | x | y | size |
 |---|---|---|---|
-| left battery column, teal | 91 .. 286 | 46 .. 423 | 196 x 378 |
-| right battery column, teal | 993 .. 1187 | 47 .. 424 | 195 x 378 |
-| speed digits "57" | 229 .. 435 | 130 .. 223 | 207 x 94 |
-| top strip, whole row | 349 .. 946 | 4 .. 63 | 598 x 60 |
-| dock ECO chip, teal | 610 .. 661 | 422 .. 440 | 52 x 19 |
+| AMP bar teal, left limb | 92 .. 399 | 51 .. 455 | - |
+| RPM bar teal, right limb | 880 .. 1188 | 53 .. 456 | - |
+| speed digits "57" | 228 .. 414 | 136 .. 242 | 187 x 107 |
+| trip digits, four cells | 940 .. 1063 | 162 .. 193 | pitch 38.3 |
+| battery bar track | 398 .. 592 | 382 .. 395 | 194 x 14 |
+| temperature bar track | 684 .. 878 | 382 .. 395 | 194 x 14 |
 
-The two battery columns are symmetric: the left starts 91 in from the left
-edge, the right ends 93 in from the right. Any difference between those two
-numbers in our build is a bug on its own.
+The two bar limbs are symmetric: the left starts 92 in from the left edge, the
+right ends 92 in from the right. Any difference between those two numbers in
+our build is a bug on its own.
 
-Colour probes on the same frame:
+## Reference colours
 
-| point | reference |
-|---|---|
-| dock background | `#262828` |
-| top strip background | `#0D0D0D` |
-| shell fill, centre | `#171717` |
+Everything dark in the reference is a **neutral** grey.
 
-## What is wrong regardless of what the build currently renders
+| point | reference | ours, before |
+|---|---|---|
+| top strip plate | `#0F0F0F` | `#14181A` |
+| housing, mid panel | `#08090B` | `#0B0E0F` |
+| ride-mode chip | `#222222` | `#1D2224` |
+| bar track, empty | `#383737` | `#3E4345` |
+| speed digit body | `#D9D9D9` | `#F1F3F3` |
+| speed digit tail | `#ADD5CB` | `#A6E3D2` |
+| KPH | `#C4D5D2` | `#B6F2E0` |
+| RANGE / ODO labels | `#8FB4AB` | `#9DE0CE` |
+| bar segment, bottom | `#274337` | `#3A8874` |
+| bar segment, top | `#CDCDCD` | `#D3D8D6` |
+| battery fill, start .. end | `#904229` .. `#969683` | flat `#A9492B` |
+| temperature fill, cool | `#91C0A9` | `#9FD8C0` |
+| temperature fill, hot end | `#8F432B` | never drawn |
 
-These are faults in the source, not in a screenshot, so they hold whatever
-the last build looked like.
+## The faults, and what was done
 
-### 1. The battery columns are twenty hand-placed coordinates
+### 1. Every dark surface leaned teal
 
-`qml/components/BatteryColumn.qml` gives every segment its own `x:` and `y:`
-literal - 322/395, 304/386, 285/377, 266/367 and so on. There is no pitch,
-no spacing, no rule. The column cannot be nudged, only rewritten twenty
-times, and the moment one number is out the whole diagonal is out.
+Forty-three colour literals across the QML were near-greys with green and
+blue a few steps above red - `#1E2123`, `#15191B`, `#1C2123`, `#4A4F52` and so
+on - and the theme tokens did the same. Alone each is invisible; together they
+are why the whole cluster reads green against the reference.
 
-This is the direct cause of "padding and margin issues everywhere": there
-are no paddings or margins to correct, only coordinates.
+Fixed: the tokens in `Theme.qml` and 23 distinct literals were replaced with
+the neutral grey of the same perceived luminance. `tools/color_check.py`
+fails on any dark literal whose channels spread 4 to 10 steps, which is the
+drift without catching the deliberate greens.
 
-**Fix:** one origin, one step vector, one segment size, and the segments
-placed from those by a `Repeater`. Then the whole column moves with one
-number and the reference measurements above can be matched exactly.
+### 2. The speed reading was three stacked copies of the text
 
-### 2. The bottom dock is hand-placed too
+`SpeedDigits.qml` drew the number three times to fake a gradient: white
+`#F1F3F3` for the top 72 rows, `#D6D9DA` for the middle, mint for the bottom
+60. The result is two hard horizontal cuts straight across the digits.
 
-`qml/components/BottomDock.qml` positions R, P, D, the map icon and the rest
-with literal x values - 393, 411, 427, 483, 512, 590. Same problem, same
-fix: a row with a spacing.
+The reference is flat `#D9D9D9` for the whole glyph and fades to `#ADD5CB`
+over its last 18 rows only, with no bright top band at all.
 
-### 3. Colours bypass the theme
+Fixed: one body text, a six-band fade over the measured 18 rows, one flat
+tail. The size was never wrong - ours measured 188 x 110 against the
+reference's 187 x 107 - so `fontSpeed` stays at 150; the glyph was 4 px left
+and 2 px high, which is now corrected in `RideView.qml`.
 
-`Theme.qml` holds the palette, and then:
+### 3. Horizontal gradients do not render
 
-- `TabStrip.qml` fills with `"#1E2224"` and `"#20262A"`
-- `SpeedDigits.qml` uses `"#F1F3F3"` and `"#C2DED6"`
+`BatteryTempBars.qml` drew both bottom bars with
+`Rectangle { gradient: Gradient { orientation: Gradient.Horizontal ... } }`.
+Neither gradient appears in the build: the battery fill is flat brick with a
+hard cut at the fill edge, and the temperature bar never shows the warm end
+the reference has.
 
-A literal is a colour nobody can change from the theme and nobody can find
-when the palette moves. Every one of these should be a token, and where the
-token does not exist yet it should be added with the measured value.
+Fixed: both ramps are now clipped bands over the pointed-bar art, the same
+idiom the generated bars already use. The battery fill runs `#904229` to
+`#969683` across the fill; the temperature bar keeps `#91C0A9` and turns to
+`#8F432B` across a fixed warm zone at the top of the scale, matching the
+reference, and the ruler ticks were lifted from 0.35 to 0.6 opacity so they
+are visible at all.
 
-### 4. The speed reading is three copies of the same text
+### 4. The two bars used different ramps
 
-`SpeedDigits.qml` draws the number three times at `Theme.fontSpeed` - once
-for the body, once for a highlight, once for a shade - to fake the gradient
-and the drop shadow the reference has. Three texts that must stay in step by
-hand is three chances to drift, and it is why the digits look flat rather
-than graded.
+`ClusterShell.qml` overrode `RpmBar.lowColor` and `highColor` with `#2C8C72`
+and `#5CEFC4`, so the right bar was duller than the left. The reference draws
+both the same. Override removed; both take `Theme.segLow` / `segHigh`.
 
-**Fix:** one text, with the gradient as a shader or a mask over it, and one
-shadow.
+### 5. Colours bypassed the theme
 
-## What still needs a fresh screenshot
+`BottomDock.qml` filled with `"#20262A"` and `TripCounter.qml` with
+`"#DDEFEA"` and `"#121617"`. These are now `Theme.surface`,
+`Theme.labelTeal` and `Theme.surfaceSunken`.
 
-`Claude outputs/ride-layout-vs-reference.png` was made at 12:22.
-`qml/components/BatteryColumn.qml` was changed at 15:04 and there has been a
-commit since, so every number taken off that picture is stale. Measured
-against it, the build was:
+## Still open
 
-- battery columns 17 px too far out on both sides, and 21 to 23 px too tall
-- the bottom dock 4 to 7 px too low
-- the speed digits about 83 per cent of the reference height, which puts
-  `fontSpeed` at roughly 178 rather than 150
-- the dock background much too light: `#1D2224` against `#0F1413`
-- the top strip background too light and blue: `#14181A` against `#0C0C0B`
-- teal on the top strip icons, where the reference draws them grey
+Not fixable from measurement alone; each needs new artwork or a decision.
 
-Those five are worth re-measuring on a current screenshot before anything is
-changed, because some may already be fixed.
+- **The bike render.** Ours is a different motorcycle from the reference's -
+  a heavier, more upright silhouette against a slim faired sportbike. It is
+  also 13 px wider and sits 6 px left. New art.
+- **Telltale glyphs.** The reference headlight is the standard beam-and-D
+  symbol; ours is a circle with a bar. The reference chevrons are doubled,
+  ours single. The reference signal meter is a solid triangle, ours is four
+  bars. All in `tools/generate_assets.py`.
+- **The battery glyph** beside the 40 % bar is a bolt only; the reference has
+  a battery body around it, and it renders orange where the source asks for
+  `#77706E`, so the asset is probably not Alpha8.
+- **The compass glyph** in the dock is a different shape from the reference's
+  north arrow.
+- **Soft shadows.** The reference puts a soft glow behind the speed digits and
+  a vertical lift across the housing interior. Ours is flat. Both want
+  pre-rendered art rather than a runtime blur.
+- **The bar knee.** `BAR_KNEE_RADIUS` is 30 but the rendered bend is square
+  against the reference's rounded one.
+
+## Re-measuring after a change
+
+    python3 tools/uicompare/refcluster.py all_frames/frame_0542.png .cmp/ref.png
+    python3 tools/uicompare/measure.py shot.png .cmp/ref.png
+
+A screenshot of the ride screen at exactly 1280 x 480 is all that is needed.

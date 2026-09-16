@@ -85,8 +85,13 @@ CMakeLists.txt.user*
 Claude outputs/
 *.qmlproject.user
 __pycache__/
-# design reference material (large, not ours to publish)
-screens/
-screen2/
+# design reference material (large, not ours to publish).
+# Anchored to the repo root: a bare screens/ also hid qml/screens/.
+/screens/
+/screen2/
+/screens3/
 *.mp4
 *.webp
+
+/.cmp/
+/all_frames/

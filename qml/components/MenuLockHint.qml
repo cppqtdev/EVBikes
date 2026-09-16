@@ -32,7 +32,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 17
-        color: "#4A5053"
+        color: "#4F4F4F"
     }
 
     Rectangle {
@@ -41,7 +41,7 @@ Item {
         width: parent.width - 2
         height: parent.height - 2
         radius: 16
-        color: "#1E2224"
+        color: "#212121"
     }
 
     Text {

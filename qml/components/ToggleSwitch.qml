@@ -14,8 +14,8 @@ Item {
         radius: height / 2
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: toggle.checked ? "#4E9E6E" : "#3A3E40" }
-            GradientStop { position: 1.0; color: toggle.checked ? "#9CF0B6" : "#4A4F52" }
+            GradientStop { position: 0.0; color: toggle.checked ? "#4E9E6E" : "#3D3D3D" }
+            GradientStop { position: 1.0; color: toggle.checked ? "#9CF0B6" : "#4E4E4E" }
         }
     }
 

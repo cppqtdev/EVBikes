@@ -16,23 +16,25 @@ QtObject {
     property color orange: "#DE5013"
 
     // Surfaces
-    property color shell: "#060708"
-    property color housing: "#1E2123"
-    property color housingBottom: "#151819"
+    property color shell: "#070709"
+    property color housing: "#1B1B1C"
+    property color housingBottom: "#141414"
     property color channel: "#010101"
-    property color surface: "#1B1F21"
-    property color surfaceRaised: "#262B2E"
-    property color surfaceSelected: "#2C3134"
-    property color stroke: "#3A4043"
-    property color stroke2: "#5B6164"
+    property color surface: "#191919"
+    property color surfaceSunken: "#101010"
+    property color surfaceRaised: "#242424"
+    property color surfaceSelected: "#2A2A2A"
+    property color stroke: "#3B3B3B"
+    property color stroke2: "#5C5C5C"
 
     // Text
-    property color textPrimary: SystemData.nightMode ? "#D5DCE0" : "#F4F6F6"
-    property color textSecondary: SystemData.nightMode ? "#7E8A92" : "#A7AFB3"
-    property color textMuted: "#5E666A"
-    property color labelTeal: "#9FE3D0"
-    property color digitGrey: "#D6D9DA"
-    property color digitShade: "#A6E3D2"
+    property color textPrimary: SystemData.nightMode ? "#C8C8C8" : "#DEDEDE"
+    property color textSecondary: SystemData.nightMode ? "#808080" : "#A8A8A8"
+    property color textMuted: "#606060"
+    property color labelTeal: "#8FB4AB"
+    property color digitGrey: "#D9D9D9"
+    property color digitShade: "#ADD5CB"
+    property color digitUnit: "#C4D5D2"
 
     // Status colours
     property color red: "#E3263A"
@@ -53,10 +55,10 @@ QtObject {
     property color glow: alertMode ? "#E8303F" : (sport ? "#E0402A" : "#57F2C9")
 
     // Bar segments
-    property color segLow: alertMode ? "#6A1018" : (sport ? "#8A2414" : "#2C7A66")
+    property color segLow: alertMode ? "#6A1018" : (sport ? "#8A2414" : "#274337")
     property color segHigh: alertMode ? "#F02A3C" : (sport ? "#FF6A34" : "#B2FFE9")
-    property color segTop: "#D3D8D6"
-    property color segOff: "#3A3E40"
+    property color segTop: "#CDCDCD"
+    property color segOff: "#3B3E3D"
     property color segRedZone: alertMode ? "#F02A3C" : "#B04A2C"
     property color segLabelOnLight: alertMode || sport ? "#D0452A" : "#2F9C80"
 

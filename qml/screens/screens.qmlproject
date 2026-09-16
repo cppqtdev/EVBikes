@@ -1,0 +1,37 @@
+import QmlProject 1.3
+
+Project {
+    MCU.Module {
+        uri: "ClusterScreens"
+    }
+
+    QmlFiles {
+        files: [
+            "AuthScreen.qml",
+            "BikeOrbit.qml",
+            "BikeStatusPage.qml",
+            "ChargingPage.qml",
+            "ClusterShell.qml",
+            "CrashOverlay.qml",
+            "CustomizePage.qml",
+            "DigilockerPage.qml",
+            "GenericAlertOverlay.qml",
+            "HexSpeedoView.qml",
+            "MapView.qml",
+            "MessageRow.qml",
+            "MiscPage.qml",
+            "OverheatOverlay.qml",
+            "PageBase.qml",
+            "PaymentPage.qml",
+            "PreRideScreen.qml",
+            "ProfilePage.qml",
+            "RideView.qml",
+            "SeatPage.qml",
+            "SecurityPage.qml",
+            "SplashScreen.qml",
+            "StatCard.qml",
+            "TripStat.qml",
+            "TyreAlertOverlay.qml"
+        ]
+    }
+}

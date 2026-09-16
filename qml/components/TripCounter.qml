@@ -16,7 +16,7 @@ Item {
         anchors.rightMargin: 30
         y: 0
         text: qsTr("TRIP")
-        color: "#DDEFEA"
+        color: Theme.labelTeal
         font.family: Theme.fontFamily
         font.pixelSize: 19
         font.bold: true
@@ -36,14 +36,14 @@ Item {
                 width: 28
                 height: 25
                 radius: 3
-                color: "#121617"
+                color: Theme.surfaceSunken
             }
 
             Rectangle {
                 y: 24
                 width: 28
                 height: 1
-                color: "#23292B"
+                color: "#252525"
             }
 
             Text {
