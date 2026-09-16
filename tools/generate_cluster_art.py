@@ -27,7 +27,10 @@ WHITE = (255, 255, 255, 255)
 # Auth / splash body outline
 SHELL = [(363, 5), (141.7, 35), (80.7, 137.7), (158.5, 368.5), (351.3, 461.7),
          (928.7, 461.7), (1121.5, 368.5), (1199.3, 137.7), (1138.3, 35), (938, 5)]
-HOUSING_TOP = [(362, 4), (938, 4), (882, 54), (436, 54)]
+# The chamfer is slightly less steep than it was: the reference lip sits about
+# four and a half pixels outside ours at rows 38 and 50, where the interior is
+# dark enough to locate it, while the 576 px top edge is unchanged.
+HOUSING_TOP = [(362, 4), (938, 4), (886.5, 54), (431.5, 54)]
 HOUSING_BOTTOM = [(416, 410), (864, 410), (929, 458), (351, 458)]
 
 # Ride glow contour, left half: (point, fillet radius)
@@ -206,7 +209,8 @@ def make_shell():
     d.polygon(sc(HOUSING_TOP), fill=WHITE)
     # Soften the chamfer: across the reference's sloped end a horizontal cut
     # ramps up over about twenty pixels, where a hard polygon steps in one.
-    face = down(img).getchannel("A").filter(ImageFilter.GaussianBlur(3))
+    top_face = down(img).getchannel("A").filter(ImageFilter.GaussianBlur(3))
+    face = top_face
     # The reference top housing fades all the way out before its bottom edge:
     # measured over #141414 it runs 255 at y8 down to about 13 at y52, so it
     # dissolves into the screen instead of ending on a line.
@@ -222,17 +226,29 @@ def make_shell():
     # band with a downward ramp and only a light blur reproduces that; a
     # Gaussian blob washes the step out and lifts the housing above it.
     band = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(band).polygon([(436, 55), (882, 55), (872, 88), (446, 88)], fill=255)
+    ImageDraw.Draw(band).polygon([(432, 55), (886, 55), (876, 88), (442, 88)], fill=255)
     spill = ImageChops.multiply(band, vertical_ramp(55, 88, 72, 0)).filter(ImageFilter.GaussianBlur(2))
     bevel = Image.new("L", (W * SS, H * SS), 0)
     bd = ImageDraw.Draw(bevel)
-    # No bevel on the top housing. The reference draws no stroke there at all -
-    # a horizontal cut across its chamfer is a smooth ramp with no spike - and
-    # ours was the visible outline around the telltale strip. The bottom
-    # housing keeps its lit edge, which the reference does have.
+    # The top housing has a bevel on its two chamfered ends only, never along
+    # the top or bottom edge, and it strengthens downwards: measured against
+    # the interior beside it the reference lip is about +1 at row 14, +5 at
+    # row 26, +13 at row 38 and +17 at row 50. The old fill of 230 across the
+    # whole outline is what drew a white box around the telltales.
+    chamfer = Image.new("L", (W * SS, H * SS), 0)
+    cd = ImageDraw.Draw(chamfer)
+    cd.line(sc([HOUSING_TOP[0], HOUSING_TOP[3]]), fill=255, width=int(1.4 * SS))
+    cd.line(sc([HOUSING_TOP[2], HOUSING_TOP[1]]), fill=255, width=int(1.4 * SS))
+    chamfer = ImageChops.multiply(chamfer.resize((W, H), Image.LANCZOS), vertical_ramp(10, 54, 0, 55))
+    # The housing also throws a soft halo outside its chamfered ends, which is
+    # what gives it weight against the black. Measured on a column just outside
+    # the left chamfer the reference runs 21 at row 32 down to 3 at row 54.
+    halo = ImageChops.subtract(top_face.filter(ImageFilter.GaussianBlur(12)), top_face)
+    halo = halo.point(lambda v: min(255, int(v * 0.7)))
     bd.line(sc([HOUSING_BOTTOM[3], HOUSING_BOTTOM[0], HOUSING_BOTTOM[1], HOUSING_BOTTOM[2]]), fill=150, width=int(1.2 * SS), joint="curve")
     bevel = bevel.resize((W, H), Image.LANCZOS)
-    save(alpha_image(ImageChops.lighter(spill, bevel)), "housing_light")
+    lit = ImageChops.lighter(ImageChops.lighter(spill, bevel), chamfer)
+    save(alpha_image(ImageChops.lighter(lit, halo)), "housing_light")
 
 
 def stroke(paths, width, scale=SS):
