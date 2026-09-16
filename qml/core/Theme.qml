@@ -17,7 +17,7 @@ QtObject {
 
     // Surfaces
     property color shell: "#070709"
-    property color housing: "#1B1B1C"
+    property color housing: "#141414"
     property color housingBottom: "#141414"
     property color channel: "#010101"
     property color surface: "#191919"
@@ -35,6 +35,7 @@ QtObject {
     property color digitGrey: "#D9D9D9"
     property color digitShade: "#ADD5CB"
     property color digitUnit: "#C4D5D2"
+    property color hexRing: "#9ED7C2"
 
     // Status colours
     property color red: "#E3263A"

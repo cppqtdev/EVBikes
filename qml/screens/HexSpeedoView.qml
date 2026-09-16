@@ -57,9 +57,9 @@ Item {
 
     Text {
         x: 241
-        y: 271
+        y: 277
         text: qsTr("Range:")
-        color: "#D9C3BD"
+        color: "#C5AFA9"
         font.family: Theme.fontFamily
         font.pixelSize: 22
     }
@@ -100,7 +100,7 @@ Item {
         x: 380
         y: 76
         source: "qrc:/assets/cluster/hex_backdrop.png"
-        color: "#1B1A1D"
+        color: "#050506"
     }
 
     ColorizedImage {

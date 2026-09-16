@@ -178,7 +178,7 @@ Item {
 
     ColorizedImage {
         source: "qrc:/assets/cluster/hex_inner.png"
-        color: Theme.teal
+        color: Theme.hexRing
     }
 
     Text {

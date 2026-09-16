@@ -19,7 +19,7 @@ Item {
     readonly property color tempHot: "#8F432B"
     readonly property int warmStart: 108
     readonly property int warmSteps: 8
-    readonly property int warmStep: 10
+    readonly property int warmStep: 11
 
     width: Theme.screenWidth
     height: 40
