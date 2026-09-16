@@ -28,7 +28,17 @@ Item {
 
     readonly property int shownValue: Math.round(shown)
     readonly property int cellWidth: Math.round(pixelSize * widthFactor)
-    readonly property int used: ("" + Math.abs(shownValue)).length
+    // Digit count by arithmetic: String.length is not part of the JavaScript
+    // subset Qt for MCUs provides.
+    readonly property int used: {
+        var rest = Math.abs(shownValue)
+        var count = 1
+        while (rest >= 10) {
+            rest = Math.floor(rest / 10)
+            count = count + 1
+        }
+        return count
+    }
     readonly property int cells: fit ? used : digits
     readonly property int blanks: Math.max(0, cells - used)
 

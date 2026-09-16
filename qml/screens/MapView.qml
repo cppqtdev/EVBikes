@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Shapes
 import QtQuickUltralite.Extras
 import ClusterCore
 import ClusterBackend

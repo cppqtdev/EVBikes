@@ -44,6 +44,36 @@ KNOWN_MISSING = {
     "SpringAnimation", "SmoothedAnimation", "PinchArea", "Flipable", "ShaderEffectSource",
 }
 
+# Types that only exist once their module is imported. Using one without the
+# import fails at load with "X is not a type", which no other rule here catches
+# because the type itself is perfectly valid.
+NEEDS_IMPORT = {
+    "Shape": "QtQuick.Shapes",
+    "ShapePath": "QtQuick.Shapes",
+    "ShapeGradient": "QtQuick.Shapes",
+    "LinearGradient": "QtQuick.Shapes",
+    "RowLayout": "QtQuick.Layouts",
+    "ColumnLayout": "QtQuick.Layouts",
+    "GridLayout": "QtQuick.Layouts",
+    "Timeline": "QtQuick.Timeline",
+    "TimelineAnimation": "QtQuick.Timeline",
+    "Keyframe": "QtQuick.Timeline",
+    "KeyframeGroup": "QtQuick.Timeline",
+    "ColorizedImage": "QtQuickUltralite.Extras",
+    "PaintedItem": "QtQuickUltralite.Extras",
+    "StaticText": "QtQuickUltralite.Extras",
+    "ArcItem": "QtQuickUltralite.Extras",
+    "AnimatedSpriteDirectory": "QtQuickUltralite.Extras",
+    "Button": "QtQuick.Controls",
+    "CheckBox": "QtQuick.Controls",
+    "Slider": "QtQuick.Controls",
+    "Switch": "QtQuick.Controls",
+    "Dial": "QtQuick.Controls",
+    "ProgressBar": "QtQuick.Controls",
+    "RadioButton": "QtQuick.Controls",
+    "SwipeView": "QtQuick.Controls",
+}
+
 TYPE_RE = re.compile(r"^\s*([A-Z][A-Za-z0-9_]*)\s*\{")
 ANIM_ON_RE = re.compile(r"^\s*([A-Z][A-Za-z0-9_]*)\s+on\s+\w+\s*\{")
 IMPORT_RE = re.compile(r"^\s*import\s+([A-Za-z0-9_.]+)")
@@ -54,6 +84,10 @@ BANNED_PATTERNS = [
     (re.compile(r"\bJSON\.|\bXMLHttpRequest\b|\bPromise\b"), "JavaScript API not available"),
     (re.compile(r"\banchors\.baseline\b"), "avoid baseline anchors; align with bottom + margin"),
     (re.compile(r"\blayer\.enabled\b"), "layer.enabled is not available; use pre-rendered images"),
+    (re.compile(r"\.(charAt|substring|substr|toUpperCase|toLowerCase|indexOf|split|trim)\s*\("),
+     "String methods are not in the Qt for MCUs JavaScript subset"),
+    (re.compile(r"\"\s*\+[^\n]*\)\.length\b|\bstring[A-Za-z0-9_]*\.length\b"),
+     "String.length is not in the Qt for MCUs JavaScript subset"),
 ]
 
 
@@ -75,16 +109,22 @@ def lint(root):
                 continue
             path = os.path.join(dirpath, f)
             module_imports = {"ClusterBackend", "ClusterCore", "ClusterComponents", "ClusterScreens"}
+            imported = set()
+            missing_import = {}
             with open(path, encoding="utf-8") as fh:
                 for n, line in enumerate(fh, 1):
                     stripped = line.split("//")[0]
                     m = IMPORT_RE.match(stripped)
                     if m:
                         mod = m.group(1)
+                        imported.add(mod)
                         if mod not in ALLOWED_IMPORTS and mod not in module_imports:
                             print(f"{path}:{n}: import '{mod}' is not a Qt Quick Ultralite module")
                             problems += 1
                         continue
+                    opener = TYPE_RE.match(stripped)
+                    if opener and opener.group(1) in NEEDS_IMPORT and opener.group(1) not in local:
+                        missing_import.setdefault(opener.group(1), n)
                     for rx in (TYPE_RE, ANIM_ON_RE):
                         t = rx.match(stripped)
                         if not t:
@@ -106,6 +146,11 @@ def lint(root):
                         if rx.search(stripped):
                             print(f"{path}:{n}: {msg}")
                             problems += 1
+            for name, n in sorted(missing_import.items(), key=lambda kv: kv[1]):
+                module = NEEDS_IMPORT[name]
+                if module not in imported:
+                    print(f"{path}:{n}: '{name}' needs 'import {module}'")
+                    problems += 1
     return problems
 
 

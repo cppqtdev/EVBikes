@@ -108,7 +108,9 @@ QtObject {
     }
 
     function contactInitial(index) {
-        return contactName(index).charAt(0)
+        if (index === 0) return qsTr("K")
+        if (index === 1) return qsTr("A")
+        return qsTr("M")
     }
 
     function reminderName(index) {
@@ -124,7 +126,9 @@ QtObject {
     }
 
     function reminderInitial(index) {
-        return reminderName(index).charAt(0)
+        if (index === 0) return qsTr("S")
+        if (index === 1) return qsTr("I")
+        return qsTr("T")
     }
 
     function profileName(index) {

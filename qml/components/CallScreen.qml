@@ -68,13 +68,11 @@ Item {
         radius: 46
         color: "#2F8A6C"
 
-        Text {
+        Icon {
             anchors.centerIn: parent
-            text: call.who.charAt(0)
+            size: 40
+            source: "qrc:/assets/icons/40/phone.png"
             color: Theme.textPrimary
-            font.family: Theme.fontFamily
-            font.pixelSize: 40
-            font.bold: true
         }
     }
 
