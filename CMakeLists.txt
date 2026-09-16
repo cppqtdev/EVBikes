@@ -1,68 +1,75 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.21.1)
 
-project(EVBikes VERSION 0.1 LANGUAGES CXX)
-
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+project(EVBikes VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick)
+option(EVB_BUILD_HOST_TESTS "Build host unit tests instead of the Qt for MCUs app" OFF)
+if(EVB_BUILD_HOST_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+    return()
+endif()
 
-set(PROJECT_SOURCES
-        main.cpp
-        qml.qrc
+# Qt for MCUs SDK present -> MCU build (desktop "Qt" platform or a board).
+# Otherwise -> plain Qt 6 desktop build of the same UI (see desktop/).
+if(NOT TARGET Qul::Core)
+    find_package(Qul QUIET)
+endif()
+
+if(NOT Qul_FOUND AND NOT TARGET Qul::Core)
+    message(STATUS "EVBikes: Qt for MCUs (Qul) not found, building the Qt 6 desktop version")
+    add_subdirectory(desktop)
+    return()
+endif()
+
+set(EVB_CORE_SOURCES
+    src/core/can/VehicleCanDecoder.cpp
+    src/core/nav/PhoneLinkProtocol.cpp
+    src/core/alerts/AlertEvaluator.cpp
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(EVBikes
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET EVBikes APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+set(EVB_BACKEND_SOURCES
+    src/backend/Backend.cpp
+    src/backend/VehicleData.cpp
+    src/backend/NavigationData.cpp
+    src/backend/PhoneData.cpp
+    src/backend/SystemData.cpp
+    src/backend/AlertData.cpp
+    src/backend/ClusterInput.cpp
+    src/backend/Simulator.cpp
+)
+
+# Desktop backend is called "Qt" in Qt for MCUs.
+string(TOLOWER "${QUL_PLATFORM}" EVB_PLATFORM_LOWER)
+if(EVB_PLATFORM_LOWER STREQUAL "qt")
+    set(EVB_PLATFORM_SOURCES src/platform/sim/PlatformSim.cpp)
 else()
-    if(ANDROID)
-        add_library(EVBikes SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(EVBikes
-          ${PROJECT_SOURCES}
-        )
-    endif()
+    set(EVB_PLATFORM_SOURCES src/platform/board/PlatformBoard.cpp)
 endif()
 
-target_link_libraries(EVBikes
-  PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
-
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.EVBikes)
+if(QUL_OS STREQUAL "FreeRTOS")
+    set(EVB_MAIN src/os/main_freertos.cpp)
+else()
+    set(EVB_MAIN src/main.cpp)
 endif()
-set_target_properties(EVBikes PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+
+qul_add_target(EVBikes
+    ${EVB_MAIN}
+    ${EVB_CORE_SOURCES}
+    ${EVB_BACKEND_SOURCES}
+    ${EVB_PLATFORM_SOURCES}
+    QML_PROJECT EVBikes.qmlproject
 )
 
-include(GNUInstallDirs)
-install(TARGETS EVBikes
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+target_include_directories(EVBikes PRIVATE
+    src
+    qml/backend
+)
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_import_qml_plugins(EVBikes)
-    qt_finalize_executable(EVBikes)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(EVBikes PRIVATE -Wall -Wextra)
 endif()
+
+app_target_setup_os(EVBikes)

@@ -1,0 +1,58 @@
+import QtQuick
+import QtQuickUltralite.Extras
+import ClusterCore
+
+// Dark glass button with an optional coloured glow when selected.
+Item {
+    id: button
+
+    property string text: ""
+    property bool selected: false
+    property color glowColor: Theme.goldTop
+    property color topColor: "#3C4144"
+    property color bottomColor: "#26292B"
+    property int fontSize: 22
+
+    width: 260
+    height: 38
+
+    ColorizedImage {
+        anchors.centerIn: parent
+        width: 320
+        height: 200
+        source: "qrc:/assets/images/glow_blob_320x200.png"
+        color: button.glowColor
+        opacity: button.selected ? 0.35 : 0.0
+        visible: opacity > 0
+
+        Behavior on opacity {
+            NumberAnimation { duration: Theme.animNormal }
+        }
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        radius: 4
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: button.topColor }
+            GradientStop { position: 1.0; color: button.bottomColor }
+        }
+    }
+
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: button.selected ? "#C9CDCF" : "#5B6164"
+    }
+
+    Text {
+        anchors.centerIn: parent
+        width: parent.width - 16
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.WordWrap
+        text: button.text
+        color: Theme.textPrimary
+        font.family: Theme.fontFamily
+        font.pixelSize: button.fontSize
+    }
+}

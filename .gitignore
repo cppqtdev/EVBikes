@@ -80,3 +80,13 @@ CMakeLists.txt.user*
 .rcc/
 .uic/
 /build*/
+
+# EVBikes: local files not kept in git
+Claude outputs/
+*.qmlproject.user
+__pycache__/
+# design reference material (large, not ours to publish)
+screens/
+screen2/
+*.mp4
+*.webp

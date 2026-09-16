@@ -1,0 +1,19 @@
+import QmlProject 1.3
+
+Project {
+    MCU.Module {
+        uri: "ClusterBackend"
+    }
+
+    InterfaceFiles {
+        files: [
+            "VehicleData.h",
+            "NavigationData.h",
+            "PhoneData.h",
+            "SystemData.h",
+            "AlertData.h",
+            "ClusterInput.h",
+            "Simulator.h"
+        ]
+    }
+}
