@@ -20,31 +20,31 @@ Item {
     }
 
     ColorizedImage {
-        x: 317
-        y: 392
+        x: 318
+        y: 393
         source: "qrc:/assets/cluster/battery_slice0.png"
         visible: column.litCount > 0
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 298
-        y: 383
+        x: 299
+        y: 384
         source: "qrc:/assets/cluster/battery_slice1.png"
         visible: column.litCount > 1
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 280
-        y: 374
+        x: 282
+        y: 375
         source: "qrc:/assets/cluster/battery_slice2.png"
         visible: column.litCount > 2
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 262
+        x: 263
         y: 365
         source: "qrc:/assets/cluster/battery_slice3.png"
         visible: column.litCount > 3
@@ -52,127 +52,127 @@ Item {
     }
 
     ColorizedImage {
-        x: 244
-        y: 355
+        x: 246
+        y: 356
         source: "qrc:/assets/cluster/battery_slice4.png"
         visible: column.litCount > 4
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 226
-        y: 346
+        x: 228
+        y: 347
         source: "qrc:/assets/cluster/battery_slice5.png"
         visible: column.litCount > 5
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 207
-        y: 336
+        x: 210
+        y: 337
         source: "qrc:/assets/cluster/battery_slice6.png"
         visible: column.litCount > 6
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 190
-        y: 325
+        x: 192
+        y: 327
         source: "qrc:/assets/cluster/battery_slice7.png"
         visible: column.litCount > 7
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 177
-        y: 311
+        x: 179
+        y: 313
         source: "qrc:/assets/cluster/battery_slice8.png"
         visible: column.litCount > 8
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 169
-        y: 292
+        x: 170
+        y: 296
         source: "qrc:/assets/cluster/battery_slice9.png"
         visible: column.litCount > 9
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 163
-        y: 272
+        x: 164
+        y: 276
         source: "qrc:/assets/cluster/battery_slice10.png"
         visible: column.litCount > 10
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 156
-        y: 252
+        x: 158
+        y: 257
         source: "qrc:/assets/cluster/battery_slice11.png"
         visible: column.litCount > 11
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 150
-        y: 233
+        x: 152
+        y: 238
         source: "qrc:/assets/cluster/battery_slice12.png"
         visible: column.litCount > 12
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 144
-        y: 213
+        x: 145
+        y: 218
         source: "qrc:/assets/cluster/battery_slice13.png"
         visible: column.litCount > 13
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 137
-        y: 193
+        x: 139
+        y: 199
         source: "qrc:/assets/cluster/battery_slice14.png"
         visible: column.litCount > 14
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 131
-        y: 173
+        x: 133
+        y: 179
         source: "qrc:/assets/cluster/battery_slice15.png"
         visible: column.litCount > 15
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 124
-        y: 152
+        x: 127
+        y: 159
         source: "qrc:/assets/cluster/battery_slice16.png"
         visible: column.litCount > 16
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 118
-        y: 132
+        x: 120
+        y: 139
         source: "qrc:/assets/cluster/battery_slice17.png"
         visible: column.litCount > 17
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 113
-        y: 111
+        x: 115
+        y: 118
         source: "qrc:/assets/cluster/battery_slice18.png"
         visible: column.litCount > 18
         color: column.litColor
     }
 
     ColorizedImage {
-        x: 116
+        x: 113
         y: 104
         source: "qrc:/assets/cluster/battery_slice19.png"
         visible: column.litCount > 19

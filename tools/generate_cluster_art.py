@@ -43,6 +43,12 @@ BAR_TOP, BAR_KNEE, BAR_END = (122.1, 110.0), (199.5, 337.7), (360.0, 418.5)
 BAR_WIDTH = 35
 BAR_GAP = 3
 BAR_KNEE_RADIUS = 30
+# How far the top segment stops short of its cut, measured along the bar axis.
+# Along the bar's top axis the reference goes dark at s=245 and its contour
+# core sits at s=260, so thirteen pixels of black separate the MAX tile from
+# the line. Ours had four: the tile ends in the same place but the contour is
+# three pixels closer and its halo reaches further in.
+BAR_TOP_INSET = 8.0
 # How far the last segment stops short of its cut, measured along the bar axis.
 # Zero is what the reference measures: along the bar centre its last tile ends
 # at the same distance ours does. Raise it only to buy visual clearance where
@@ -61,16 +67,18 @@ BAR_CUTS = [((345.0, 430.0), (375.0, 408.3)),
 BAR_SEGMENTS = len(BAR_CUTS) - 1
 
 
-def _inset_end_cut():
-    dx, dy = BAR_END[0] - BAR_KNEE[0], BAR_END[1] - BAR_KNEE[1]
+def _inset_cut(index, toward, amount):
+    """Pull one end cut back along the bar axis, towards the knee."""
+    dx, dy = toward[0] - BAR_KNEE[0], toward[1] - BAR_KNEE[1]
     length = (dx * dx + dy * dy) ** 0.5
     ux, uy = dx / length, dy / length
-    (oa, ia) = BAR_CUTS[0]
-    BAR_CUTS[0] = ((oa[0] - ux * BAR_END_INSET, oa[1] - uy * BAR_END_INSET),
-                   (ia[0] - ux * BAR_END_INSET, ia[1] - uy * BAR_END_INSET))
+    (outer, inner) = BAR_CUTS[index]
+    BAR_CUTS[index] = ((outer[0] - ux * amount, outer[1] - uy * amount),
+                       (inner[0] - ux * amount, inner[1] - uy * amount))
 
 
-_inset_end_cut()
+_inset_cut(0, BAR_END, BAR_END_INSET)
+_inset_cut(-1, BAR_TOP, BAR_TOP_INSET)
 
 
 def canvas(w=W, h=H, scale=SS):

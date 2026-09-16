@@ -69,14 +69,14 @@ Item {
 
     ColorizedImage {
         x: 1124
-        y: 91
+        y: 98
         source: "qrc:/assets/cluster/seg_r7.png"
         color: bar.redZoneTop ? Theme.segRedZone : (bar.litCount >= 8 ? bar.topColor : bar.offColor)
     }
 
     Text {
-        x: 1119
-        y: 127
+        x: 1117
+        y: 131
         width: 60
         horizontalAlignment: Text.AlignHCenter
         text: "× 8"
