@@ -6,6 +6,7 @@ qt_add_qml_module(cluster_components
     VERSION 1.0
     OUTPUT_DIRECTORY ${EVB_QML_OUT}/ClusterComponents
     QML_FILES
+        BatteryColumn.qml
         BatteryTempBars.qml
         BootChrome.qml
         BottomDock.qml

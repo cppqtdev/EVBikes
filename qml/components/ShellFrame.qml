@@ -11,6 +11,7 @@ Item {
     property bool showChannel: true
     property color floorColor: Theme.red
     property real floorOpacity: 0.0
+    property real centerLift: 0.06
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -35,7 +36,7 @@ Item {
     ColorizedImage {
         source: "qrc:/assets/cluster/shell_vignette.png"
         color: "#FFFFFF"
-        opacity: 0.06
+        opacity: frame.centerLift
     }
 
     ColorizedImage {

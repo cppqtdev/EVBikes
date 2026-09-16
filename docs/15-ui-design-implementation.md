@@ -21,6 +21,19 @@ This page explains how each screen was rebuilt **only with Qt Quick Ultralite co
 | Bar centre line | top (122, 110) → knee (200, 338) → end (360, 419), 35 px wide |
 | Bar segments | **8** per side; the cut lines are listed in `BAR_CUTS` (outer point, inner point) |
 
+Hexagon view (measured on `frame_086`):
+
+| Part | Value |
+|---|---|
+| Ring outer hexagon | vertices (467, 208.5), (555, 84), (735, 84), (823, 208.5); ends at y 333 |
+| Ring thickness | 38 px on the top side, 46 px on the four slanted sides (`HEX_BANDS`) |
+| Ring colours | lit `#7DFFDB`, unlit `#3C3C3D`, black shade toward the inner edge (35 %) |
+| Inner hexagon | centre (645, 208.5); outline 79 × 55, soft band 61 × 43.5 |
+| Needle | 132 × 5 px, dark red at the centre → `#E8141E` at the tip |
+| Backdrop | `#1B1A1D`, black inside the ring |
+| Battery column | 20 slanted slices (`BatteryColumn.qml`), lit `#78F0C8`, unlit `#7E9E93` |
+| Text | 40 %: 57 px · Range: 22 px · range value: 48 px · speed: 64 px · Kmph: 18 px |
+
 Map route: one image per turn type (`route_straight/left/right/slight_*/sharp_*/uturn_*/roundabout/destination.png`).
 Every route starts at the tip of the arrow cursor and ends pointing the same way as the turn arrow; `Format.routeImage()` picks it from `NavigationData.maneuver`.
 

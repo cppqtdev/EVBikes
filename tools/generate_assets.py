@@ -281,6 +281,25 @@ def tt_battery(d):
     d.ellipse([s(40.2), s(33), s(43.8), s(36.6)], fill=W)
 
 
+def icon_battery_bolt(d):
+    # upright battery, bolt cut out
+    d.rounded_rectangle([s(14), s(8), s(34), s(46)], radius=s(3), fill=W)
+    d.rectangle([s(19), s(3), s(29), s(8)], fill=W)
+    d.polygon(pts([(27, 13), (17, 29), (23, 29), (20, 41), (31, 24), (25, 24), (28, 13)]), fill=(0, 0, 0, 0))
+
+
+def icon_thermo(d):
+    # outline thermometer with a small degree circle
+    d.rounded_rectangle([s(12), s(4), s(24), s(32)], radius=s(6), outline=W, width=int(s(3)))
+    d.ellipse([s(7), s(26), s(29), s(46)], outline=W, width=int(s(3)))
+    d.rectangle([s(15), s(27), s(21), s(33)], fill=(0, 0, 0, 0))
+    d.ellipse([s(12), s(31), s(24), s(41)], fill=W)
+    line(d, [(18, 14), (18, 33)], 4)
+    for y in (10, 16, 22):
+        line(d, [(27, y), (31, y)], 2.5)
+    arc(d, (34, 4, 44, 14), 0, 360, 2.5)
+
+
 def icon_sun(d):
     d.ellipse([s(14), s(14), s(34), s(34)], fill=W)
     for i in range(8):
@@ -493,6 +512,8 @@ ICON_SET = {
     "clock": icon_clock,
     "doc": icon_doc,
     "info": icon_info,
+    "battery_bolt": icon_battery_bolt,
+    "thermo": icon_thermo,
     "tt_left": lambda d: tt_chevron(d, True),
     "tt_right": lambda d: tt_chevron(d, False),
     "tt_high_beam": lambda d: tt_beam(d, True),

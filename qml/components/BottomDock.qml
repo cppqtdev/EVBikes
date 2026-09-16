@@ -61,7 +61,8 @@ Item {
         x: 590
         y: 0
         source: "qrc:/assets/cluster/chip.png"
-        color: Theme.alertMode ? "#4A4F52" : "#26292B"
+        color: "#4A4F52"
+        visible: Theme.alertMode
     }
 
     Rectangle {
@@ -69,7 +70,8 @@ Item {
         y: 0
         width: 96
         height: 1
-        color: Theme.alertMode ? "#9AA0A3" : "#50575A"
+        color: "#9AA0A3"
+        visible: Theme.alertMode
     }
 
     Text {

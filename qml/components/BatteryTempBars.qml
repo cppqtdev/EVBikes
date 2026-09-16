@@ -15,20 +15,20 @@ Item {
     height: 40
 
     Icon {
-        x: 380
-        y: 5
-        size: 22
-        source: "qrc:/assets/icons/22/charging.png"
-        color: bars.battery <= 15 ? Theme.red : "#C4613F"
+        x: 378
+        y: 8
+        size: 26
+        source: "qrc:/assets/icons/26/battery_bolt.png"
+        color: bars.battery <= 15 ? Theme.red : "#77706E"
     }
 
     Text {
         x: 404
-        y: 0
+        y: 2
         text: bars.battery + "%"
         color: Theme.textPrimary
         font.family: Theme.fontFamily
-        font.pixelSize: 15
+        font.pixelSize: 14
         font.italic: true
     }
 
@@ -56,13 +56,16 @@ Item {
         }
 
         Rectangle {
-            anchors.right: parent.right
-            width: Math.min(40, parent.width)
+            x: 12
+            width: Math.max(0, parent.width - 12)
             height: 12
+            radius: 6
             gradient: Gradient {
                 orientation: Gradient.Horizontal
-                GradientStop { position: 0.0; color: "#00E08A68" }
-                GradientStop { position: 1.0; color: "#C8E8A080" }
+                GradientStop { position: 0.0; color: "#A9492B" }
+                GradientStop { position: 0.45; color: "#B5583A" }
+                GradientStop { position: 0.8; color: "#DFA48C" }
+                GradientStop { position: 1.0; color: "#B9D2BF" }
             }
         }
     }
@@ -73,7 +76,7 @@ Item {
         text: bars.temperature + "°c"
         color: Theme.textPrimary
         font.family: Theme.fontFamily
-        font.pixelSize: 15
+        font.pixelSize: 16
         font.italic: true
     }
 
@@ -98,7 +101,7 @@ Item {
         ColorizedImage {
             x: parent.width - 194
             source: "qrc:/assets/cluster/bar_pointed_right.png"
-            color: bars.temperature >= 55 ? "#E08A7A" : "#A9E4D0"
+            color: "#9FD8C0"
         }
 
         ColorizedImage {
@@ -109,12 +112,14 @@ Item {
         }
 
         Rectangle {
-            anchors.right: parent.right
-            width: Math.min(22, parent.width)
+            x: parent.width - 194
+            width: 194
             height: 12
             gradient: Gradient {
                 orientation: Gradient.Horizontal
-                GradientStop { position: 0.0; color: "#00D9644A" }
+                GradientStop { position: 0.0; color: "#009FD8C0" }
+                GradientStop { position: 0.55; color: "#009FD8C0" }
+                GradientStop { position: 0.78; color: "#C0C49484" }
                 GradientStop { position: 1.0; color: "#FFD9644A" }
             }
         }
@@ -122,18 +127,9 @@ Item {
 
     Icon {
         x: 878
-        y: 6
+        y: 8
         size: 28
-        source: "qrc:/assets/icons/28/temp.png"
-        color: "#D9DDDE"
-    }
-
-    Rectangle {
-        x: 884
-        y: 25
-        width: 9
-        height: 9
-        radius: 4.5
-        color: Theme.red
+        source: "qrc:/assets/icons/28/thermo.png"
+        color: bars.temperature >= 55 ? "#D9644A" : "#A7C9BA"
     }
 }

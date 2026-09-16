@@ -10,9 +10,9 @@ Item {
     property int speed: 0
     property int clamped: Math.max(0, Math.min(150, speed))
     property int litHalves: Math.round(3 + clamped / 10)
-    property color litColor: "#5FE8BE"
-    property color offColor: "#3A3D40"
-    property real needleAngle: (clamped < 20 ? 160.6 + (clamped - 0) * 1.512 : (clamped < 40 ? 190.9 + (clamped - 20) * 1.280 : (clamped < 60 ? 216.5 + (clamped - 40) * 1.865 : (clamped < 80 ? 253.8 + (clamped - 60) * 1.728 : (clamped < 100 ? 288.3 + (clamped - 80) * 1.659 : (clamped < 120 ? 321.5 + (clamped - 100) * 1.347 : (clamped < 140 ? 348.5 + (clamped - 120) * 1.422 : 376.9)))))))
+    property color litColor: "#7DFFDB"
+    property color offColor: "#3C3C3D"
+    property real needleAngle: (clamped < 20 ? 160.2 + (clamped - 0) * 1.543 : (clamped < 40 ? 191.1 + (clamped - 20) * 1.306 : (clamped < 60 ? 217.2 + (clamped - 40) * 1.896 : (clamped < 80 ? 255.1 + (clamped - 60) * 1.726 : (clamped < 100 ? 289.7 + (clamped - 80) * 1.631 : (clamped < 120 ? 322.3 + (clamped - 100) * 1.321 : (clamped < 140 ? 348.7 + (clamped - 120) * 1.395 : 376.6)))))))
 
     x: 440
     y: 70
@@ -20,149 +20,155 @@ Item {
     height: 290
 
     ColorizedImage {
-        x: 92
-        y: 213
+        x: 90
+        y: 210
         source: "qrc:/assets/cluster/hex_piece0.png"
         color: gauge.litHalves > 0 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 70
-        y: 189
+        x: 68
+        y: 188
         source: "qrc:/assets/cluster/hex_piece1.png"
         color: gauge.litHalves > 1 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 48
-        y: 166
+        x: 46
+        y: 165
         source: "qrc:/assets/cluster/hex_piece2.png"
         color: gauge.litHalves > 2 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 27
+        x: 25
         y: 135
         source: "qrc:/assets/cluster/hex_piece3.png"
         color: gauge.litHalves > 3 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 27
+        x: 25
         y: 104
         source: "qrc:/assets/cluster/hex_piece4.png"
         color: gauge.litHalves > 4 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 48
+        x: 46
         y: 72
         source: "qrc:/assets/cluster/hex_piece5.png"
         color: gauge.litHalves > 5 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 70
+        x: 68
         y: 41
         source: "qrc:/assets/cluster/hex_piece6.png"
         color: gauge.litHalves > 6 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 92
+        x: 90
         y: 11
         source: "qrc:/assets/cluster/hex_piece7.png"
         color: gauge.litHalves > 7 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 114
+        x: 112
         y: 11
         source: "qrc:/assets/cluster/hex_piece8.png"
         color: gauge.litHalves > 8 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 158
+        x: 156
         y: 11
         source: "qrc:/assets/cluster/hex_piece9.png"
         color: gauge.litHalves > 9 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 203
+        x: 201
         y: 11
         source: "qrc:/assets/cluster/hex_piece10.png"
         color: gauge.litHalves > 10 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 239
+        x: 234
         y: 11
         source: "qrc:/assets/cluster/hex_piece11.png"
         color: gauge.litHalves > 11 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 275
+        x: 265
         y: 11
         source: "qrc:/assets/cluster/hex_piece12.png"
         color: gauge.litHalves > 12 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 294
+        x: 281
         y: 41
         source: "qrc:/assets/cluster/hex_piece13.png"
         color: gauge.litHalves > 13 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 312
+        x: 297
         y: 72
         source: "qrc:/assets/cluster/hex_piece14.png"
         color: gauge.litHalves > 14 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 330
+        x: 313
         y: 104
         source: "qrc:/assets/cluster/hex_piece15.png"
         color: gauge.litHalves > 15 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 318
+        x: 302
         y: 135
         source: "qrc:/assets/cluster/hex_piece16.png"
         color: gauge.litHalves > 16 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 299
-        y: 166
+        x: 286
+        y: 165
         source: "qrc:/assets/cluster/hex_piece17.png"
         color: gauge.litHalves > 17 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 280
-        y: 189
+        x: 270
+        y: 188
         source: "qrc:/assets/cluster/hex_piece18.png"
         color: gauge.litHalves > 18 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
-        x: 262
-        y: 213
+        x: 255
+        y: 210
         source: "qrc:/assets/cluster/hex_piece19.png"
         color: gauge.litHalves > 19 ? gauge.litColor : gauge.offColor
     }
 
     ColorizedImage {
         source: "qrc:/assets/cluster/hex_shade.png"
+        color: "#000000"
+        opacity: 0.35
+    }
+
+    ColorizedImage {
+        source: "qrc:/assets/cluster/hex_rim.png"
         color: "#FFFFFF"
-        opacity: 0.16
+        opacity: 0.08
     }
 
     ColorizedImage {
@@ -183,7 +189,7 @@ Item {
         text: "0"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
@@ -195,7 +201,7 @@ Item {
         text: "20"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
@@ -207,7 +213,7 @@ Item {
         text: "40"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
@@ -219,7 +225,7 @@ Item {
         text: "60"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
@@ -231,7 +237,7 @@ Item {
         text: "80"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
@@ -243,7 +249,7 @@ Item {
         text: "100"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
@@ -255,7 +261,7 @@ Item {
         text: "120"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
@@ -267,24 +273,25 @@ Item {
         text: "140"
         color: "#EEF1F1"
         font.family: Theme.fontFamily
-        font.pixelSize: 20
+        font.pixelSize: 18
         font.italic: true
     }
 
     Rectangle {
-        x: 207.5
-        y: 136.5
+        x: 205.0
+        y: 136.0
         width: 132
-        height: 4
-        radius: 2
+        height: 5
+        radius: 2.5
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: "#40E0303A" }
-            GradientStop { position: 1.0; color: "#E8202C" }
+            GradientStop { position: 0.0; color: "#00600010" }
+            GradientStop { position: 0.35; color: "#B0900018" }
+            GradientStop { position: 1.0; color: "#E8141E" }
         }
         transform: Rotation {
             origin.x: 0
-            origin.y: 2
+            origin.y: 2.5
             angle: gauge.needleAngle
         }
     }
