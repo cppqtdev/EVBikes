@@ -110,9 +110,7 @@ Item {
             visible: shell.otherAlert
         }
 
-        CallBanner {
-            x: 430
-        }
+        CallScreen {}
 
         NotificationToast {
             x: 430

@@ -95,6 +95,38 @@ QtObject {
         return "" + (v % 10)
     }
 
+    function contactName(index) {
+        if (index === 0) return qsTr("Karan")
+        if (index === 1) return qsTr("Akash")
+        return qsTr("Myra")
+    }
+
+    function contactBody(index) {
+        if (index === 0) return qsTr("Reached the office, see you soon")
+        if (index === 1) return qsTr("Lunch at 1?")
+        return qsTr("Call me when you are free")
+    }
+
+    function contactInitial(index) {
+        return contactName(index).charAt(0)
+    }
+
+    function reminderName(index) {
+        if (index === 0) return qsTr("Service due")
+        if (index === 1) return qsTr("Insurance renewal")
+        return qsTr("Tyre check")
+    }
+
+    function reminderBody(index) {
+        if (index === 0) return qsTr("In 240 km")
+        if (index === 1) return qsTr("12 November")
+        return qsTr("Every 15 days")
+    }
+
+    function reminderInitial(index) {
+        return reminderName(index).charAt(0)
+    }
+
     function profileName(index) {
         if (index === 0) return qsTr("JASH")
         if (index === 1) return qsTr("RISHI")

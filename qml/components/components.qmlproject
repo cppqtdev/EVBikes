@@ -11,7 +11,7 @@ Project {
             "BatteryTempBars.qml",
             "BootChrome.qml",
             "BottomDock.qml",
-            "CallBanner.qml",
+            "CallScreen.qml",
             "CaptionText.qml",
             "FadeLine.qml",
             "GlassButton.qml",

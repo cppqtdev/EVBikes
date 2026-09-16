@@ -10,20 +10,7 @@ PageBase {
     pageId: Router.menuMisc
 
     property int tab: Router.subIndex
-
-    ListModel {
-        id: messages
-        ListElement { initial: "K"; name: "Karan"; body: "Reached the office, see you soon" }
-        ListElement { initial: "A"; name: "Akash"; body: "Lunch at 1?" }
-        ListElement { initial: "M"; name: "Myra"; body: "Call me when you are free" }
-    }
-
-    ListModel {
-        id: reminders
-        ListElement { initial: "S"; name: "Service due"; body: "In 240 km" }
-        ListElement { initial: "I"; name: "Insurance renewal"; body: "12 November" }
-        ListElement { initial: "T"; name: "Tyre check"; body: "Every 15 days" }
-    }
+    readonly property bool rowFocus: Router.subLevel > 0
 
     TabStrip {
         x: (Theme.screenWidth - width) / 2
@@ -35,37 +22,51 @@ PageBase {
     }
 
     Column {
-        x: 510
+        x: 645 - 140
         y: 133
-        spacing: 5
+        spacing: 6
         visible: page.tab === 0
 
         Repeater {
-            model: messages
+            model: 3
 
             MessageRow {
-                initial: model.initial
-                name: model.name
-                body: VehicleData.speedKmh > 0 ? qsTr("Stop to read") : model.body
+                initial: Format.contactInitial(index)
+                name: Format.contactName(index)
+                body: VehicleData.speedKmh > 0 ? qsTr("Stop to read") : Format.contactBody(index)
                 avatarColor: "#2F8A6C"
+                selected: page.rowFocus && Router.subLevel - 1 === index
             }
         }
     }
 
+    Text {
+        x: 0
+        y: 274
+        width: Theme.screenWidth
+        horizontalAlignment: Text.AlignHCenter
+        visible: page.tab === 0 || page.tab === 2
+        text: page.rowFocus ? qsTr("OK call  \u00B7  BACK back") : qsTr("OK open the list")
+        color: Theme.textMuted
+        font.family: Theme.fontFamily
+        font.pixelSize: 11
+    }
+
     Column {
-        x: 510
+        x: 645 - 140
         y: 133
-        spacing: 5
+        spacing: 6
         visible: page.tab === 2
 
         Repeater {
-            model: reminders
+            model: 3
 
             MessageRow {
-                initial: model.initial
-                name: model.name
-                body: model.body
+                initial: Format.reminderInitial(index)
+                name: Format.reminderName(index)
+                body: Format.reminderBody(index)
                 avatarColor: "#8A5A2F"
+                selected: page.rowFocus && Router.subLevel - 1 === index
             }
         }
     }
@@ -77,7 +78,7 @@ PageBase {
 
         Text {
             x: 0
-            y: 120
+            y: 118
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("NOW PLAYING")
@@ -88,25 +89,25 @@ PageBase {
         }
 
         Image {
-            x: 598
-            y: 137
+            x: 645 - 38
+            y: 134
             source: "qrc:/assets/cluster/album_art.png"
         }
 
         Text {
             x: 0
-            y: 238
+            y: 216
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: PhoneData.trackTitle !== "" ? PhoneData.trackTitle : qsTr("Nothing playing")
             color: Theme.textPrimary
             font.family: Theme.fontFamily
-            font.pixelSize: 16
+            font.pixelSize: 15
         }
 
         Text {
             x: 0
-            y: 257
+            y: 236
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: PhoneData.trackArtist
@@ -115,21 +116,21 @@ PageBase {
             font.pixelSize: 10
         }
 
-        Icon { x: 574; y: 268; size: 18; source: "qrc:/assets/icons/18/prev.png"; color: "#8C9194" }
-        Icon { x: 639; y: 267; size: 18; source: PhoneData.mediaPlaying ? "qrc:/assets/icons/18/pause.png" : "qrc:/assets/icons/18/play.png"; color: Theme.textPrimary }
-        Icon { x: 707; y: 268; size: 18; source: "qrc:/assets/icons/18/next.png"; color: "#8C9194" }
+        Icon { x: 580; y: 252; size: 18; source: "qrc:/assets/icons/18/prev.png"; color: "#8C9194" }
+        Icon { x: 636; y: 251; size: 18; source: PhoneData.mediaPlaying ? "qrc:/assets/icons/18/pause.png" : "qrc:/assets/icons/18/play.png"; color: Theme.textPrimary }
+        Icon { x: 692; y: 252; size: 18; source: "qrc:/assets/icons/18/next.png"; color: "#8C9194" }
 
         Rectangle {
-            x: 542
-            y: 289
-            width: 213
+            x: 560
+            y: 278
+            width: 170
             height: 1
-            color: "#5B6164"
+            color: "#5C5C5C"
         }
 
         Rectangle {
-            x: 542 + 213 * (PhoneData.trackDurationS > 0 ? PhoneData.trackPositionS / PhoneData.trackDurationS : 0) - 3
-            y: 286
+            x: 560 + 170 * (PhoneData.trackDurationS > 0 ? PhoneData.trackPositionS / PhoneData.trackDurationS : 0) - 3
+            y: 275
             width: 7
             height: 7
             radius: 3.5

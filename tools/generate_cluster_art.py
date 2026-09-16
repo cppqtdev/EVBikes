@@ -1012,17 +1012,19 @@ def make_seat():
     save(halo, "seat")
 
 
-def make_album_art():
-    w = h = 100
-    img = vgrad((w, h), (210, 214, 216), (120, 124, 128))
+def make_album_art(size=76):
+    # Drawn at the size it is shown at, so the music page does not scale it.
+    k = size / 100.0
+    img = vgrad((size, size), (210, 214, 216), (120, 124, 128))
     d = ImageDraw.Draw(img)
-    for k in range(5):
-        x = 18 + k * 18
-        d.line([(x, 96), (x + 4, 52 - k * 3)], fill=(60, 60, 64, 255), width=1)
+    for stem in range(5):
+        x = (18 + stem * 18) * k
+        d.line([(x, 96 * k), (x + 4 * k, (52 - stem * 3) * k)], fill=(60, 60, 64, 255), width=1)
         for a in range(0, 360, 30):
-            r = 7 + (k % 2) * 2
-            cx, cy = x + 4, 50 - k * 3
-            d.line([(cx, cy), (cx + math.cos(math.radians(a)) * r, cy + math.sin(math.radians(a)) * r)], fill=(245, 245, 245, 255), width=1)
+            r = (7 + (stem % 2) * 2) * k
+            cx, cy = x + 4 * k, (50 - stem * 3) * k
+            d.line([(cx, cy), (cx + math.cos(math.radians(a)) * r, cy + math.sin(math.radians(a)) * r)],
+                   fill=(245, 245, 245, 255), width=1)
     save(img, "album_art")
 
 

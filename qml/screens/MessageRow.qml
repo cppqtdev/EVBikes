@@ -9,31 +9,40 @@ Item {
     property string name: ""
     property string body: ""
     property color avatarColor: "#2F8A6C"
+    property bool selected: false
 
     width: 280
-    height: 47
+    height: 42
 
     Rectangle {
         anchors.fill: parent
-        radius: 23
-        color: "#9EA3A5"
+        radius: height / 2
+        color: row.selected ? Theme.accent : "#6E7375"
+
+        Behavior on color {
+            ColorAnimation { duration: Theme.animFast }
+        }
     }
 
     Rectangle {
         x: 1
         y: 1
-        width: 278
-        height: 45
-        radius: 22
-        color: "#0E1011"
+        width: row.width - 2
+        height: row.height - 2
+        radius: (row.height - 2) / 2
+        color: row.selected ? "#16221F" : "#0E1011"
+
+        Behavior on color {
+            ColorAnimation { duration: Theme.animFast }
+        }
     }
 
     Rectangle {
-        x: 10
-        y: 6
-        width: 34
-        height: 34
-        radius: 17
+        x: 8
+        y: 5
+        width: 32
+        height: 32
+        radius: 16
         color: row.avatarColor
 
         Text {
@@ -41,28 +50,30 @@ Item {
             text: row.initial
             color: Theme.textPrimary
             font.family: Theme.fontFamily
-            font.pixelSize: 16
+            font.pixelSize: 14
             font.bold: true
         }
     }
 
     Text {
-        x: 60
-        y: 3
+        x: 50
+        y: 5
+        width: 220
+        elide: Text.ElideRight
         text: row.name
         color: Theme.textPrimary
         font.family: Theme.fontFamily
-        font.pixelSize: 18
+        font.pixelSize: 15
     }
 
     Text {
-        x: 60
-        y: 25
-        width: 210
+        x: 50
+        y: 23
+        width: 220
         elide: Text.ElideRight
         text: row.body
-        color: Theme.textPrimary
+        color: row.selected ? Theme.textPrimary : Theme.textSecondary
         font.family: Theme.fontFamily
-        font.pixelSize: 14
+        font.pixelSize: 12
     }
 }

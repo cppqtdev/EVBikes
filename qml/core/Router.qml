@@ -126,6 +126,11 @@ QtObject {
                 PhoneData.rejectCall()
             return
         }
+        if (PhoneData.callStatus === PhoneData.Active) {
+            if (button === ClusterInput.Back)
+                PhoneData.rejectCall()
+            return
+        }
         if (menuOpen) {
             handleMenuButton(button)
             return
@@ -213,10 +218,29 @@ QtObject {
         } else if (menuIndex === menuCustomize) {
             handleCustomizeButton(up, down, ok)
         } else if (menuIndex === menuMisc) {
+            handleMiscButton(up, down, ok)
+        }
+    }
+
+    // Misc: subIndex = tab (0 messages, 1 music, 2 reminders). On a list tab OK
+    // steps into the rows (subLevel = 1 + row), where OK calls that contact.
+    function handleMiscButton(up, down, ok) {
+        if (subLevel === 0) {
             if (up) subIndex = (subIndex + 2) % 3
             else if (down) subIndex = (subIndex + 1) % 3
             else if (ok && subIndex === 1) PhoneData.mediaPlayPause()
+            else if (ok) subLevel = 1
+            return
         }
+        var row = subLevel - 1
+        if (up) subLevel = 1 + (row + 2) % 3
+        else if (down) subLevel = 1 + (row + 1) % 3
+        else if (ok && subIndex === 0) placeCall(row)
+    }
+
+    function placeCall(row) {
+        PhoneData.callerName = Format.contactName(row)
+        PhoneData.callStatus = PhoneData.Active
     }
 
     // Customize: subIndex = tab (0 help, 1 shortcut keys, 2 theme).

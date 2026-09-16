@@ -10,7 +10,7 @@ qt_add_qml_module(cluster_components
         BatteryTempBars.qml
         BootChrome.qml
         BottomDock.qml
-        CallBanner.qml
+        CallScreen.qml
         CaptionText.qml
         FadeLine.qml
         GlassButton.qml

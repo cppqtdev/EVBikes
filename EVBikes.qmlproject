@@ -35,6 +35,7 @@ Project {
         files: [
             "assets/icons/18/back.png",
             "assets/icons/18/building.png",
+            "assets/icons/18/chevron.png",
             "assets/icons/18/flag.png",
             "assets/icons/18/grid_plus.png",
             "assets/icons/18/layers.png",
