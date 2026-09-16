@@ -99,9 +99,17 @@ Item {
 
     ColorizedImage {
         x: 770
-        y: 5
+        y: 4
         source: "qrc:/assets/cluster/band_right.png"
-        color: "#202020"
+        color: "#020202"
+        visible: dock.menuActive
+    }
+
+    ColorizedImage {
+        x: 770
+        y: 4
+        source: "qrc:/assets/cluster/band_right_lip.png"
+        color: "#3A3A3A"
         visible: dock.menuActive
     }
 

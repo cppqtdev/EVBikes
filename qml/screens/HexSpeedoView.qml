@@ -101,6 +101,7 @@ Item {
         y: 76
         source: "qrc:/assets/cluster/hex_backdrop.png"
         color: "#050506"
+        opacity: 0.5
     }
 
     ColorizedImage {

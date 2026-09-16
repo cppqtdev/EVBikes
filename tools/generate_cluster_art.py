@@ -469,11 +469,25 @@ def make_trapezoids():
     img, d = canvas(w, h)
     d.polygon(sc([(0, 0), (w, 0), (w - 10, h), (10, h)]), fill=WHITE)
     save(img.resize((w, h), Image.LANCZOS), "tile_slant")
-    # right bottom band behind mute/settings
-    w, h = 170, 50
+    # Selected settings control: a recessed well with a lit bottom lip.
+    # Measured on frame_1318: the left edge runs (770, 414) to (818, 456),
+    # the well bottoms out near black, and the last 12 rows lift to #3B3937.
+    w, h = 170, 44
     img, d = canvas(w, h)
-    d.polygon(sc([(30, 0), (w - 40, 0), (w, h), (0, h)]), fill=WHITE)
-    save(img.resize((w, h), Image.LANCZOS), "band_right")
+    d.polygon(sc([(0, 0), (w, 0), (w, h), (48, h)]), fill=WHITE)
+    band = img.resize((w, h), Image.LANCZOS)
+    save(band, "band_right")
+    lip = band.copy()
+    ramp = Image.new("L", (w, h))
+    pixels = ramp.load()
+    for y in range(h):
+        bottom = 0.0 if y < h - 12 else (y - (h - 12)) / 11.0
+        for x in range(w):
+            inward = x - 48.0 * y / h
+            side = max(0.0, 1.0 - inward / 55.0) if inward >= 0 else 0.0
+            pixels[x, y] = int(255 * min(1.0, max(bottom, side * 0.85)))
+    lip.putalpha(ImageChops.multiply(band.split()[3], ramp))
+    save(lip, "band_right_lip")
     # ribbons (WARNING / PROTOCOLS / CRASH DETECTED)
     w, h = 340, 30
     img, d = canvas(w, h)

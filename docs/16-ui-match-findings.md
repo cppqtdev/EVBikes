@@ -136,6 +136,46 @@ Everything fixed above was read out of the source, not the screenshot, so
 none of it depends on that picture. Everything left below was read off the
 screenshot and wants a fresh one before anyone acts on it.
 
+## Close-up findings on the hexagon screen (frame_1318)
+
+### The gauge backdrop is translucent, ours was opaque
+
+The dark plate behind the hexagon lets the terrain wireframe read through it.
+Measured on the same grid: contrast under the plate is 34.0, outside it 71.7,
+so the plate passes about 47 per cent of what is behind. Ours painted it as a
+solid fill and hid the terrain completely. It carries `opacity: 0.5` now.
+
+### The selected settings control is a well, not a raised plate
+
+Cross-section at x 860 in the reference:
+
+| rows | reading |
+|---|---|
+| 405 .. 413 | the two teal dock strokes |
+| 414 .. 445 | falls from `#171E1D` to `#020202` |
+| 446 .. 457 | lifts back to `#3B3937` |
+| 458 on | the dock plate, `#12100E` |
+
+So it is a recessed black well with a lit bottom lip and a light wedge down
+its left diagonal. Its left edge runs (770, 414) to (818, 456) - it leans
+**right** going down.
+
+Ours drew `band_right.png` as a flat `#202020` plate and its slant leaned the
+other way. The art is rebuilt with the measured slant, plus a
+`band_right_lip.png` carrying the edge light; the well is `#020202` and the
+lip `#3A3A3A`.
+
+The reference shows this selected state on the hexagon screen and not on the
+classic ride screen. Ours ties it to `menuActive`, which the hexagon view
+never sets, so it never appears there. That is a behaviour question, not a
+measurement, and is left alone.
+
+### Dock spacing was already right
+
+Ink columns in the reference, y 415..462: D at 429..448, compass 514..546,
+ECO 611..661, bell 742..762, gear 836..855. Ours places them at 427, 512,
+610..661, 740..764, 832..856. Nothing to change.
+
 ## Still open
 
 - **The bike render.** Ours looked like a different motorcycle from the
