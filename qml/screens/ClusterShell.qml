@@ -100,6 +100,7 @@ Item {
             y: 410
             mapActive: Router.centerView === Router.viewMap && !Router.menuOpen && !shell.hexStyle
             menuActive: Router.menuOpen
+            focusIndex: Router.menuOpen ? -1 : Router.dockIndex
         }
 
         TyreAlertOverlay {

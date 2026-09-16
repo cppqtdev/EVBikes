@@ -18,6 +18,15 @@ QtObject {
     property int viewMap: 1
     property int centerView: viewBike
 
+    // Bottom dock focus while riding. Left and right walk it, OK acts on it.
+    property int dockMap: 0
+    property int dockMode: 1
+    property int dockAlerts: 2
+    property int dockSettings: 3
+    property int dockCount: 4
+    property int dockIndex: dockMode
+    property bool alertsMuted: false
+
     // Menu carousel
     property bool menuOpen: false
     property int menuIndex: 1
@@ -135,14 +144,42 @@ QtObject {
             handleMenuButton(button)
             return
         }
-        if (button === ClusterInput.Left || button === ClusterInput.Right)
-            centerView = centerView === viewBike ? viewMap : viewBike
+        if (button === ClusterInput.Left)
+            moveDock(-1)
+        else if (button === ClusterInput.Right)
+            moveDock(1)
         else if (button === ClusterInput.Up)
             SystemData.toggleSpeedoStyle()
+        else if (button === ClusterInput.Mode)
+            cycleRideMode()
         else if (button === ClusterInput.Ok)
-            openMenu()
+            activateDock()
         else if (button === ClusterInput.Back)
             centerView = viewBike
+    }
+
+    function moveDock(step) {
+        dockIndex = (dockIndex + step + dockCount) % dockCount
+    }
+
+    function activateDock() {
+        if (dockIndex === dockMap)
+            centerView = centerView === viewBike ? viewMap : viewBike
+        else if (dockIndex === dockMode)
+            cycleRideMode()
+        else if (dockIndex === dockAlerts)
+            alertsMuted = !alertsMuted
+        else if (dockIndex === dockSettings)
+            openMenu()
+    }
+
+    function cycleRideMode() {
+        if (VehicleData.rideMode === VehicleData.Eco)
+            VehicleData.rideMode = VehicleData.Normal
+        else if (VehicleData.rideMode === VehicleData.Normal)
+            VehicleData.rideMode = VehicleData.Sport
+        else
+            VehicleData.rideMode = VehicleData.Eco
     }
 
     function handleAlertButton(button) {

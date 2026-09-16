@@ -11,6 +11,13 @@ Item {
     property bool menuActive: false
     property int gear: VehicleData.driveState
 
+    // Which dock control the handlebar keys are on. -1 while the menu is open.
+    property int focusIndex: -1
+    readonly property bool mapFocus: focusIndex === Router.dockMap
+    readonly property bool modeFocus: focusIndex === Router.dockMode
+    readonly property bool alertFocus: focusIndex === Router.dockAlerts
+    readonly property bool settingsFocus: focusIndex === Router.dockSettings
+
     width: Theme.screenWidth
     height: 60
 
@@ -45,8 +52,12 @@ Item {
         x: 483
         y: 3
         source: "qrc:/assets/cluster/tile_slant.png"
-        color: Theme.surface
-        visible: dock.mapActive
+        color: dock.mapFocus ? Theme.surfaceSelected : Theme.surface
+        visible: dock.mapActive || dock.mapFocus
+
+        Behavior on color {
+            ColorAnimation { duration: Theme.animFast }
+        }
     }
 
     Icon {
@@ -54,15 +65,19 @@ Item {
         y: 12
         size: 36
         source: "qrc:/assets/icons/36/compass.png"
-        color: dock.mapActive ? Theme.textPrimary : "#C3C8CA"
+        color: dock.mapActive || dock.mapFocus ? Theme.textPrimary : "#C3C8CA"
     }
 
     ColorizedImage {
         x: 590
         y: 0
         source: "qrc:/assets/cluster/chip.png"
-        color: "#4E4E4E"
-        visible: Theme.alertMode
+        color: dock.modeFocus ? Theme.surfaceSelected : "#4E4E4E"
+        visible: Theme.alertMode || dock.modeFocus
+
+        Behavior on color {
+            ColorAnimation { duration: Theme.animFast }
+        }
     }
 
     Rectangle {
@@ -71,7 +86,7 @@ Item {
         width: 96
         height: 1
         color: "#9AA0A3"
-        visible: Theme.alertMode
+        visible: Theme.alertMode || dock.modeFocus
     }
 
     Text {
@@ -89,12 +104,20 @@ Item {
         font.italic: true
     }
 
+    ColorizedImage {
+        x: 705
+        y: 3
+        source: "qrc:/assets/cluster/tile_slant.png"
+        color: Theme.surfaceSelected
+        visible: dock.alertFocus
+    }
+
     Icon {
         x: 740
         y: 13
         size: 24
-        source: PhoneData.mediaPlaying ? "qrc:/assets/icons/24/bell.png" : "qrc:/assets/icons/24/mute.png"
-        color: "#A7ADB0"
+        source: Router.alertsMuted ? "qrc:/assets/icons/24/mute.png" : "qrc:/assets/icons/24/bell.png"
+        color: dock.alertFocus ? Theme.textPrimary : "#A7ADB0"
     }
 
     ColorizedImage {
@@ -102,7 +125,7 @@ Item {
         y: 4
         source: "qrc:/assets/cluster/band_right.png"
         color: "#020202"
-        visible: dock.menuActive
+        visible: dock.menuActive || dock.settingsFocus
     }
 
     ColorizedImage {
@@ -110,7 +133,7 @@ Item {
         y: 4
         source: "qrc:/assets/cluster/band_right_lip.png"
         color: "#3A3A3A"
-        visible: dock.menuActive
+        visible: dock.menuActive || dock.settingsFocus
     }
 
     Icon {
@@ -118,6 +141,6 @@ Item {
         y: 13
         size: 24
         source: "qrc:/assets/icons/24/settings.png"
-        color: dock.menuActive ? Theme.textPrimary : "#A7ADB0"
+        color: dock.menuActive || dock.settingsFocus ? Theme.textPrimary : "#A7ADB0"
     }
 }
