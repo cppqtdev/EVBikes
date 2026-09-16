@@ -204,7 +204,9 @@ def make_shell():
     # housings: lighter top face fading down
     img, d = canvas()
     d.polygon(sc(HOUSING_TOP), fill=WHITE)
-    face = down(img).getchannel("A")
+    # Soften the chamfer: across the reference's sloped end a horizontal cut
+    # ramps up over about twenty pixels, where a hard polygon steps in one.
+    face = down(img).getchannel("A").filter(ImageFilter.GaussianBlur(3))
     # The reference top housing fades all the way out before its bottom edge:
     # measured over #141414 it runs 255 at y8 down to about 13 at y52, so it
     # dissolves into the screen instead of ending on a line.
@@ -215,12 +217,13 @@ def make_shell():
     save(alpha_image(ImageChops.multiply(face, vertical_ramp(410, 458, 255, 150))), "housing_bottom")
 
     # bevel highlight along the housing edges and a soft spill below the top housing
-    # The reference glow starts under the housing edge, not inside it: row 46
-    # is #030303 and rows 56 to 60 lift to #191919. Start lower, blur less.
-    spill = Image.new("L", (W, H), 0)
-    sd = ImageDraw.Draw(spill)
-    sd.polygon([(436, 54), (882, 54), (872, 70), (446, 70)], fill=70)
-    spill = spill.filter(ImageFilter.GaussianBlur(5))
+    # The glow under the strip is a step, not a blob: the reference jumps from
+    # #010101 at row 52 to #171616 at row 56 and then decays slowly. A hard
+    # band with a downward ramp and only a light blur reproduces that; a
+    # Gaussian blob washes the step out and lifts the housing above it.
+    band = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(band).polygon([(436, 55), (882, 55), (872, 88), (446, 88)], fill=255)
+    spill = ImageChops.multiply(band, vertical_ramp(55, 88, 72, 0)).filter(ImageFilter.GaussianBlur(2))
     bevel = Image.new("L", (W * SS, H * SS), 0)
     bd = ImageDraw.Draw(bevel)
     # No bevel on the top housing. The reference draws no stroke there at all -
