@@ -518,9 +518,14 @@ def make_trapezoids():
     # Selected settings control: a recessed well with a lit bottom lip.
     # Measured on frame_1318: the left edge runs (770, 414) to (818, 456),
     # the well bottoms out near black, and the last 12 rows lift to #3B3937.
-    w, h = 170, 44
+    # It has to tuck under the dock's teal line, which runs level to x868 and
+    # then falls away to the right. A straight-topped bar to x940 rides over
+    # that line and out into the RPM limb, which is what it used to do. The
+    # reference well's dark interior ends by x885 and its top drops from y421
+    # to y434 across the last twenty pixels.
+    w, h = 118, 38
     img, d = canvas(w, h)
-    d.polygon(sc([(0, 0), (w, 0), (w, h), (48, h)]), fill=WHITE)
+    d.polygon(sc([(0, 0), (98, 0), (w, 14), (w, h), (48, h)]), fill=WHITE)
     band = img.resize((w, h), Image.LANCZOS)
     save(band, "band_right")
     lip = band.copy()
@@ -530,8 +535,10 @@ def make_trapezoids():
         bottom = 0.0 if y < h - 12 else (y - (h - 12)) / 11.0
         for x in range(w):
             inward = x - 48.0 * y / h
-            side = max(0.0, 1.0 - inward / 55.0) if inward >= 0 else 0.0
-            pixels[x, y] = int(255 * min(1.0, max(bottom, side * 0.85)))
+            # The wedge is narrow: measured across row 440 the reference is
+            # back to the well's dark interior about twenty pixels in.
+            side = max(0.0, 1.0 - inward / 20.0) if inward >= 0 else 0.0
+            pixels[x, y] = int(255 * min(1.0, max(bottom, side * 0.8)))
     lip.putalpha(ImageChops.multiply(band.split()[3], ramp))
     save(lip, "band_right_lip")
     # ribbons (WARNING / PROTOCOLS / CRASH DETECTED)

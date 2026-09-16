@@ -122,7 +122,7 @@ Item {
 
     ColorizedImage {
         x: 770
-        y: 4
+        y: 10
         source: "qrc:/assets/cluster/band_right.png"
         color: "#020202"
         visible: dock.menuActive || dock.settingsFocus
@@ -130,7 +130,7 @@ Item {
 
     ColorizedImage {
         x: 770
-        y: 4
+        y: 10
         source: "qrc:/assets/cluster/band_right_lip.png"
         color: "#3A3A3A"
         visible: dock.menuActive || dock.settingsFocus
