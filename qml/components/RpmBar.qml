@@ -19,7 +19,7 @@ Item {
     height: 480
 
     ColorizedImage {
-        x: 901
+        x: 906
         y: 383
         source: "qrc:/assets/cluster/seg_r0.png"
         color: bar.litCount > 0 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 0.00, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 0.00, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 0.00, 1) : bar.offColor
@@ -101,8 +101,8 @@ Item {
     }
 
     Text {
-        x: 913
-        y: 400
+        x: 916
+        y: 399
         width: 60
         horizontalAlignment: Text.AlignHCenter
         text: "RPM"

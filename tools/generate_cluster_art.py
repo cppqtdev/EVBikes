@@ -47,7 +47,7 @@ BAR_KNEE_RADIUS = 30
 # Zero is what the reference measures: along the bar centre its last tile ends
 # at the same distance ours does. Raise it only to buy visual clearance where
 # the tile's far corner meets the contour elbow.
-BAR_END_INSET = 0.0
+BAR_END_INSET = 6.0
 # Segment boundaries, bottom end first: (outer point, inner point)
 BAR_CUTS = [((345.0, 430.0), (375.0, 408.3)),
             ((298.3, 406.7), (328.3, 386.7)),

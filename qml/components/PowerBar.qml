@@ -88,8 +88,8 @@ Item {
     }
 
     Text {
-        x: 307
-        y: 400
+        x: 304
+        y: 399
         width: 60
         horizontalAlignment: Text.AlignHCenter
         text: "AMP"
