@@ -191,6 +191,35 @@ ECO 611..661, bell 742..762, gear 836..855. Ours places them at 427, 512,
 - **The ride-mode chip** under ECO read harder-edged and lighter than the
   reference's, which is nearly invisible against the dock.
 
+## Behaviour round
+
+Not everything wrong with a screen is a measurement. These came out of the same
+pass and are fixed in the source rather than in the art.
+
+- **Numbers flickered** because a `Text` bound to a value re-lays out on every
+  change and proportional digits are different widths, so whatever followed the
+  number moved with it. `NumberReadout` gives each digit a fixed cell and
+  animates the displayed value; `fit` mode keeps a row flowing so it only moves
+  when a digit is gained or lost.
+- **The turn indicators never blinked.** They run at 1.2 Hz now, and every
+  telltale crossfades its colour instead of cutting.
+- **The route was a picture.** `MapView` chose one of nine PNGs from the
+  maneuver, so nothing moved during a trip. It is a cubic driven by the
+  maneuver and the distance to it, with the bend pulling down towards the rider
+  as the turn arrives.
+- **`TabStrip` hard-coded 96 px a cell**, so `Shortcut keys` was wider than its
+  own pill. Cells size to their labels.
+- **The charging ring** swept its whole progress in one arc with `useLargeArc`,
+  which is where it rendered ragged past halfway. Two half-sweeps, and a
+  smaller radius.
+- **`MenuCarousel`** re-labelled three fixed tiles. It is a `PathView`, so the
+  titles slide and the direction of travel is visible.
+- **A call** arrived as a corner banner. `CallScreen` takes the display.
+- **`make_avatar` and `make_album_art`** drew at fixed pixel sizes while only
+  the canvas changed, so the smaller copy was a different picture. Both scale
+  their coordinates now - the same bug, twice, worth checking for in any other
+  generator that takes a size.
+
 ## Re-measuring after a change
 
     python3 tools/uicompare/refcluster.py all_frames/frame_0542.png .cmp/ref.png
