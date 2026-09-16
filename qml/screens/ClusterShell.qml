@@ -33,7 +33,7 @@ Item {
         glowStyle: !shell.riding ? (Router.stage === Router.stagePreRide ? 2 : 0) : (shell.fullAlert ? 2 : 1)
         glowColor: Router.stage === Router.stagePreRide ? (VehicleData.sideStandDown ? Theme.red : "#57F2C9") : Theme.glow
         showChannel: shell.showBars
-        centerLift: shell.riding && shell.hexStyle && !Router.menuOpen ? 0.0 : 0.06
+        centerLift: shell.riding && shell.hexStyle && !Router.menuOpen ? 0.0 : 0.03
         floorColor: SystemData.authState === SystemData.AuthDenied ? Theme.red : Theme.teal
         floorOpacity: Router.stage === Router.stageAuth
                       ? (SystemData.authState === SystemData.AuthDenied ? 0.55

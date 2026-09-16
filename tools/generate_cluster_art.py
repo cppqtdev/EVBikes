@@ -205,21 +205,28 @@ def make_shell():
     img, d = canvas()
     d.polygon(sc(HOUSING_TOP), fill=WHITE)
     face = down(img).getchannel("A")
-    save(alpha_image(ImageChops.multiply(face, vertical_ramp(4, 54, 255, 110))), "housing_top")
+    # The reference top housing fades all the way out before its bottom edge:
+    # measured over #141414 it runs 255 at y8 down to about 13 at y52, so it
+    # dissolves into the screen instead of ending on a line.
+    save(alpha_image(ImageChops.multiply(face, vertical_ramp(4, 54, 255, 0))), "housing_top")
     img, d = canvas()
     d.polygon(sc(HOUSING_BOTTOM), fill=WHITE)
     face = down(img).getchannel("A")
     save(alpha_image(ImageChops.multiply(face, vertical_ramp(410, 458, 255, 150))), "housing_bottom")
 
     # bevel highlight along the housing edges and a soft spill below the top housing
+    # The reference glow starts under the housing edge, not inside it: row 46
+    # is #030303 and rows 56 to 60 lift to #191919. Start lower, blur less.
     spill = Image.new("L", (W, H), 0)
     sd = ImageDraw.Draw(spill)
-    sd.polygon([(436, 54), (882, 54), (872, 74), (446, 74)], fill=70)
-    spill = spill.filter(ImageFilter.GaussianBlur(10))
+    sd.polygon([(436, 54), (882, 54), (872, 70), (446, 70)], fill=70)
+    spill = spill.filter(ImageFilter.GaussianBlur(5))
     bevel = Image.new("L", (W * SS, H * SS), 0)
     bd = ImageDraw.Draw(bevel)
-    bd.line(sc([HOUSING_TOP[0], HOUSING_TOP[3], HOUSING_TOP[2], HOUSING_TOP[1]]), fill=230, width=int(1.4 * SS), joint="curve")
-    bd.line(sc([HOUSING_TOP[0], HOUSING_TOP[1]]), fill=90, width=int(1.0 * SS))
+    # No bevel on the top housing. The reference draws no stroke there at all -
+    # a horizontal cut across its chamfer is a smooth ramp with no spike - and
+    # ours was the visible outline around the telltale strip. The bottom
+    # housing keeps its lit edge, which the reference does have.
     bd.line(sc([HOUSING_BOTTOM[3], HOUSING_BOTTOM[0], HOUSING_BOTTOM[1], HOUSING_BOTTOM[2]]), fill=150, width=int(1.2 * SS), joint="curve")
     bevel = bevel.resize((W, H), Image.LANCZOS)
     save(alpha_image(ImageChops.lighter(spill, bevel)), "housing_light")

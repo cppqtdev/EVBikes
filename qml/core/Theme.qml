@@ -16,7 +16,7 @@ QtObject {
     property color orange: "#DE5013"
 
     // Surfaces
-    property color shell: "#070709"
+    property color shell: "#000000"
     property color housing: "#141414"
     property color housingBottom: "#141414"
     property color channel: "#010101"
