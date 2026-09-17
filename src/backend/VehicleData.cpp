@@ -17,6 +17,9 @@ VehicleData::VehicleData()
     tyreRearPsiX10.setValue(320);
     lowBeam.setValue(true);
     driveState.setValue(Park);
+    driveStale.setValue(true);
+    batteryStale.setValue(true);
+    lampsStale.setValue(true);
 }
 
 void VehicleData::applySignal(int signalId, int value)

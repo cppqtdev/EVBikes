@@ -43,12 +43,12 @@ Item {
 
     PowerBar {
         visible: shell.showBars
-        value: Math.abs(VehicleData.powerPercent)
+        value: VehicleData.driveStale ? 0 : Math.abs(VehicleData.powerPercent)
     }
 
     RpmBar {
         visible: shell.showBars
-        value: VehicleData.motorRpm / 100
+        value: VehicleData.driveStale ? 0 : VehicleData.motorRpm / 100
         redZoneTop: true
     }
 

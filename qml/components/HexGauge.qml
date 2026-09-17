@@ -9,7 +9,8 @@ Item {
 
     property int speed: 0
     property int clamped: Math.max(0, Math.min(150, speed))
-    property int litHalves: Math.round(3 + clamped / 10)
+    property bool stale: false
+    property int litHalves: stale ? 0 : Math.round(3 + clamped / 10)
     property color litColor: "#7DFFDB"
     property color offColor: "#3C3C3D"
     property real needleAngle: (clamped < 20 ? 160.2 + (clamped - 0) * 1.543 : (clamped < 40 ? 191.1 + (clamped - 20) * 1.306 : (clamped < 60 ? 217.2 + (clamped - 40) * 1.896 : (clamped < 80 ? 255.1 + (clamped - 60) * 1.726 : (clamped < 100 ? 289.7 + (clamped - 80) * 1.631 : (clamped < 120 ? 322.3 + (clamped - 100) * 1.321 : (clamped < 140 ? 348.7 + (clamped - 120) * 1.395 : 376.6)))))))
@@ -283,6 +284,7 @@ Item {
         width: 132
         height: 5
         radius: 2.5
+        opacity: gauge.stale ? 0.25 : 1.0
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0.0; color: "#00600010" }

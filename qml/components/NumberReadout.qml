@@ -18,6 +18,9 @@ Item {
     property bool bold: false
     property bool italic: false
     property bool centered: false
+    // stale means the reading stopped arriving. Showing the last figure would
+    // claim the bike is still doing that, so the cells show dashes instead.
+    property bool stale: false
     // fit lets the cell count follow the value, so a row keeps flowing and only
     // moves when a digit is gained or lost, never on every tick.
     property bool fit: false
@@ -39,8 +42,9 @@ Item {
         }
         return count
     }
-    readonly property int cells: fit ? used : digits
-    readonly property int blanks: Math.max(0, cells - used)
+    readonly property int cells: stale ? (fit ? 2 : digits) : (fit ? used : digits)
+    readonly property int blanks: stale ? 0 : Math.max(0, cells - used)
+    readonly property color ink: stale ? Theme.textMuted : color
 
     width: cells * cellWidth
     height: Math.round(pixelSize * 1.25)
@@ -65,8 +69,9 @@ Item {
                 height: readout.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: index < readout.blanks ? "" : Format.digitAt(readout.shownValue, readout.cells - 1 - index)
-                color: readout.color
+                text: readout.stale ? "-"
+                      : (index < readout.blanks ? "" : Format.digitAt(readout.shownValue, readout.cells - 1 - index))
+                color: readout.ink
                 font.family: Theme.fontFamily
                 font.pixelSize: readout.pixelSize
                 font.bold: readout.bold

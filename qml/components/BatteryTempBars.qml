@@ -9,6 +9,7 @@ Item {
 
     property int battery: VehicleData.batteryPercent
     property int temperature: VehicleData.packTempC
+    property bool stale: VehicleData.batteryStale
     property int tempPercent: Math.max(0, Math.min(100, (temperature - 10) * 100 / 60))
 
     // Measured on the reference frames.
@@ -29,7 +30,7 @@ Item {
         y: 8
         size: 26
         source: "qrc:/assets/icons/26/battery_bolt.png"
-        color: bars.battery <= 15 ? Theme.red : "#77706E"
+        color: bars.stale ? Theme.textMuted : (bars.battery <= 15 ? Theme.red : "#77706E")
     }
 
     NumberReadout {
@@ -37,6 +38,7 @@ Item {
         x: 404
         y: 0
         value: bars.battery
+        stale: bars.stale
         fit: true
         pixelSize: 14
         widthFactor: 0.58
@@ -65,7 +67,7 @@ Item {
 
         x: 398
         y: 20
-        width: 190 * bars.battery / 100
+        width: bars.stale ? 0 : 190 * bars.battery / 100
         height: 12
         clip: true
 
@@ -105,6 +107,7 @@ Item {
         x: 852 - width
         y: -2
         value: bars.temperature
+        stale: bars.stale
         fit: true
         pixelSize: 16
         widthFactor: 0.58
@@ -135,7 +138,7 @@ Item {
 
         x: 684 + 194 - width
         y: 20
-        width: 194 * bars.tempPercent / 100
+        width: bars.stale ? 0 : 194 * bars.tempPercent / 100
         height: 12
         clip: true
 
@@ -188,6 +191,6 @@ Item {
         y: 8
         size: 28
         source: "qrc:/assets/icons/28/thermo.png"
-        color: bars.temperature >= 55 ? "#D9644A" : "#A7C9BA"
+        color: bars.stale ? Theme.textMuted : (bars.temperature >= 55 ? "#D9644A" : "#A7C9BA")
     }
 }

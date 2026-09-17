@@ -29,6 +29,7 @@ struct SystemData : public Qul::Singleton<SystemData>
     SystemData();
 
     void tick();
+    void poll();
     bool submitPin(int pin);
     void setBrightnessLevel(int level);
     void toggleClockFormat();

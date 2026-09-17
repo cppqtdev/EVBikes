@@ -31,6 +31,7 @@ Item {
         x: 525
         y: 1
         value: VehicleData.rangeKm
+        stale: VehicleData.batteryStale
         fit: true
         pixelSize: 30
         widthFactor: 0.6
@@ -64,6 +65,7 @@ Item {
         x: 728
         y: 1
         value: VehicleData.odometerKm
+        stale: VehicleData.driveStale
         fit: true
         pixelSize: 30
         widthFactor: 0.6

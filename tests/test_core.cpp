@@ -89,6 +89,57 @@ static void testCanDecoder()
     CHECK(find(out, SignalId::FaultCode) == 0);
 }
 
+static void testStaleness()
+{
+    std::vector<VehicleSignal> out;
+    VehicleCanDecoder dec(collect, &out);
+
+    // Nothing has been heard yet, so every group counts as stale.
+    CHECK(dec.driveStale());
+    CHECK(dec.batteryStale());
+    CHECK(dec.lampsStale());
+
+    CanFrame vcu;
+    vcu.id = canid::VcuStatus;
+    vcu.dlc = 4;
+    vcu.timestampMs = 1000;
+    CHECK(dec.decode(vcu));
+    CanFrame motor;
+    motor.id = canid::MotorStatus;
+    motor.dlc = 6;
+    motor.timestampMs = 1000;
+    CHECK(dec.decode(motor));
+    CanFrame bms;
+    bms.id = canid::BmsStatus;
+    bms.dlc = 8;
+    bms.timestampMs = 1000;
+    CHECK(dec.decode(bms));
+
+    dec.checkTimeouts(1100);
+    CHECK(!dec.driveStale());
+    CHECK(!dec.batteryStale());
+    CHECK(dec.lampsStale());
+
+    // The battery node alone goes quiet.
+    const uint32_t quiet = 1000 + VehicleCanDecoder::kTimeoutMs + 50;
+    vcu.timestampMs = quiet;
+    motor.timestampMs = quiet;
+    CHECK(dec.decode(vcu));
+    CHECK(dec.decode(motor));
+    dec.checkTimeouts(quiet);
+    CHECK(!dec.driveStale());
+    CHECK(dec.batteryStale());
+
+    bms.timestampMs = quiet + 10;
+    CHECK(dec.decode(bms));
+    CHECK(!dec.batteryStale());
+
+    // Then everything stops.
+    dec.checkTimeouts(quiet + 10 + VehicleCanDecoder::kTimeoutMs + 1);
+    CHECK(dec.driveStale());
+    CHECK(dec.batteryStale());
+}
+
 struct Capture : link::Handler
 {
     int navCount = 0;
@@ -183,6 +234,7 @@ static void testUtils()
 int main()
 {
     testCanDecoder();
+    testStaleness();
     testPhoneLink();
     testAlerts();
     testUtils();

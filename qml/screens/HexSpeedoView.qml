@@ -40,6 +40,7 @@ Item {
         x: 223
         y: 186
         value: VehicleData.batteryPercent
+        stale: VehicleData.batteryStale
         fit: true
         pixelSize: 57
         widthFactor: 0.63
@@ -69,6 +70,7 @@ Item {
         x: 321
         y: 248
         value: VehicleData.rangeKm
+        stale: VehicleData.batteryStale
         fit: true
         pixelSize: 48
         widthFactor: 0.55
@@ -116,6 +118,7 @@ Item {
 
     HexGauge {
         speed: hex.speed
+        stale: VehicleData.driveStale
     }
 
     // Centred on 640 with a fixed 37 px cell per digit, the pitch measured on
@@ -129,6 +132,7 @@ Item {
         x: 640 - width / 2
         y: 272
         value: speedDamper.value
+        stale: VehicleData.driveStale
         digits: 3
         centered: true
         pixelSize: 64

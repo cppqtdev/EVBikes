@@ -42,10 +42,16 @@ void SystemData::setClock(int unixSeconds, int utcOffsetMinutes)
     tick();
 }
 
+// Runs several times a second: node timeouts and alert thresholds have to be
+// noticed sooner than the once-a-second clock work below.
+void SystemData::poll()
+{
+    Backend::periodic(evb::platform::millis());
+}
+
 void SystemData::tick()
 {
     const uint32_t now = evb::platform::millis();
-    Backend::periodic(now);
     AlertData::instance().tickSecond();
 
     if (!clockValid.value())

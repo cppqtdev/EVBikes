@@ -687,6 +687,11 @@ void SystemDataQml::tick()
     SystemData::instance().tick();
 }
 
+void SystemDataQml::poll()
+{
+    SystemData::instance().poll();
+}
+
 bool SystemDataQml::submitPin(int pin)
 {
     return SystemData::instance().submitPin(pin);
@@ -770,6 +775,9 @@ VehicleDataQml::VehicleDataQml(QObject *parent)
     d.tripKmX10.setOnChanged([this] { emit tripKmX10Changed(); });
     d.faultCode.setOnChanged([this] { emit faultCodeChanged(); });
     d.crashDetected.setOnChanged([this] { emit crashDetectedChanged(); });
+    d.driveStale.setOnChanged([this] { emit driveStaleChanged(); });
+    d.batteryStale.setOnChanged([this] { emit batteryStaleChanged(); });
+    d.lampsStale.setOnChanged([this] { emit lampsStaleChanged(); });
 }
 
 int VehicleDataQml::speedKmh() const
@@ -1060,6 +1068,36 @@ bool VehicleDataQml::crashDetected() const
 void VehicleDataQml::qmlWriteCrashDetected(bool value)
 {
     VehicleData::instance().crashDetected.setValue(value);
+}
+
+bool VehicleDataQml::driveStale() const
+{
+    return VehicleData::instance().driveStale.value();
+}
+
+void VehicleDataQml::qmlWriteDriveStale(bool value)
+{
+    VehicleData::instance().driveStale.setValue(value);
+}
+
+bool VehicleDataQml::batteryStale() const
+{
+    return VehicleData::instance().batteryStale.value();
+}
+
+void VehicleDataQml::qmlWriteBatteryStale(bool value)
+{
+    VehicleData::instance().batteryStale.setValue(value);
+}
+
+bool VehicleDataQml::lampsStale() const
+{
+    return VehicleData::instance().lampsStale.value();
+}
+
+void VehicleDataQml::qmlWriteLampsStale(bool value)
+{
+    VehicleData::instance().lampsStale.setValue(value);
 }
 
 void VehicleDataQml::applySignal(int signalId, int value)

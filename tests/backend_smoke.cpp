@@ -6,8 +6,11 @@
 #include "SystemData.h"
 #include "VehicleData.h"
 #include "../src/backend/Backend.h"
+#include "../src/core/can/VehicleCanDecoder.h"
 
+#include <chrono>
 #include <cstdio>
+#include <thread>
 
 static int g_failures = 0;
 #define CHECK(cond) do { if (!(cond)) { std::printf("FAIL %s:%d %s\n", __FILE__, __LINE__, #cond); ++g_failures; } } while (0)
@@ -16,6 +19,7 @@ static void run(Simulator &sim, int ms)
 {
     for (int t = 0; t < ms; t += 50) {
         sim.step(50);
+        SystemData::instance().poll();
         if (t % 1000 == 0)
             SystemData::instance().tick();
     }
@@ -26,8 +30,13 @@ int main()
     Backend::init();
     Simulator &sim = Simulator::instance();
 
-    run(sim, 15000);
     const VehicleData &v = VehicleData::instance();
+    CHECK(v.driveStale.value());
+    CHECK(v.batteryStale.value());
+
+    run(sim, 15000);
+    CHECK(!v.driveStale.value());
+    CHECK(!v.batteryStale.value());
     CHECK(v.speedKmh.value() > 0);
     CHECK(v.motorRpm.value() > 0);
     CHECK(v.readyToRide.value());
@@ -96,6 +105,16 @@ int main()
     CHECK(gotButton == ClusterInput::Ok);
 
     PhoneData::instance().mediaNext();
+
+    // Let the bus fall silent for longer than the node timeout: the readings
+    // must be marked stale, and come back when the frames do.
+    std::this_thread::sleep_for(std::chrono::milliseconds(evb::VehicleCanDecoder::kTimeoutMs + 150));
+    SystemData::instance().poll();
+    CHECK(v.driveStale.value());
+    CHECK(v.batteryStale.value());
+    run(sim, 500);
+    CHECK(!v.driveStale.value());
+    CHECK(!v.batteryStale.value());
 
     std::printf(g_failures ? "%d FAILURE(S)\n" : "BACKEND SMOKE PASSED\n", g_failures);
     return g_failures ? 1 : 0;

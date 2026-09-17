@@ -124,6 +124,12 @@ PhoneQueue &phoneQueue()
     return q;
 }
 
+void setIfChanged(Qul::Property<bool> &property, bool value)
+{
+    if (property.value() != value)
+        property.setValue(value);
+}
+
 void evaluateAlerts()
 {
     const VehicleData &v = VehicleData::instance();
@@ -190,6 +196,12 @@ void postPhoneBytesFromIsr(const uint8_t *data, std::size_t len)
 void periodic(uint32_t nowMs)
 {
     g_decoder.checkTimeouts(nowMs);
+
+    VehicleData &vehicle = VehicleData::instance();
+    setIfChanged(vehicle.driveStale, g_decoder.driveStale());
+    setIfChanged(vehicle.batteryStale, g_decoder.batteryStale());
+    setIfChanged(vehicle.lampsStale, g_decoder.lampsStale());
+
     evaluateAlerts();
 
     PhoneData &phone = PhoneData::instance();

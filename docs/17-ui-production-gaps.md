@@ -32,25 +32,37 @@ demo content.
 
 ---
 
-## B. Nothing handles data that stops arriving
+## B. Data that stops arriving — closed
 
-This is the single biggest safety gap in the UI.
+The decoder already tracked which node had gone quiet, but nothing that
+knowledge reached the screen, so a bus that fell silent at 80 km/h left
+80 km/h standing.
 
-- Searching the whole QML tree for staleness handling returns **one** result:
-  `SystemData.clockValid`. Nothing else.
-- Searching `src/` for a CAN receive timeout, a last-seen timestamp or a
-  freshness check returns **nothing**.
+What is in place now:
 
-So if the bus goes quiet at 80 km/h, the cluster keeps showing 80 km/h
-forever. Same for state of charge, temperature, gear and every telltale.
+- `VehicleCanDecoder` reports freshness per group: `driveStale()` (vehicle
+  control unit or motor), `batteryStale()`, `lampsStale()`. A group counts as
+  stale when its node has gone quiet for longer than `kTimeoutMs` (500 ms) and
+  also before it has ever spoken, so the cluster starts out honest at power-up
+  rather than showing a confident zero.
+- `VehicleData.driveStale` / `batteryStale` / `lampsStale` carry it to QML.
+  `Backend::periodic` sets them, and `SystemData.poll()` runs that from a
+  100 ms timer in `Main.qml`; the old once-a-second `tick()` would have meant
+  noticing a dead bus up to a second late.
+- The stale look: `NumberReadout` draws dashes in `Theme.textMuted` instead of
+  the last figure, `SpeedDigits` shows `--`, the AMP and RPM bars go unlit, the
+  hexagon gauge goes dark and its needle drops to a quarter opacity, the charge
+  and temperature fills go to zero, and the warning telltale lights.
+- The `CommunicationLost` alert already existed and fires off the timeout fault
+  code, so the rider also gets "SYSTEM FAULT — stop safely and restart the
+  bike".
+- Covered by `testStaleness()` in `tests/test_core.cpp` (injected timestamps)
+  and by an end-to-end silence in `tests/backend_smoke.cpp`. Both were checked
+  by breaking the flag on purpose and watching them fail.
 
-**To close:**
-- a last-seen timestamp per signal group in `VehicleData`
-- a `stale` flag the UI can bind to
-- a defined look for stale: the reading greys out or shows dashes, and a
-  warning telltale lights
-- a decision on what the speedo does when speed is unknown, which is a legal
-  question in most markets, not a design one
+**Still open:** dashes for an unknown speed is the safe reading, but which
+behaviour is *allowed* is a homologation question, not a design one. It needs
+sign-off for each market before launch.
 
 ---
 

@@ -300,6 +300,7 @@ public:
     int theftCaptures() const;
     void qmlWriteTheftCaptures(int value);
     Q_INVOKABLE void tick();
+    Q_INVOKABLE void poll();
     Q_INVOKABLE bool submitPin(int pin);
     Q_INVOKABLE void setBrightnessLevel(int level);
     Q_INVOKABLE void toggleClockFormat();
@@ -364,6 +365,9 @@ class VehicleDataQml : public QObject
     Q_PROPERTY(int tripKmX10 READ tripKmX10 WRITE qmlWriteTripKmX10 NOTIFY tripKmX10Changed FINAL)
     Q_PROPERTY(int faultCode READ faultCode WRITE qmlWriteFaultCode NOTIFY faultCodeChanged FINAL)
     Q_PROPERTY(bool crashDetected READ crashDetected WRITE qmlWriteCrashDetected NOTIFY crashDetectedChanged FINAL)
+    Q_PROPERTY(bool driveStale READ driveStale WRITE qmlWriteDriveStale NOTIFY driveStaleChanged FINAL)
+    Q_PROPERTY(bool batteryStale READ batteryStale WRITE qmlWriteBatteryStale NOTIFY batteryStaleChanged FINAL)
+    Q_PROPERTY(bool lampsStale READ lampsStale WRITE qmlWriteLampsStale NOTIFY lampsStaleChanged FINAL)
 
 public:
     enum RideMode { Eco = 0, Normal = 1, Sport = 2 };
@@ -432,6 +436,12 @@ public:
     void qmlWriteFaultCode(int value);
     bool crashDetected() const;
     void qmlWriteCrashDetected(bool value);
+    bool driveStale() const;
+    void qmlWriteDriveStale(bool value);
+    bool batteryStale() const;
+    void qmlWriteBatteryStale(bool value);
+    bool lampsStale() const;
+    void qmlWriteLampsStale(bool value);
     Q_INVOKABLE void applySignal(int signalId, int value);
 
 signals:
@@ -464,4 +474,7 @@ signals:
     void tripKmX10Changed();
     void faultCodeChanged();
     void crashDetectedChanged();
+    void driveStaleChanged();
+    void batteryStaleChanged();
+    void lampsStaleChanged();
 };

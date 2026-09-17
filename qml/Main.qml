@@ -27,6 +27,15 @@ Rectangle {
         onTriggered: SystemData.tick()
     }
 
+    // Faster than the clock tick: a node that stops talking has to be noticed
+    // within a few frames, not at the next second.
+    Timer {
+        interval: 100
+        running: true
+        repeat: true
+        onTriggered: SystemData.poll()
+    }
+
     Connections {
         target: ClusterInput
         function onButtonEvent(button: int, action: int) {

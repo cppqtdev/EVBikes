@@ -11,6 +11,14 @@ Item {
     property color bodyColor: Theme.digitGrey
     property color tailColor: Theme.sport || Theme.alertMode ? "#E7B3A6" : Theme.digitShade
 
+    // Speed stops arriving when the vehicle control unit goes quiet. The last
+    // figure would sit there looking live, so the reading goes to dashes in the
+    // muted ink and the warning telltale carries the fault.
+    property bool stale: VehicleData.driveStale
+    readonly property string shownText: stale ? "--" : "" + shownValue
+    readonly property color inkBody: stale ? Theme.textMuted : bodyColor
+    readonly property color inkTail: stale ? Theme.textMuted : tailColor
+
     // The raw speed changes many times a second, which reads as the number
     // flickering. Follow it at a readable rate instead.
     readonly property int shownValue: damper.value
@@ -35,8 +43,8 @@ Item {
         y: 0
         width: 390
         horizontalAlignment: Text.AlignRight
-        text: "" + speed.shownValue
-        color: speed.bodyColor
+        text: speed.shownText
+        color: speed.inkBody
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSpeed
         font.bold: true
@@ -62,9 +70,9 @@ Item {
                 width: 390
                 horizontalAlignment: Text.AlignRight
                 text: base.text
-                color: Qt.rgba(speed.bodyColor.r + (speed.tailColor.r - speed.bodyColor.r) * band.mix,
-                               speed.bodyColor.g + (speed.tailColor.g - speed.bodyColor.g) * band.mix,
-                               speed.bodyColor.b + (speed.tailColor.b - speed.bodyColor.b) * band.mix, 1)
+                color: Qt.rgba(speed.inkBody.r + (speed.inkTail.r - speed.inkBody.r) * band.mix,
+                               speed.inkBody.g + (speed.inkTail.g - speed.inkBody.g) * band.mix,
+                               speed.inkBody.b + (speed.inkTail.b - speed.inkBody.b) * band.mix, 1)
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSpeed
                 font.bold: true
@@ -87,7 +95,7 @@ Item {
             width: 390
             horizontalAlignment: Text.AlignRight
             text: base.text
-            color: speed.tailColor
+            color: speed.inkTail
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSpeed
             font.bold: true
@@ -99,7 +107,8 @@ Item {
         x: 382
         y: 116
         text: speed.unit
-        color: Theme.sport || Theme.alertMode ? "#F0C2B5" : Theme.digitUnit
+        color: speed.stale ? Theme.textMuted
+               : (Theme.sport || Theme.alertMode ? "#F0C2B5" : Theme.digitUnit)
         font.family: Theme.fontFamily
         font.pixelSize: 20
         font.bold: true

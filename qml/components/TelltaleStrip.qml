@@ -42,6 +42,7 @@ Item {
         size: 28
         source: "qrc:/assets/icons/28/tt_warning.png"
         on: strip.selfTest || VehicleData.faultCode !== 0 || AlertData.level >= AlertData.LevelWarning
+            || VehicleData.driveStale || VehicleData.batteryStale
         onColor: AlertData.level === AlertData.LevelCritical || AlertData.popupVisible ? Theme.telltaleRed : Theme.telltaleAmber
     }
     Telltale {
