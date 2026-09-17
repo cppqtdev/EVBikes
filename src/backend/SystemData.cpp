@@ -21,6 +21,7 @@ SystemData::SystemData()
 {
     use24Hour.setValue(false);
     brightness.setValue(80);
+    softwareDimming.setValue(!evb::platform::hasBacklight());
     locked.setValue(true);
     pinAttemptsLeft.setValue(kMaxPinAttempts);
     demoMode.setValue(true);

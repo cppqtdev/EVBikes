@@ -92,6 +92,12 @@ int main()
 
     SystemData &sys = SystemData::instance();
     CHECK(sys.locked.value());
+    // The simulator has no panel backlight, so brightness has to be drawn.
+    CHECK(sys.softwareDimming.value());
+    sys.setBrightnessLevel(5);
+    CHECK(sys.brightness.value() == 10);
+    sys.setBrightnessLevel(120);
+    CHECK(sys.brightness.value() == 100);
     sys.selectProfile(2);
     sys.startScan();
     sys.completeScan();

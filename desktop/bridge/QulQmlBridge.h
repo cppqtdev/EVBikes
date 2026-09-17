@@ -343,6 +343,7 @@ class SystemDataQml : public QObject
     Q_PROPERTY(bool use24Hour READ use24Hour WRITE qmlWriteUse24Hour NOTIFY use24HourChanged FINAL)
     Q_PROPERTY(bool nightMode READ nightMode WRITE qmlWriteNightMode NOTIFY nightModeChanged FINAL)
     Q_PROPERTY(int brightness READ brightness WRITE qmlWriteBrightness NOTIFY brightnessChanged FINAL)
+    Q_PROPERTY(bool softwareDimming READ softwareDimming WRITE qmlWriteSoftwareDimming NOTIFY softwareDimmingChanged FINAL)
     Q_PROPERTY(bool locked READ locked WRITE qmlWriteLocked NOTIFY lockedChanged FINAL)
     Q_PROPERTY(int pinAttemptsLeft READ pinAttemptsLeft WRITE qmlWritePinAttemptsLeft NOTIFY pinAttemptsLeftChanged FINAL)
     Q_PROPERTY(bool demoMode READ demoMode WRITE qmlWriteDemoMode NOTIFY demoModeChanged FINAL)
@@ -376,6 +377,8 @@ public:
     void qmlWriteNightMode(bool value);
     int brightness() const;
     void qmlWriteBrightness(int value);
+    bool softwareDimming() const;
+    void qmlWriteSoftwareDimming(bool value);
     bool locked() const;
     void qmlWriteLocked(bool value);
     int pinAttemptsLeft() const;
@@ -422,6 +425,7 @@ signals:
     void use24HourChanged();
     void nightModeChanged();
     void brightnessChanged();
+    void softwareDimmingChanged();
     void lockedChanged();
     void pinAttemptsLeftChanged();
     void demoModeChanged();

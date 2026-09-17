@@ -16,6 +16,9 @@ struct SystemData : public Qul::Singleton<SystemData>
     Qul::Property<bool> use24Hour;
     Qul::Property<bool> nightMode;
     Qul::Property<int> brightness;
+    // True when brightness has to be applied by dimming the picture, because
+    // this target's panel has no backlight the cluster can turn down.
+    Qul::Property<bool> softwareDimming;
     Qul::Property<bool> locked;
     Qul::Property<int> pinAttemptsLeft;
     Qul::Property<bool> demoMode;

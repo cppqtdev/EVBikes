@@ -743,6 +743,7 @@ SystemDataQml::SystemDataQml(QObject *parent)
     d.use24Hour.setOnChanged([this] { emit use24HourChanged(); });
     d.nightMode.setOnChanged([this] { emit nightModeChanged(); });
     d.brightness.setOnChanged([this] { emit brightnessChanged(); });
+    d.softwareDimming.setOnChanged([this] { emit softwareDimmingChanged(); });
     d.locked.setOnChanged([this] { emit lockedChanged(); });
     d.pinAttemptsLeft.setOnChanged([this] { emit pinAttemptsLeftChanged(); });
     d.demoMode.setOnChanged([this] { emit demoModeChanged(); });
@@ -816,6 +817,16 @@ int SystemDataQml::brightness() const
 void SystemDataQml::qmlWriteBrightness(int value)
 {
     SystemData::instance().brightness.setValue(value);
+}
+
+bool SystemDataQml::softwareDimming() const
+{
+    return SystemData::instance().softwareDimming.value();
+}
+
+void SystemDataQml::qmlWriteSoftwareDimming(bool value)
+{
+    SystemData::instance().softwareDimming.setValue(value);
 }
 
 bool SystemDataQml::locked() const

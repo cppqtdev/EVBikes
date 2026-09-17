@@ -76,16 +76,26 @@ sign-off for each market before launch.
 
 ---
 
-## C. Settings that do not do anything
+## C. Brightness and night mode — closed, units still open
 
-- **Brightness** is shown on the Customize page and changed by `OK`, but
-  nothing in the UI or the platform layer reads `SystemData.brightness`. The
-  screen does not get brighter or dimmer.
-- **Night mode** changes exactly two colours, `textPrimary` and
-  `textSecondary`. The glow, the bars, the housings and every literal colour
-  stay at their day values, so night mode is not a night mode.
-- **Units are km only.** No mph anywhere. Any market that needs miles cannot
-  use this build.
+Both now work through one mechanism. The cluster is drawn on black, so a black
+layer over the whole screen at opacity *a* scales every lit pixel by *1 - a*:
+that is a real dim, not a grey wash.
+
+- **Brightness.** `setBrightnessLevel` already pushed the value to
+  `platform::setBacklight`, but the board driver is a stub and the desktop panel
+  has no backlight at all, so nothing happened. `platform::hasBacklight()` says
+  which case a target is in; where there is no backlight the picture is dimmed
+  instead, over the full 10–100 range the setting allows. `Backend::init` also
+  pushes the stored level at start-up, so the first frame is at the level the
+  rider left it.
+- **Night mode** takes a further step down on top of that, alongside the two
+  text colours it already shifted.
+- **A critical alert goes back to full brightness.** A crash card at twenty per
+  cent is no use to anybody.
+
+**Still open:** units are km only. No mph anywhere, so any market that needs
+miles cannot use this build.
 
 ---
 

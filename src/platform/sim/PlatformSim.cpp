@@ -28,4 +28,9 @@ void setBacklight(int percent)
     std::printf("[sim] backlight %d%%\n", percent);
 }
 
+bool hasBacklight()
+{
+    return false;
+}
+
 } // namespace evb::platform

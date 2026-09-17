@@ -178,6 +178,11 @@ void init()
     canQueue();
     phoneQueue();
     evb::platform::init();
+
+    // Push the stored brightness to the panel, so the first frame is at the
+    // level the rider left it rather than whatever the driver came up at.
+    SystemData &system = SystemData::instance();
+    system.setBrightnessLevel(system.brightness.value());
 }
 
 void postCanFrame(const evb::CanFrame &frame)
