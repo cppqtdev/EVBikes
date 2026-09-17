@@ -76,7 +76,7 @@ sign-off for each market before launch.
 
 ---
 
-## C. Brightness and night mode — closed, units still open
+## C. Brightness, night mode and units — closed
 
 Both now work through one mechanism. The cluster is drawn on black, so a black
 layer over the whole screen at opacity *a* scales every lit pixel by *1 - a*:
@@ -94,8 +94,13 @@ that is a real dim, not a grey wash.
 - **A critical alert goes back to full brightness.** A crash card at twenty per
   cent is no use to anybody.
 
-**Still open:** units are km only. No mph anywhere, so any market that needs
-miles cannot use this build.
+**Units are done too.** `SystemData.useMiles` is a display choice: everything
+below the screen stays in kilometres and the conversion happens where the number
+is drawn, so nothing stored or sent changes. Speed, range, odometer, trip, the
+trip page and the navigation distances follow it, the hexagon gauge's printed
+labels convert with it so the needle and the numbers still agree, and under a
+mile the turn distance counts down in feet. There is a Units row on the
+Customize page.
 
 ---
 
@@ -203,16 +208,23 @@ that is still the measuring tools in `tools/uicompare`.
 
 ---
 
-## G. Look and feel, smaller measured gaps
+## G. Look and feel — mostly closed
 
-- The **bike render** is a different motorcycle from the reference's, and
-  sits 13 px wider and 6 px left.
-- The **compass glyph** in the dock is a diamond in an ellipse; the reference
-  is a north arrow.
-- **No soft shadow behind the speed digits.** The reference has one; ours is
-  flat. Wants pre-rendered art, not a runtime blur.
-- The **bar knee**: `BAR_KNEE_RADIUS` is 30 and applied to the centre line,
-  but the segments are cut by straight lines, so the bend can read angular.
+- The **compass glyph** is redrawn: an N over an ellipse open at the top and
+  bottom with a solid north arrow across its foot, landing on the reference's
+  own 33 by 25 box. It was a diamond under a zigzag.
+- The **speed digits have their footing**. Below the baseline the reference
+  falls 89, 69, 53, 34, 23, 14 over seven rows, hugging each stem rather than
+  lying in a band. Three copies of the glyphs pushed down and faded match that
+  to within three levels at every row, with no blur.
+- The **bike on the alert and pre-ride screens** is the side view now, fitted to
+  each screen's measured box. The ride screen keeps the photo render.
+- The **bar knee is right**. Compositing the eight `seg_l` masks and reading the
+  outer edge of the segment body row by row against `frame_0600` gives a
+  difference of one pixel or less through the whole bend (rows 120 to 270, the
+  outliers being rows that land in a gap between segments). An overlay of the
+  two confirms it: the segments track the reference's channel and its cuts are
+  straight too.
 - The **hexagon gauge's segment count is right**, and the three-at-zero is the
   design, not a bug. Sampling each of the twenty piece masks against the only
   hexagon frames in the capture (around `frame_1280`, at 20 km/h) shows pieces

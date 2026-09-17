@@ -47,7 +47,9 @@ FACES = [
 
 
 def slant(path_in, path_out, names):
-    font = TTFont(path_in)
+    # recalcTimestamp off, or every run stamps head.modified and the file
+    # changes for no reason.
+    font = TTFont(path_in, recalcTimestamp=False)
     glyphset = font.getGlyphSet()
     glyf = font["glyf"]
     shear = Transform(1, 0, math.tan(math.radians(-ANGLE)), 1, 0, 0)

@@ -29,6 +29,12 @@ jobs:
       - name: No art drawn at one times
         run: python3 tools/art_check.py
 
+      - name: Italic faces match the roman ones
+        run: |
+          pip install fonttools
+          python3 tools/generate_italic_faces.py
+          git diff --exit-code assets/fonts
+
       - name: Desktop bridge matches the backend headers
         run: |
           python3 tools/generate_desktop_bridge.py
