@@ -634,7 +634,9 @@ def make_card_shapes():
     # tyre alert / crash card: wide rounded octagon
     def octagon(w, h, c):
         return [(c, 0), (w - c, 0), (w, c), (w, h - c), (w - c, h), (c, h), (0, h - c), (0, c)]
-    for name, (w, h, c) in {"card_mid": (560, 300, 50)}.items():
+    # 280 tall, not 300: at 300 the card's foot reached y 368 and the battery
+    # and temperature row starts at 363, so the plate sat on the readings.
+    for name, (w, h, c) in {"card_mid": (560, 280, 50)}.items():
         img, d = canvas(w, h)
         d.polygon(sc(octagon(w, h, c)), fill=WHITE)
         save(img.resize((w, h), Image.LANCZOS), name)

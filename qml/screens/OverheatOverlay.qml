@@ -122,7 +122,7 @@ Item {
 
         Text {
             x: 0
-            y: 334
+            y: 324
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("↑ ↓ choose   ·   OK activate")

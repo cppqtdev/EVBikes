@@ -65,7 +65,7 @@ Item {
 
     Text {
         x: 0
-        y: 330
+        y: 310
         width: Theme.screenWidth
         horizontalAlignment: Text.AlignHCenter
         visible: AlertData.level !== AlertData.LevelCritical
