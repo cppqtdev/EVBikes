@@ -26,6 +26,9 @@ jobs:
       - name: Every face the screens ask for is shipped
         run: python3 tools/font_check.py
 
+      - name: No art drawn at one times
+        run: python3 tools/art_check.py
+
       - name: Desktop bridge matches the backend headers
         run: |
           python3 tools/generate_desktop_bridge.py

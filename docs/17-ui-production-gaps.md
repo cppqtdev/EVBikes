@@ -181,15 +181,18 @@ that is still the measuring tools in `tools/uicompare`.
 
 ---
 
-## H. Checkers that exist, and one worth adding
+## H. Checkers that exist
 
-Already in the tree and passing:
+All of these run in `.github/workflows/ci.yml` and pass on the current tree:
 
-- `tools/qul_lint.py` - Qt for MCUs type and import rules, including the
+- `tools/qul_lint.py` — Qt for MCUs type and import rules, including the
   missing-import and JavaScript-subset rules added this session
-- `tools/color_check.py` - dark greys with a colour cast
-- `tools/uicompare/refcluster.py`, `measure.py`, `paintshell.py` - measuring
-  against reference frames without Qt
-
-Worth adding: a checker for art that is drawn at one times in the generator,
-which is the habit behind most of section D.
+- `tools/color_check.py` — dark greys with a colour cast
+- `tools/font_check.py` — every face the screens ask for is shipped
+- `tools/art_check.py` — the one-times habit behind most of section D: a shape
+  drawn straight onto a screen-sized canvas, unless a wide blur follows
+- `tools/generate_desktop_bridge.py` and `tools/sync_project_files.py` re-run
+  against a clean tree, so the generated bridge and the project files cannot
+  drift from the headers and the QML
+- `tools/uicompare/refcluster.py`, `measure.py`, `paintshell.py` — measuring
+  against reference frames without Qt, used by hand rather than in CI

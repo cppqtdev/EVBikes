@@ -269,8 +269,7 @@ def make_shell():
     # #010101 at row 52 to #171616 at row 56 and then decays slowly. A hard
     # band with a downward ramp and only a light blur reproduces that; a
     # Gaussian blob washes the step out and lifts the housing above it.
-    band = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(band).polygon([(432, 55), (886, 55), (876, 88), (442, 88)], fill=255)
+    band = polygon_mask([(432, 55), (886, 55), (876, 88), (442, 88)])
     spill = ImageChops.multiply(band, vertical_ramp(55, 88, 72, 0)).filter(ImageFilter.GaussianBlur(2))
     bevel = Image.new("L", (W * SS, H * SS), 0)
     bd = ImageDraw.Draw(bevel)
