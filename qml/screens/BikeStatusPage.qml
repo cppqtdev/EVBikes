@@ -14,6 +14,30 @@ PageBase {
     property int co2GramsPerKm: 45
     property bool tripView: Router.subLevel === 1
 
+    // Ride-mode split for the last trip. The ring and the caption both read
+    // these, so they cannot drift apart.
+    property int ecoShare: 50
+    property int normalShare: 40
+    property int sportShare: 10
+
+    readonly property real ringRadius: 85
+    readonly property real ringCx: 100
+    readonly property real ringCy: 100
+
+    // Twelve o'clock, going clockwise. One per cent is 3.6 degrees.
+    readonly property real ringStart: -90
+    readonly property real ecoEnd: ringStart + ecoShare * 3.6
+    readonly property real normalEnd: ecoEnd + normalShare * 3.6
+    readonly property real sportEnd: normalEnd + sportShare * 3.6
+
+    function ringX(degrees) {
+        return ringCx + ringRadius * Math.cos(degrees * Math.PI / 180)
+    }
+
+    function ringY(degrees) {
+        return ringCy + ringRadius * Math.sin(degrees * Math.PI / 180)
+    }
+
     Item {
         width: Theme.screenWidth
         height: 300
@@ -106,41 +130,77 @@ PageBase {
                 PathArc { x: 100; y: 15; radiusX: 85; radiusY: 85 }
             }
 
+            // Each wedge is drawn as two half-sweeps. A single arc over 180
+            // degrees needs useLargeArc, which is where the ring came apart,
+            // and its endpoints were literal coordinates that no longer
+            // matched the percentages beside it.
             ShapePath {
                 strokeColor: "#2FE07F"
                 strokeWidth: 18
+                capStyle: ShapePath.FlatCap
                 fillColor: "transparent"
-                startX: 100
-                startY: 15
-                PathArc { x: 100; y: 185; radiusX: 85; radiusY: 85 }
-            }
+                startX: page.ringX(page.ringStart)
+                startY: page.ringY(page.ringStart)
 
-            ShapePath {
-                strokeColor: "#1FA85C"
-                strokeWidth: 18
-                fillColor: "transparent"
-                startX: 50.0
-                startY: 168.8
-                PathArc { x: 100; y: 15; radiusX: 85; radiusY: 85 }
-            }
+                PathArc {
+                    x: page.ringX((page.ringStart + page.ecoEnd) / 2)
+                    y: page.ringY((page.ringStart + page.ecoEnd) / 2)
+                    radiusX: page.ringRadius
+                    radiusY: page.ringRadius
+                }
 
-            ShapePath {
-                strokeColor: "#D34A3E"
-                strokeWidth: 18
-                fillColor: "transparent"
-                startX: 100
-                startY: 185
-                PathArc { x: 73.7; y: 180.8; radiusX: 85; radiusY: 85 }
+                PathArc {
+                    x: page.ringX(page.ecoEnd)
+                    y: page.ringY(page.ecoEnd)
+                    radiusX: page.ringRadius
+                    radiusY: page.ringRadius
+                }
             }
 
             ShapePath {
                 strokeColor: "#D9B561"
                 strokeWidth: 18
-                capStyle: ShapePath.RoundCap
+                capStyle: ShapePath.FlatCap
                 fillColor: "transparent"
-                startX: 73.7
-                startY: 180.8
-                PathArc { x: 50.0; y: 168.8; radiusX: 85; radiusY: 85 }
+                startX: page.ringX(page.ecoEnd)
+                startY: page.ringY(page.ecoEnd)
+
+                PathArc {
+                    x: page.ringX((page.ecoEnd + page.normalEnd) / 2)
+                    y: page.ringY((page.ecoEnd + page.normalEnd) / 2)
+                    radiusX: page.ringRadius
+                    radiusY: page.ringRadius
+                }
+
+                PathArc {
+                    x: page.ringX(page.normalEnd)
+                    y: page.ringY(page.normalEnd)
+                    radiusX: page.ringRadius
+                    radiusY: page.ringRadius
+                }
+            }
+
+            ShapePath {
+                strokeColor: "#D34A3E"
+                strokeWidth: 18
+                capStyle: ShapePath.FlatCap
+                fillColor: "transparent"
+                startX: page.ringX(page.normalEnd)
+                startY: page.ringY(page.normalEnd)
+
+                PathArc {
+                    x: page.ringX((page.normalEnd + page.sportEnd) / 2)
+                    y: page.ringY((page.normalEnd + page.sportEnd) / 2)
+                    radiusX: page.ringRadius
+                    radiusY: page.ringRadius
+                }
+
+                PathArc {
+                    x: page.ringX(page.sportEnd)
+                    y: page.ringY(page.sportEnd)
+                    radiusX: page.ringRadius
+                    radiusY: page.ringRadius
+                }
             }
         }
 
@@ -149,7 +209,9 @@ PageBase {
             y: 172
             width: 200
             horizontalAlignment: Text.AlignHCenter
-            text: qsTr("50% Eco\n40% Normal\n10% Sport")
+            text: page.ecoShare + qsTr("% Eco") + "\n"
+                  + page.normalShare + qsTr("% Normal") + "\n"
+                  + page.sportShare + qsTr("% Sport")
             color: Theme.textPrimary
             font.family: Theme.fontFamily
             font.pixelSize: 18
