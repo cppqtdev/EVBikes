@@ -23,6 +23,9 @@ jobs:
       - name: Colour casts in dark greys
         run: python3 tools/color_check.py
 
+      - name: Every face the screens ask for is shipped
+        run: python3 tools/font_check.py
+
       - name: Desktop bridge matches the backend headers
         run: |
           python3 tools/generate_desktop_bridge.py
