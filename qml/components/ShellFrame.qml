@@ -12,6 +12,10 @@ Item {
     property color floorColor: Theme.red
     property real floorOpacity: 0.0
     property real centerLift: 0.06
+    // Outer border. The reference has nothing outside the contour, so this is
+    // an addition by choice; edgeOpacity 0 returns to the measured design.
+    property color edgeColor: "#4A4A4A"
+    property real edgeOpacity: 0.7
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -31,6 +35,13 @@ Item {
         source: "qrc:/assets/cluster/shell_ride.png"
         color: Theme.shell
         visible: frame.glowStyle !== 0
+    }
+
+    ColorizedImage {
+        source: "qrc:/assets/cluster/ride_outline.png"
+        color: frame.edgeColor
+        opacity: frame.edgeOpacity
+        visible: frame.glowStyle !== 0 && frame.edgeOpacity > 0
     }
 
     ColorizedImage {

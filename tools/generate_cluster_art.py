@@ -303,8 +303,30 @@ def backing_mask():
     return body.filter(ImageFilter.MaxFilter(29)).filter(ImageFilter.GaussianBlur(2))
 
 
+def make_ride_outline():
+    """A thin outline sitting outside the ride body.
+
+    The reference has nothing here - outside the contour it is pure black at
+    every row - so this is a deliberate addition. Dilating the body mask and
+    subtracting a slightly smaller dilation gives a ring that follows every
+    corner correctly, rounding the convex turns the way a drawn stroke would
+    not. Masked off above the housing, where the strip already closes the top.
+    """
+    body = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(body).polygon(ride_body_polygon(), fill=255)
+    outer = body.filter(ImageFilter.MaxFilter(37))
+    inner = body.filter(ImageFilter.MaxFilter(33))
+    ring = ImageChops.subtract(outer, inner).filter(ImageFilter.GaussianBlur(0.8))
+    # Keep it clear of the top housing only, not of the whole top of the
+    # screen, so the border still wraps both upper corners.
+    keep = Image.new("L", (W, H), 255)
+    ImageDraw.Draw(keep).rectangle([330, 0, 950, 60], fill=0)
+    save(alpha_image(ImageChops.multiply(ring, keep)), "ride_outline")
+
+
 def make_backing():
     save(alpha_image(backing_mask()), "shell_backing")
+    make_ride_outline()
 
 
 def make_glows():
