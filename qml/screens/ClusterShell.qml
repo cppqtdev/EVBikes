@@ -30,11 +30,16 @@ Item {
     }
 
     ShellFrame {
-        // Measured on the header light of the reference frames: cool grey
-        // riding, white and about twice as strong in sport, amber on the two
-        // full-screen alerts.
+        // The hues are the reference's, measured on the header light: cool grey
+        // riding, white in sport, amber on the two full-screen alerts.
+        //
+        // The strengths are deliberately above it. The reference draws the eco
+        // and normal header at about 25 levels, which is invisible on a black
+        // panel, and only sport reads. The header has to separate itself in
+        // every mode, so the cool one runs at roughly the reference's sport
+        // level and sport is lifted further to stay ahead of it.
         housingLight: shell.fullAlert ? "#FF8020" : (Theme.sport ? "#FFFFFF" : "#DEE8FF")
-        housingLightOpacity: shell.fullAlert ? 0.37 : (Theme.sport ? 0.66 : 0.24)
+        housingLightOpacity: shell.fullAlert ? 0.72 : (Theme.sport ? 0.95 : 0.62)
         glowStyle: !shell.riding ? (Router.stage === Router.stagePreRide ? 2 : 0) : (shell.fullAlert ? 2 : 1)
         glowColor: Router.stage === Router.stagePreRide ? (VehicleData.sideStandDown ? Theme.red : "#57F2C9") : Theme.glow
         showChannel: shell.showBars

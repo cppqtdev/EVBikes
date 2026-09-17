@@ -20,7 +20,7 @@ Item {
     // on the reference over the header: cool grey while riding, near white and
     // about twice as strong in sport, amber on a full-screen alert.
     property color housingLight: "#DEE8FF"
-    property real housingLightOpacity: 0.24
+    property real housingLightOpacity: 0.62
 
     width: Theme.screenWidth
     height: Theme.screenHeight
