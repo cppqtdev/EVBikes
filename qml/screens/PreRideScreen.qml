@@ -20,10 +20,11 @@ Item {
         onTriggered: Router.finishPreRide()
     }
 
+    // Measured on frame_0260: the side view, 250 by 120, at x 518.
     Image {
-        x: 513
-        y: 68
-        source: "qrc:/assets/cluster/bike_260.png"
+        x: 518
+        y: 103
+        source: "qrc:/assets/cluster/bikeside_preride.png"
     }
 
     Item {
@@ -109,22 +110,22 @@ Item {
     }
 
     GlowBand {
-        x: 500
-        y: 264
+        x: 490
+        y: 262
         width: 320
         height: 26
         bandColor: check.ready ? "#1F6F58" : "#6E1420"
     }
 
     Text {
-        x: 0
-        y: 264
+        x: 10
+        y: 266
         width: Theme.screenWidth
         horizontalAlignment: Text.AlignHCenter
         text: check.ready ? qsTr("CONNECTED") : qsTr("CONNECTIVITY")
         color: "#ECEFF0"
         font.family: Theme.fontFamily
-        font.pixelSize: 18
+        font.pixelSize: 16
         font.bold: true
         font.italic: true
     }
@@ -133,20 +134,20 @@ Item {
         model: 3
 
         Item {
-            x: 570 + index * 58
-            y: 307
-            width: 50
-            height: 50
+            x: 571 + index * 60
+            y: 308
+            width: 46
+            height: 40
 
             Rectangle {
                 anchors.fill: parent
                 radius: 6
-                color: "#1E1E1E"
+                color: "#141414"
             }
 
             Icon {
                 anchors.centerIn: parent
-                size: 34
+                size: 30
                 source: index === 0 ? "qrc:/assets/icons/34/bluetooth.png"
                       : (index === 1 ? "qrc:/assets/icons/34/helmet.png" : "qrc:/assets/icons/34/watch.png")
                 color: index === 0 ? (PhoneData.connected ? Theme.teal : "#8C9194")

@@ -932,9 +932,9 @@ def wheel(base, cx, cy, r, scale, masks=None):
 # Your own bike render (any size, transparent background). Kept outside assets/cluster
 # so the big source file is not packed into the firmware.
 BIKE_PHOTO = os.path.join(ROOT, "assets", "source", "bike.png")
-# Only the two the ride and pre-ride screens ask for; the alert screens use the
-# side view below.
-BIKE_SIZES = (180, 260)
+# Only the size the ride screen asks for; every other screen uses the side view
+# below, which is the shape the reference draws.
+BIKE_SIZES = (180,)
 # The alert screens want the side view, which the reference draws long and low:
 # about 180 x 83 on the overheat card, 189 x 92 on the crash card and 107 x 52
 # on the tyre card. The photo above is a three-quarter render and cannot be
@@ -948,6 +948,7 @@ BIKE_SIDE_SIZES = {
     "tyre": (107, 52, ("wheel", "front")),
     "heat": (168, 79, ()),
     "crash": (189, 92, ("rear",)),
+    "preride": (250, 120, ()),
 }
 # Regions on the source photo, as fractions of its width / height
 BIKE_REAR_WHEEL = (0.08, 0.42, 0.28, 0.72)
