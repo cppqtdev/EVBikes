@@ -101,7 +101,7 @@ Item {
                 : (auth.authState === SystemData.AuthDenied ? qsTr("No access") : qsTr("Match"))
             color: Theme.white
             font.family: Theme.fontFamily
-            font.pixelSize: 38
+            font.pixelSize: 34
         }
 
         Item {

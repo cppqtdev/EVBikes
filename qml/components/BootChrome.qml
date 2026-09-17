@@ -12,16 +12,17 @@ Item {
     width: Theme.screenWidth
     height: Theme.screenHeight
 
+    // Measured on frame_0200: the print sits at x 611..667, y 298..351.
     ColorizedImage {
-        x: 602
-        y: 295
+        x: 597
+        y: 283
         source: "qrc:/assets/cluster/fingerprint_disc.png"
         color: "#1D1D1D"
     }
 
     ColorizedImage {
-        x: 602
-        y: 295
+        x: 597
+        y: 283
         source: "qrc:/assets/cluster/fingerprint.png"
         color: chrome.printColor
 

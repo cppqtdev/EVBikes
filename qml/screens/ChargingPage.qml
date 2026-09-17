@@ -19,10 +19,12 @@ PageBase {
     property int minutesLeft: Math.round((100 - soc) * 0.75)
     property bool plugged: VehicleData.chargeState === VehicleData.Charging
 
-    readonly property int ringX: 570
-    readonly property int ringY: 117
-    readonly property int ringR: 66
-    readonly property int ringSize: 150
+    // Measured on frame_1000: the ring's outer edge runs x 567..738 and
+    // y 107..280, so it is centred on (652.5, 193.5) with an outer radius of 86.
+    readonly property int ringX: 566
+    readonly property int ringY: 107
+    readonly property int ringR: 80
+    readonly property int ringSize: 172
 
     Behavior on fraction {
         NumberAnimation { duration: Theme.animSlow }
@@ -47,7 +49,7 @@ PageBase {
         text: qsTr("AUTO TURNOFF")
         color: Theme.textPrimary
         font.family: Theme.fontFamily
-        font.pixelSize: 18
+        font.pixelSize: 17
         font.bold: true
     }
 
@@ -123,7 +125,7 @@ PageBase {
     NumberReadout {
         id: socReadout
         x: 645 - (width + percentSign.width) / 2
-        y: 186
+        y: 193
         value: page.soc
         fit: true
         pixelSize: 30
@@ -136,7 +138,7 @@ PageBase {
     Text {
         id: percentSign
         x: socReadout.x + socReadout.width
-        y: 192
+        y: 199
         text: "%"
         color: "#C0603F"
         font.family: Theme.fontFamily

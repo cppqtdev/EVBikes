@@ -1111,10 +1111,14 @@ def make_fingerprint():
     img = Image.new("L", (size * s, size * s), 0)
     d = ImageDraw.Draw(img)
     c = size * s / 2
+    # Measured on frame_0200 the print is 57 wide and 54 tall; drawn on a circle
+    # it came out 56 by 63, so the arcs are squashed to that ratio.
+    squash = 0.86
     for k, r in enumerate(range(6, 34, 5)):
         start = 200 + (k * 23) % 40
         end = 520 - (k * 31) % 60
-        d.arc([c - r * s, c - r * s + 4 * s, c + r * s, c + r * s + 4 * s], start, end, fill=255, width=int(2.2 * s))
+        d.arc([c - r * s, c - r * s * squash + 4 * s, c + r * s, c + r * s * squash + 4 * s],
+              start, end, fill=255, width=int(2.2 * s))
     save(alpha_layer(img.resize((size, size), Image.LANCZOS)), "fingerprint")
     ring = Image.new("L", (size * s, size * s), 0)
     ImageDraw.Draw(ring).ellipse([2 * s, 2 * s, (size - 2) * s, (size - 2) * s], fill=255)

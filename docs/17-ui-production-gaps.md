@@ -128,63 +128,54 @@ the last-ride ring and the premultiplied-alpha fringe. The rest of the class:
 
 ---
 
-## E. Screens nobody has measured — one down, twenty-two to go
+## E. Screens measured — six down
 
-The frame numbers in the generator's comments belong to the old capture; in the
-new `all_frames/` the alert screens are elsewhere. Searching every frame for red
-ink finds them: the overheat screen is around `frame_0770`, and there are six
-other red runs worth looking at, including a sport-mode ride screen with a
-route prompt and a quick-action row (`frame_0450`) that this UI does not have
-at all.
+The frame numbers in the generator's comments belong to the old capture. In the
+new `all_frames/` the screens are: boot and login around 60–220, the profile
+picker 140–160, pre-ride 240–260, the ride screens 280–520, the alert overlays
+in the red runs 553–809, the menu pages 980–1140 and the hexagon speedo from
+1160. Contact sheets of every twentieth frame are the quickest way to find one.
 
-**Overheat overlay, measured against `frame_0770` and fixed:**
+**Overheat overlay (`frame_0770`).** The screen is laid out about a centre line
+at x 655, not the middle of the display; the art was already there but the
+centred text was still at 640. "Slow Down!" was 46 px and is 52 (the reference
+ink is 296 by 39, Inter Bold at 52 measures 293 by 40) and its colour was
+`#E0142A` against the reference's `#D60006`. The warning triangle was 89 by 77
+with a thin sharp-cornered outline; the reference is 94 by 93 with rounded
+corners and a stroke a tenth of its width, and the redrawn one lands on
+x 606..699, y 117..209 exactly. The band behind the title was 310 by 28 and is
+256 by 24.
 
-- The screen is laid out about a centre line at **x 655**, not the middle of
-  the display. The art on it (ribbon, triangle) was already there; the centred
-  text was still at 640, so the title and "Slow Down!" did not line up with
-  anything above or below them.
-- "Slow Down!" was 46 px and is 52: the reference ink is 296 px wide and 39
-  tall, and Inter Bold at 52 measures 293 by 40. Its colour was `#E0142A` and
-  the reference is `#D60006`.
-- The warning triangle was the wrong shape. The reference outline is all but
-  square — 94 wide by 93 tall — with rounded corners and a stroke about a tenth
-  of its width; ours was 89 by 77 with a thin sharp-cornered outline. Redrawn
-  from those numbers it lands on the reference exactly: x 606..699, y 117..209.
-  It also sits at about half opacity over the bike, not 0.9.
-- The band behind the title was 310 by 28 and is 256 by 24.
-- The title's own size was already right: Inter Regular at 22 measures 141 px
-  against the reference's 140.
+**Crash overlay (`frame_0660`).** Same idea, axis 656. The WARNING ribbon's text
+was 20 px where the reference measures 21, the CRASH DETECTED ribbon sat 4 px
+right and 3 px low, and the small triangle under the message was 2 px low and
+crossed the card's bottom edge.
 
-**Crash overlay, measured against `frame_0660`:** the same offset centre line,
-at 656 here. The WARNING ribbon's text was 20 px where the reference measures
-21 (its ink is exactly 100 px wide at that size), the CRASH DETECTED ribbon sat
-4 px right and 3 px low, and the small warning triangle beneath the message was
-2 px low. The redrawn triangle fixes that glyph here too: it is 31 by 31 on the
-reference, and the old squat one could not be.
+**Tyre overlay (`frame_0570`).** Axis 645. "TIRE PSI LOW" was 28 px and is 26 —
+the reference ink is 170 by 20, which Inter Bold at 26 matches exactly — and its
+colour was `#D4203A` where the reference peaks at `#99102F`. "Tire Inflation
+Required" was 18 px and is 16. The pressure bar was already right to the pixel.
 
-**Tyre overlay, measured against `frame_0570`:** content sits about x 645 on
-this one. "TIRE PSI LOW" was 28 px and is 26 — the reference ink is 170 by 20,
-which Inter Bold at 26 matches exactly — and its colour was `#D4203A` where the
-reference peaks at `#99102F`. "Tire Inflation Required" was 18 px and is 16.
-The pressure bar was already right: 128 px wide from x 580, to the pixel.
+**Pre-ride (`frame_0260`).** The bike is the side view, 250 by 120 at x 518.
+CONNECTED was 18 px where the reference measures 16, its band sat 10 px right,
+and the three status chips were 50 square on a 58 pitch against the reference's
+46 by 40 on 60.
 
-**The bike drawings are fixed.** The source render in `assets/source/bike.png`
-is a three-quarter view and roughly square, so it could never be the long low
-side view the alert screens want. The generator's own side drawing is, and it
-now has a family of its own: `bikeside_tyre`, `bikeside_heat` and
-`bikeside_crash`, each cropped to its lit part and fitted to the exact box the
-reference draws on that screen (107 x 52, 168 x 79, 189 x 92). It was drawn
-nose-right and the reference is nose-left, so it is mirrored, and the tint masks
-carry the drawing's own shading, which keeps the rim and spokes in the crash
-card's red rear wheel instead of a flat disc. The tyre card now lights the wheel
-that is actually low. The photo family stays for the ride and pre-ride screens,
-trimmed to the two sizes they ask for.
+**Charging (`frame_1000`).** The ring was much too small: the reference's outer
+edge runs x 567..738 and y 107..280, an outer radius of 86 about (652.5, 193.5),
+where ours was 72 about (645, 192). AUTO TURNOFF was 18 px and is 17, and the
+state-of-charge reading sat 7 px high.
 
-**Still open:** the side drawing is flat vector art against the reference's
-shaded render — the silhouette, the direction and the boxes match, the styling
-does not. Twenty screens have still never been compared to anything, and
-`frame_0450` shows a sport-mode ride screen with a route prompt and a
-quick-action row that this UI does not have at all.
+**Auth (`frame_0200`).** The fingerprint was drawn on a circle and came out 56
+by 63; the reference is 57 by 54, so the arcs are squashed to that ratio and the
+print now sits at x 611..667, y 298..351. The progress bar was already measured.
+
+**Still open:** the word "Scan" is not Inter. At the height the reference draws
+it (cap 25) Inter measures 77 wide against the reference's 100, and no weight or
+plausible tracking closes that — it is a wider, more geometric face. Identifying
+and licensing it is a decision, not a measurement. Fourteen screens have still
+never been compared to anything, and `frame_0450` shows a sport-mode ride screen
+with a route prompt and a quick-action row that this UI does not have at all.
 
 ---
 
