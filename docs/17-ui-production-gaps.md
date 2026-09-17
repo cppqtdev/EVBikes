@@ -117,17 +117,27 @@ pre-ride screen, the charging page, the auth screen.
 
 ---
 
-## F. No test covers the UI
+## F. Tests over the UI — closed
 
-- `tests/` holds two C++ files, `test_core.cpp` and `backend_smoke.cpp`.
-- There is no QML test of any kind.
+The `Shape` import fault this session took the whole application down and was
+only found because somebody ran it and read the console. Now:
 
-Nothing catches a screen that fails to load. The `Shape` import fault this
-session took the whole application down and was only found because somebody
-ran it and read the console.
+- `tests/qml_load_test.cpp` walks every type in `ClusterCore`,
+  `ClusterComponents`, `ClusterScreens` and `EVBikesApp` straight out of the
+  resources, creates each one, and fails on any warning. Nothing is listed by
+  hand, so a new file is covered the day it is added. Singletons are asked for
+  through the engine instead, since they cannot be instantiated.
+- `Main.qml` moved into a QML module of its own (`cluster_app`) so the test can
+  load the whole screen tree exactly as the application does.
+- `.github/workflows/ci.yml` runs three gates: the static checks
+  (`qul_lint.py`, `color_check.py`, and the two generators re-run against a
+  clean tree), the host unit tests, then a Qt 6 desktop build and the load
+  test. The first run on the runner will probably need the Qt version and the
+  system library list adjusted; nothing else in it is machine-specific.
 
-**To close:** a load test that instantiates every screen and fails on any QML
-warning would have caught that in CI, and is perhaps thirty lines.
+**Still open:** the load test proves every file loads and binds without
+complaint. It does not compare what is drawn against the reference frames —
+that is still the measuring tools in `tools/uicompare`.
 
 ---
 

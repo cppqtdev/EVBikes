@@ -59,11 +59,12 @@ add_subdirectory(${EVB_ROOT}/qml/core ${CMAKE_CURRENT_BINARY_DIR}/qml_core)
 add_subdirectory(${EVB_ROOT}/qml/components ${CMAKE_CURRENT_BINARY_DIR}/qml_components)
 add_subdirectory(${EVB_ROOT}/qml/screens ${CMAKE_CURRENT_BINARY_DIR}/qml_screens)
 
-# --- application ---------------------------------------------------------------
-qt_add_executable(EVBikes main.cpp)
-
+# --- QML module: EVBikesApp (Main.qml) ----------------------------------------
+# A module of its own rather than part of the executable, so the load test below
+# can instantiate the whole screen tree the same way the app does.
 set_source_files_properties(${EVB_ROOT}/qml/Main.qml PROPERTIES QT_RESOURCE_ALIAS Main.qml)
-qt_add_qml_module(EVBikes
+qt_add_library(cluster_app STATIC)
+qt_add_qml_module(cluster_app
     URI EVBikesApp
     VERSION 1.0
     OUTPUT_DIRECTORY ${EVB_QML_OUT}/EVBikesApp
@@ -78,24 +79,49 @@ file(GLOB_RECURSE EVB_ASSETS CONFIGURE_DEPENDS RELATIVE ${EVB_ROOT}
     ${EVB_ROOT}/assets/fonts/*.ttf
 )
 list(TRANSFORM EVB_ASSETS PREPEND ${EVB_ROOT}/)
-qt_add_resources(EVBikes "evb_assets"
-    PREFIX "/"
-    BASE ${EVB_ROOT}
-    FILES ${EVB_ASSETS}
-)
 
-target_link_libraries(EVBikes PRIVATE
-    Qt6::Gui
-    Qt6::Quick
+set(EVB_QML_MODULES
     evb_backend
     cluster_backend cluster_backendplugin
     qul_extras qul_extrasplugin
     cluster_core cluster_coreplugin
     cluster_components cluster_componentsplugin
     cluster_screens cluster_screensplugin
+    cluster_app cluster_appplugin
 )
+
+# --- application ---------------------------------------------------------------
+qt_add_executable(EVBikes main.cpp)
+
+qt_add_resources(EVBikes "evb_assets"
+    PREFIX "/"
+    BASE ${EVB_ROOT}
+    FILES ${EVB_ASSETS}
+)
+
+target_link_libraries(EVBikes PRIVATE Qt6::Gui Qt6::Quick ${EVB_QML_MODULES})
 
 set_target_properties(EVBikes PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+
+# --- QML load test --------------------------------------------------------------
+enable_testing()
+
+qt_add_executable(qml_load_test ${EVB_ROOT}/tests/qml_load_test.cpp)
+
+qt_add_resources(qml_load_test "evb_test_assets"
+    PREFIX "/"
+    BASE ${EVB_ROOT}
+    FILES ${EVB_ASSETS}
+)
+
+target_link_libraries(qml_load_test PRIVATE Qt6::Gui Qt6::Quick ${EVB_QML_MODULES})
+
+set_target_properties(qml_load_test PROPERTIES
+    MACOSX_BUNDLE FALSE
+    WIN32_EXECUTABLE FALSE
+)
+
+add_test(NAME qml_load COMMAND qml_load_test)

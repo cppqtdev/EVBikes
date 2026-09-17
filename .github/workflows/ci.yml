@@ -1,0 +1,73 @@
+# Three gates, cheapest first: the static checks, the host unit tests, then a
+# build of the Qt 6 desktop version that loads every QML file.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: Static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Qt for MCUs QML subset
+        run: python3 tools/qul_lint.py
+
+      - name: Colour casts in dark greys
+        run: python3 tools/color_check.py
+
+      - name: Desktop bridge matches the backend headers
+        run: |
+          python3 tools/generate_desktop_bridge.py
+          git diff --exit-code desktop/bridge
+
+      - name: Project files match the QML tree
+        run: |
+          python3 tools/sync_project_files.py
+          git diff --exit-code qml
+
+  host-tests:
+    name: Host unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: cmake -S . -B build-tests -DEVB_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+      - name: Compile
+        run: cmake --build build-tests --parallel
+      - name: Run
+        run: ctest --test-dir build-tests --output-on-failure
+
+  qml-load:
+    name: QML load test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: System libraries Qt needs headless
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 \
+            libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 \
+            libxcb-render-util0 libxcb-shape0 libxcb-xinerama0
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.1'
+          modules: 'qtshadertools'
+
+      - name: Configure
+        run: cmake -S . -B build-desktop -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build-desktop --parallel
+
+      - name: Load every QML file
+        run: ctest --test-dir build-desktop --output-on-failure
