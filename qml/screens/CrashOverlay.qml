@@ -79,9 +79,12 @@ Item {
             font.pixelSize: 20
         }
 
+        // The card ends at 367 and the message ink at 326, so the triangle is
+        // centred in what is left with 6 px clear either side. At 338 its
+        // bottom two rows crossed the card edge and the outline cut through it.
         Icon {
             x: 639
-            y: 338
+            y: 330
             size: 34
             source: "qrc:/assets/icons/34/triangle.png"
             color: Theme.red
