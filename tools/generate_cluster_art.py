@@ -38,7 +38,7 @@ RIDE_GLOW = [((250, 18.8), 0), ((150, 32), 16), ((88.3, 150.3), 14), ((162.6, 36
              ((350, 456.7), 5), ((416, 406.3), 5), ((545, 406.3), 0)]
 RIDE_TOP = (362, 4)
 # Outer border: how far outside the body it sits, and how wide the line is.
-RIDE_OUTLINE_OFFSET = 18
+RIDE_OUTLINE_OFFSET = 6
 RIDE_OUTLINE_WIDTH = 1.6
 
 # Bar centre line (top cut centre -> knee -> end cut centre), width and gap
