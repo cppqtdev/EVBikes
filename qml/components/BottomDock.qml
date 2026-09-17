@@ -68,7 +68,7 @@ Item {
 
     Icon {
         x: 512
-        y: 12
+        y: 13
         size: 36
         source: "qrc:/assets/icons/36/compass.png"
         color: dock.mapActive || dock.mapFocus ? Theme.textPrimary : "#C3C8CA"

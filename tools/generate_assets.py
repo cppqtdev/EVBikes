@@ -350,10 +350,15 @@ def icon_watch(d):
 
 
 def icon_compass(d):
-    arc(d, (4, 22, 44, 40), 200, 340, 2.5)
-    arc(d, (4, 22, 44, 40), 20, 160, 2.5)
-    d.polygon(pts([(24, 18), (34, 36), (24, 32), (14, 36)]), fill=W)
-    line(d, [(20, 13), (20, 4), (28, 13), (28, 4)], 2)
+    # Measured on the dock of the reference frames: a letter N above an ellipse
+    # that is open at the top and the bottom, with a solid north arrow across
+    # its foot. This drew a diamond under a zigzag that read as neither.
+    box = (2.7, 12.0, 46.0, 38.7)
+    arc(d, box, 305, 55, 2)
+    arc(d, box, 125, 235, 2)
+    d.polygon(pts([(24, 25.3), (37.3, 38.7), (24, 33.3), (10.7, 38.7)]), fill=W)
+    font = ImageFont.truetype(os.path.join(ROOT, "assets", "fonts", "Inter-Regular.ttf"), int(s(20)))
+    d.text((s(24.7), s(12)), "N", font=font, fill=W, anchor="mm")
 
 
 def icon_flag(d):
