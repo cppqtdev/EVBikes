@@ -146,8 +146,11 @@ struct Capture : link::Handler
     int errors = 0;
     link::NavUpdate last;
     link::CallState call;
+    int entryCount = 0;
+    link::ListEntry entry;
     void onNavUpdate(const link::NavUpdate &n) override { ++navCount; last = n; }
     void onCallState(const link::CallState &c) override { call = c; }
+    void onListEntry(const link::ListEntry &e) override { ++entryCount; entry = e; }
     void onFrameError() override { ++errors; }
 };
 
@@ -194,6 +197,34 @@ static void testPhoneLink()
     CHECK(cap.errors == errBefore + 1);
 }
 
+static void testListEntries()
+{
+    Capture capture;
+    link::Parser parser(capture);
+    uint8_t frame[link::kMaxFrame];
+
+    link::ListEntry out;
+    out.list = link::ListId::Reminders;
+    out.slot = 2;
+    std::strcpy(out.title, "Tyre check");
+    std::strcpy(out.text, "Every 15 days");
+    std::size_t n = link::encodeListEntry(out, frame, sizeof(frame));
+    CHECK(n > 0);
+    parser.feed(frame, n);
+    CHECK(capture.entryCount == 1);
+    CHECK(capture.entry.list == link::ListId::Reminders);
+    CHECK(capture.entry.slot == 2);
+    CHECK(std::strcmp(capture.entry.title, "Tyre check") == 0);
+    CHECK(std::strcmp(capture.entry.text, "Every 15 days") == 0);
+
+    // A slot the cluster has no room for is a bad frame, not a silent write.
+    out.slot = link::kMaxListSlots;
+    n = link::encodeListEntry(out, frame, sizeof(frame));
+    parser.feed(frame, n);
+    CHECK(capture.entryCount == 1);
+    CHECK(capture.errors == 1);
+}
+
 static void testAlerts()
 {
     AlertEvaluator ev;
@@ -236,6 +267,7 @@ int main()
     testCanDecoder();
     testStaleness();
     testPhoneLink();
+    testListEntries();
     testAlerts();
     testUtils();
     std::printf(g_failures ? "%d FAILURE(S)\n" : "ALL TESTS PASSED\n", g_failures);

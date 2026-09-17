@@ -28,7 +28,7 @@ PageBase {
         visible: page.tab === 0
 
         Repeater {
-            model: 3
+            model: PhoneListData.contactCount
 
             MessageRow {
                 initial: Format.contactInitial(index)
@@ -40,12 +40,28 @@ PageBase {
         }
     }
 
+    // Nothing is built in, so an unpaired phone means an empty list. Say so
+    // rather than leave the rows blank.
+    Text {
+        x: 0
+        y: 170
+        width: Theme.screenWidth
+        horizontalAlignment: Text.AlignHCenter
+        visible: (page.tab === 0 && PhoneListData.contactCount === 0)
+                 || (page.tab === 2 && PhoneListData.reminderCount === 0)
+        text: page.tab === 0 ? qsTr("No messages yet") : qsTr("No reminders yet")
+        color: Theme.textMuted
+        font.family: Theme.fontFamily
+        font.pixelSize: 14
+    }
+
     Text {
         x: 0
         y: 274
         width: Theme.screenWidth
         horizontalAlignment: Text.AlignHCenter
-        visible: page.tab === 0 || page.tab === 2
+        visible: (page.tab === 0 && PhoneListData.contactCount > 0)
+                 || (page.tab === 2 && PhoneListData.reminderCount > 0)
         text: page.rowFocus ? qsTr("OK call  \u00B7  BACK back") : qsTr("OK open the list")
         color: Theme.textMuted
         font.family: Theme.fontFamily
@@ -59,7 +75,7 @@ PageBase {
         visible: page.tab === 2
 
         Repeater {
-            model: 3
+            model: PhoneListData.reminderCount
 
             MessageRow {
                 initial: Format.reminderInitial(index)

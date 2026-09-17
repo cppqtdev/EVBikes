@@ -210,6 +210,100 @@ signals:
     void notificationTextChanged();
 };
 
+class PhoneListDataQml : public QObject
+{
+    Q_OBJECT
+    QML_NAMED_ELEMENT(PhoneListData)
+    QML_SINGLETON
+    Q_PROPERTY(QString contact0Name READ contact0Name WRITE qmlWriteContact0Name NOTIFY contact0NameChanged FINAL)
+    Q_PROPERTY(QString contact0Text READ contact0Text WRITE qmlWriteContact0Text NOTIFY contact0TextChanged FINAL)
+    Q_PROPERTY(QString contact0Initial READ contact0Initial WRITE qmlWriteContact0Initial NOTIFY contact0InitialChanged FINAL)
+    Q_PROPERTY(QString contact1Name READ contact1Name WRITE qmlWriteContact1Name NOTIFY contact1NameChanged FINAL)
+    Q_PROPERTY(QString contact1Text READ contact1Text WRITE qmlWriteContact1Text NOTIFY contact1TextChanged FINAL)
+    Q_PROPERTY(QString contact1Initial READ contact1Initial WRITE qmlWriteContact1Initial NOTIFY contact1InitialChanged FINAL)
+    Q_PROPERTY(QString contact2Name READ contact2Name WRITE qmlWriteContact2Name NOTIFY contact2NameChanged FINAL)
+    Q_PROPERTY(QString contact2Text READ contact2Text WRITE qmlWriteContact2Text NOTIFY contact2TextChanged FINAL)
+    Q_PROPERTY(QString contact2Initial READ contact2Initial WRITE qmlWriteContact2Initial NOTIFY contact2InitialChanged FINAL)
+    Q_PROPERTY(QString reminder0Name READ reminder0Name WRITE qmlWriteReminder0Name NOTIFY reminder0NameChanged FINAL)
+    Q_PROPERTY(QString reminder0Text READ reminder0Text WRITE qmlWriteReminder0Text NOTIFY reminder0TextChanged FINAL)
+    Q_PROPERTY(QString reminder0Initial READ reminder0Initial WRITE qmlWriteReminder0Initial NOTIFY reminder0InitialChanged FINAL)
+    Q_PROPERTY(QString reminder1Name READ reminder1Name WRITE qmlWriteReminder1Name NOTIFY reminder1NameChanged FINAL)
+    Q_PROPERTY(QString reminder1Text READ reminder1Text WRITE qmlWriteReminder1Text NOTIFY reminder1TextChanged FINAL)
+    Q_PROPERTY(QString reminder1Initial READ reminder1Initial WRITE qmlWriteReminder1Initial NOTIFY reminder1InitialChanged FINAL)
+    Q_PROPERTY(QString reminder2Name READ reminder2Name WRITE qmlWriteReminder2Name NOTIFY reminder2NameChanged FINAL)
+    Q_PROPERTY(QString reminder2Text READ reminder2Text WRITE qmlWriteReminder2Text NOTIFY reminder2TextChanged FINAL)
+    Q_PROPERTY(QString reminder2Initial READ reminder2Initial WRITE qmlWriteReminder2Initial NOTIFY reminder2InitialChanged FINAL)
+    Q_PROPERTY(int contactCount READ contactCount WRITE qmlWriteContactCount NOTIFY contactCountChanged FINAL)
+    Q_PROPERTY(int reminderCount READ reminderCount WRITE qmlWriteReminderCount NOTIFY reminderCountChanged FINAL)
+
+public:
+    explicit PhoneListDataQml(QObject *parent = nullptr);
+
+    QString contact0Name() const;
+    void qmlWriteContact0Name(const QString &value);
+    QString contact0Text() const;
+    void qmlWriteContact0Text(const QString &value);
+    QString contact0Initial() const;
+    void qmlWriteContact0Initial(const QString &value);
+    QString contact1Name() const;
+    void qmlWriteContact1Name(const QString &value);
+    QString contact1Text() const;
+    void qmlWriteContact1Text(const QString &value);
+    QString contact1Initial() const;
+    void qmlWriteContact1Initial(const QString &value);
+    QString contact2Name() const;
+    void qmlWriteContact2Name(const QString &value);
+    QString contact2Text() const;
+    void qmlWriteContact2Text(const QString &value);
+    QString contact2Initial() const;
+    void qmlWriteContact2Initial(const QString &value);
+    QString reminder0Name() const;
+    void qmlWriteReminder0Name(const QString &value);
+    QString reminder0Text() const;
+    void qmlWriteReminder0Text(const QString &value);
+    QString reminder0Initial() const;
+    void qmlWriteReminder0Initial(const QString &value);
+    QString reminder1Name() const;
+    void qmlWriteReminder1Name(const QString &value);
+    QString reminder1Text() const;
+    void qmlWriteReminder1Text(const QString &value);
+    QString reminder1Initial() const;
+    void qmlWriteReminder1Initial(const QString &value);
+    QString reminder2Name() const;
+    void qmlWriteReminder2Name(const QString &value);
+    QString reminder2Text() const;
+    void qmlWriteReminder2Text(const QString &value);
+    QString reminder2Initial() const;
+    void qmlWriteReminder2Initial(const QString &value);
+    int contactCount() const;
+    void qmlWriteContactCount(int value);
+    int reminderCount() const;
+    void qmlWriteReminderCount(int value);
+    Q_INVOKABLE void clear();
+
+signals:
+    void contact0NameChanged();
+    void contact0TextChanged();
+    void contact0InitialChanged();
+    void contact1NameChanged();
+    void contact1TextChanged();
+    void contact1InitialChanged();
+    void contact2NameChanged();
+    void contact2TextChanged();
+    void contact2InitialChanged();
+    void reminder0NameChanged();
+    void reminder0TextChanged();
+    void reminder0InitialChanged();
+    void reminder1NameChanged();
+    void reminder1TextChanged();
+    void reminder1InitialChanged();
+    void reminder2NameChanged();
+    void reminder2TextChanged();
+    void reminder2InitialChanged();
+    void contactCountChanged();
+    void reminderCountChanged();
+};
+
 class SimulatorQml : public QObject
 {
     Q_OBJECT
@@ -259,6 +353,9 @@ class SystemDataQml : public QObject
     Q_PROPERTY(int speedoStyle READ speedoStyle WRITE qmlWriteSpeedoStyle NOTIFY speedoStyleChanged FINAL)
     Q_PROPERTY(bool antiTheftArmed READ antiTheftArmed WRITE qmlWriteAntiTheftArmed NOTIFY antiTheftArmedChanged FINAL)
     Q_PROPERTY(int theftCaptures READ theftCaptures WRITE qmlWriteTheftCaptures NOTIFY theftCapturesChanged FINAL)
+    Q_PROPERTY(QString profile0Name READ profile0Name WRITE qmlWriteProfile0Name NOTIFY profile0NameChanged FINAL)
+    Q_PROPERTY(QString profile1Name READ profile1Name WRITE qmlWriteProfile1Name NOTIFY profile1NameChanged FINAL)
+    Q_PROPERTY(QString profile2Name READ profile2Name WRITE qmlWriteProfile2Name NOTIFY profile2NameChanged FINAL)
 
 public:
     enum AuthState { AuthIdle = 0, AuthScanning, AuthMatched, AuthDenied };
@@ -299,6 +396,12 @@ public:
     void qmlWriteAntiTheftArmed(bool value);
     int theftCaptures() const;
     void qmlWriteTheftCaptures(int value);
+    QString profile0Name() const;
+    void qmlWriteProfile0Name(const QString &value);
+    QString profile1Name() const;
+    void qmlWriteProfile1Name(const QString &value);
+    QString profile2Name() const;
+    void qmlWriteProfile2Name(const QString &value);
     Q_INVOKABLE void tick();
     Q_INVOKABLE void poll();
     Q_INVOKABLE bool submitPin(int pin);
@@ -329,6 +432,47 @@ signals:
     void speedoStyleChanged();
     void antiTheftArmedChanged();
     void theftCapturesChanged();
+    void profile0NameChanged();
+    void profile1NameChanged();
+    void profile2NameChanged();
+};
+
+class TripDataQml : public QObject
+{
+    Q_OBJECT
+    QML_NAMED_ELEMENT(TripData)
+    QML_SINGLETON
+    Q_PROPERTY(int rideMinutes READ rideMinutes WRITE qmlWriteRideMinutes NOTIFY rideMinutesChanged FINAL)
+    Q_PROPERTY(int socUsedPercent READ socUsedPercent WRITE qmlWriteSocUsedPercent NOTIFY socUsedPercentChanged FINAL)
+    Q_PROPERTY(int ecoShare READ ecoShare WRITE qmlWriteEcoShare NOTIFY ecoShareChanged FINAL)
+    Q_PROPERTY(int normalShare READ normalShare WRITE qmlWriteNormalShare NOTIFY normalShareChanged FINAL)
+    Q_PROPERTY(int sportShare READ sportShare WRITE qmlWriteSportShare NOTIFY sportShareChanged FINAL)
+    Q_PROPERTY(bool recorded READ recorded WRITE qmlWriteRecorded NOTIFY recordedChanged FINAL)
+
+public:
+    explicit TripDataQml(QObject *parent = nullptr);
+
+    int rideMinutes() const;
+    void qmlWriteRideMinutes(int value);
+    int socUsedPercent() const;
+    void qmlWriteSocUsedPercent(int value);
+    int ecoShare() const;
+    void qmlWriteEcoShare(int value);
+    int normalShare() const;
+    void qmlWriteNormalShare(int value);
+    int sportShare() const;
+    void qmlWriteSportShare(int value);
+    bool recorded() const;
+    void qmlWriteRecorded(bool value);
+    Q_INVOKABLE void reset();
+
+signals:
+    void rideMinutesChanged();
+    void socUsedPercentChanged();
+    void ecoShareChanged();
+    void normalShareChanged();
+    void sportShareChanged();
+    void recordedChanged();
 };
 
 class VehicleDataQml : public QObject

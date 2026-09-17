@@ -10,7 +10,9 @@ Project {
             "VehicleData.h",
             "NavigationData.h",
             "PhoneData.h",
+            "PhoneListData.h",
             "SystemData.h",
+            "TripData.h",
             "AlertData.h",
             "ClusterInput.h",
             "Simulator.h"

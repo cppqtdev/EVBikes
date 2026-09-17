@@ -5,8 +5,10 @@
 #include "ClusterInput.h"
 #include "NavigationData.h"
 #include "PhoneData.h"
+#include "PhoneListData.h"
 #include "Simulator.h"
 #include "SystemData.h"
+#include "TripData.h"
 #include "VehicleData.h"
 
 AlertDataQml::AlertDataQml(QObject *parent)
@@ -446,6 +448,237 @@ void PhoneDataQml::rejectCall()
     PhoneData::instance().rejectCall();
 }
 
+PhoneListDataQml::PhoneListDataQml(QObject *parent)
+    : QObject(parent)
+{
+    PhoneListData &d = PhoneListData::instance();
+    d.contact0Name.setOnChanged([this] { emit contact0NameChanged(); });
+    d.contact0Text.setOnChanged([this] { emit contact0TextChanged(); });
+    d.contact0Initial.setOnChanged([this] { emit contact0InitialChanged(); });
+    d.contact1Name.setOnChanged([this] { emit contact1NameChanged(); });
+    d.contact1Text.setOnChanged([this] { emit contact1TextChanged(); });
+    d.contact1Initial.setOnChanged([this] { emit contact1InitialChanged(); });
+    d.contact2Name.setOnChanged([this] { emit contact2NameChanged(); });
+    d.contact2Text.setOnChanged([this] { emit contact2TextChanged(); });
+    d.contact2Initial.setOnChanged([this] { emit contact2InitialChanged(); });
+    d.reminder0Name.setOnChanged([this] { emit reminder0NameChanged(); });
+    d.reminder0Text.setOnChanged([this] { emit reminder0TextChanged(); });
+    d.reminder0Initial.setOnChanged([this] { emit reminder0InitialChanged(); });
+    d.reminder1Name.setOnChanged([this] { emit reminder1NameChanged(); });
+    d.reminder1Text.setOnChanged([this] { emit reminder1TextChanged(); });
+    d.reminder1Initial.setOnChanged([this] { emit reminder1InitialChanged(); });
+    d.reminder2Name.setOnChanged([this] { emit reminder2NameChanged(); });
+    d.reminder2Text.setOnChanged([this] { emit reminder2TextChanged(); });
+    d.reminder2Initial.setOnChanged([this] { emit reminder2InitialChanged(); });
+    d.contactCount.setOnChanged([this] { emit contactCountChanged(); });
+    d.reminderCount.setOnChanged([this] { emit reminderCountChanged(); });
+}
+
+QString PhoneListDataQml::contact0Name() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact0Name.value());
+}
+
+void PhoneListDataQml::qmlWriteContact0Name(const QString &value)
+{
+    PhoneListData::instance().contact0Name.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact0Text() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact0Text.value());
+}
+
+void PhoneListDataQml::qmlWriteContact0Text(const QString &value)
+{
+    PhoneListData::instance().contact0Text.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact0Initial() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact0Initial.value());
+}
+
+void PhoneListDataQml::qmlWriteContact0Initial(const QString &value)
+{
+    PhoneListData::instance().contact0Initial.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact1Name() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact1Name.value());
+}
+
+void PhoneListDataQml::qmlWriteContact1Name(const QString &value)
+{
+    PhoneListData::instance().contact1Name.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact1Text() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact1Text.value());
+}
+
+void PhoneListDataQml::qmlWriteContact1Text(const QString &value)
+{
+    PhoneListData::instance().contact1Text.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact1Initial() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact1Initial.value());
+}
+
+void PhoneListDataQml::qmlWriteContact1Initial(const QString &value)
+{
+    PhoneListData::instance().contact1Initial.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact2Name() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact2Name.value());
+}
+
+void PhoneListDataQml::qmlWriteContact2Name(const QString &value)
+{
+    PhoneListData::instance().contact2Name.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact2Text() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact2Text.value());
+}
+
+void PhoneListDataQml::qmlWriteContact2Text(const QString &value)
+{
+    PhoneListData::instance().contact2Text.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::contact2Initial() const
+{
+    return QString::fromStdString(PhoneListData::instance().contact2Initial.value());
+}
+
+void PhoneListDataQml::qmlWriteContact2Initial(const QString &value)
+{
+    PhoneListData::instance().contact2Initial.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder0Name() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder0Name.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder0Name(const QString &value)
+{
+    PhoneListData::instance().reminder0Name.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder0Text() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder0Text.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder0Text(const QString &value)
+{
+    PhoneListData::instance().reminder0Text.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder0Initial() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder0Initial.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder0Initial(const QString &value)
+{
+    PhoneListData::instance().reminder0Initial.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder1Name() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder1Name.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder1Name(const QString &value)
+{
+    PhoneListData::instance().reminder1Name.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder1Text() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder1Text.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder1Text(const QString &value)
+{
+    PhoneListData::instance().reminder1Text.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder1Initial() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder1Initial.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder1Initial(const QString &value)
+{
+    PhoneListData::instance().reminder1Initial.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder2Name() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder2Name.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder2Name(const QString &value)
+{
+    PhoneListData::instance().reminder2Name.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder2Text() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder2Text.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder2Text(const QString &value)
+{
+    PhoneListData::instance().reminder2Text.setValue(value.toStdString());
+}
+
+QString PhoneListDataQml::reminder2Initial() const
+{
+    return QString::fromStdString(PhoneListData::instance().reminder2Initial.value());
+}
+
+void PhoneListDataQml::qmlWriteReminder2Initial(const QString &value)
+{
+    PhoneListData::instance().reminder2Initial.setValue(value.toStdString());
+}
+
+int PhoneListDataQml::contactCount() const
+{
+    return PhoneListData::instance().contactCount.value();
+}
+
+void PhoneListDataQml::qmlWriteContactCount(int value)
+{
+    PhoneListData::instance().contactCount.setValue(value);
+}
+
+int PhoneListDataQml::reminderCount() const
+{
+    return PhoneListData::instance().reminderCount.value();
+}
+
+void PhoneListDataQml::qmlWriteReminderCount(int value)
+{
+    PhoneListData::instance().reminderCount.setValue(value);
+}
+
+void PhoneListDataQml::clear()
+{
+    PhoneListData::instance().clear();
+}
+
 SimulatorQml::SimulatorQml(QObject *parent)
     : QObject(parent)
 {
@@ -520,6 +753,9 @@ SystemDataQml::SystemDataQml(QObject *parent)
     d.speedoStyle.setOnChanged([this] { emit speedoStyleChanged(); });
     d.antiTheftArmed.setOnChanged([this] { emit antiTheftArmedChanged(); });
     d.theftCaptures.setOnChanged([this] { emit theftCapturesChanged(); });
+    d.profile0Name.setOnChanged([this] { emit profile0NameChanged(); });
+    d.profile1Name.setOnChanged([this] { emit profile1NameChanged(); });
+    d.profile2Name.setOnChanged([this] { emit profile2NameChanged(); });
 }
 
 int SystemDataQml::hours() const
@@ -682,6 +918,36 @@ void SystemDataQml::qmlWriteTheftCaptures(int value)
     SystemData::instance().theftCaptures.setValue(value);
 }
 
+QString SystemDataQml::profile0Name() const
+{
+    return QString::fromStdString(SystemData::instance().profile0Name.value());
+}
+
+void SystemDataQml::qmlWriteProfile0Name(const QString &value)
+{
+    SystemData::instance().profile0Name.setValue(value.toStdString());
+}
+
+QString SystemDataQml::profile1Name() const
+{
+    return QString::fromStdString(SystemData::instance().profile1Name.value());
+}
+
+void SystemDataQml::qmlWriteProfile1Name(const QString &value)
+{
+    SystemData::instance().profile1Name.setValue(value.toStdString());
+}
+
+QString SystemDataQml::profile2Name() const
+{
+    return QString::fromStdString(SystemData::instance().profile2Name.value());
+}
+
+void SystemDataQml::qmlWriteProfile2Name(const QString &value)
+{
+    SystemData::instance().profile2Name.setValue(value.toStdString());
+}
+
 void SystemDataQml::tick()
 {
     SystemData::instance().tick();
@@ -740,6 +1006,83 @@ void SystemDataQml::toggleSpeedoStyle()
 void SystemDataQml::clearTheftCaptures()
 {
     SystemData::instance().clearTheftCaptures();
+}
+
+TripDataQml::TripDataQml(QObject *parent)
+    : QObject(parent)
+{
+    TripData &d = TripData::instance();
+    d.rideMinutes.setOnChanged([this] { emit rideMinutesChanged(); });
+    d.socUsedPercent.setOnChanged([this] { emit socUsedPercentChanged(); });
+    d.ecoShare.setOnChanged([this] { emit ecoShareChanged(); });
+    d.normalShare.setOnChanged([this] { emit normalShareChanged(); });
+    d.sportShare.setOnChanged([this] { emit sportShareChanged(); });
+    d.recorded.setOnChanged([this] { emit recordedChanged(); });
+}
+
+int TripDataQml::rideMinutes() const
+{
+    return TripData::instance().rideMinutes.value();
+}
+
+void TripDataQml::qmlWriteRideMinutes(int value)
+{
+    TripData::instance().rideMinutes.setValue(value);
+}
+
+int TripDataQml::socUsedPercent() const
+{
+    return TripData::instance().socUsedPercent.value();
+}
+
+void TripDataQml::qmlWriteSocUsedPercent(int value)
+{
+    TripData::instance().socUsedPercent.setValue(value);
+}
+
+int TripDataQml::ecoShare() const
+{
+    return TripData::instance().ecoShare.value();
+}
+
+void TripDataQml::qmlWriteEcoShare(int value)
+{
+    TripData::instance().ecoShare.setValue(value);
+}
+
+int TripDataQml::normalShare() const
+{
+    return TripData::instance().normalShare.value();
+}
+
+void TripDataQml::qmlWriteNormalShare(int value)
+{
+    TripData::instance().normalShare.setValue(value);
+}
+
+int TripDataQml::sportShare() const
+{
+    return TripData::instance().sportShare.value();
+}
+
+void TripDataQml::qmlWriteSportShare(int value)
+{
+    TripData::instance().sportShare.setValue(value);
+}
+
+bool TripDataQml::recorded() const
+{
+    return TripData::instance().recorded.value();
+}
+
+void TripDataQml::qmlWriteRecorded(bool value)
+{
+    TripData::instance().recorded.setValue(value);
+}
+
+void TripDataQml::reset()
+{
+    TripData::instance().reset();
 }
 
 VehicleDataQml::VehicleDataQml(QObject *parent)

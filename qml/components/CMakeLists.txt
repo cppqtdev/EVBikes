@@ -13,6 +13,7 @@ qt_add_qml_module(cluster_components
         CallScreen.qml
         CaptionText.qml
         DampedInt.qml
+        DemoNotice.qml
         FadeLine.qml
         GlassButton.qml
         GlowBand.qml

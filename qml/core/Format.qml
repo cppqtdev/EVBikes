@@ -95,46 +95,49 @@ QtObject {
         return "" + (v % 10)
     }
 
+    // Contacts and reminders come off the phone link, three slots each. An
+    // unpaired phone leaves them empty, which is the truth rather than a list
+    // of people the firmware made up.
     function contactName(index) {
-        if (index === 0) return qsTr("Karan")
-        if (index === 1) return qsTr("Akash")
-        return qsTr("Myra")
+        if (index === 0) return PhoneListData.contact0Name
+        if (index === 1) return PhoneListData.contact1Name
+        return PhoneListData.contact2Name
     }
 
     function contactBody(index) {
-        if (index === 0) return qsTr("Reached the office, see you soon")
-        if (index === 1) return qsTr("Lunch at 1?")
-        return qsTr("Call me when you are free")
+        if (index === 0) return PhoneListData.contact0Text
+        if (index === 1) return PhoneListData.contact1Text
+        return PhoneListData.contact2Text
     }
 
     function contactInitial(index) {
-        if (index === 0) return qsTr("K")
-        if (index === 1) return qsTr("A")
-        return qsTr("M")
+        if (index === 0) return PhoneListData.contact0Initial
+        if (index === 1) return PhoneListData.contact1Initial
+        return PhoneListData.contact2Initial
     }
 
     function reminderName(index) {
-        if (index === 0) return qsTr("Service due")
-        if (index === 1) return qsTr("Insurance renewal")
-        return qsTr("Tyre check")
+        if (index === 0) return PhoneListData.reminder0Name
+        if (index === 1) return PhoneListData.reminder1Name
+        return PhoneListData.reminder2Name
     }
 
     function reminderBody(index) {
-        if (index === 0) return qsTr("In 240 km")
-        if (index === 1) return qsTr("12 November")
-        return qsTr("Every 15 days")
+        if (index === 0) return PhoneListData.reminder0Text
+        if (index === 1) return PhoneListData.reminder1Text
+        return PhoneListData.reminder2Text
     }
 
     function reminderInitial(index) {
-        if (index === 0) return qsTr("S")
-        if (index === 1) return qsTr("I")
-        return qsTr("T")
+        if (index === 0) return PhoneListData.reminder0Initial
+        if (index === 1) return PhoneListData.reminder1Initial
+        return PhoneListData.reminder2Initial
     }
 
     function profileName(index) {
-        if (index === 0) return qsTr("JASH")
-        if (index === 1) return qsTr("RISHI")
-        return qsTr("KEVIN")
+        if (index === 0) return SystemData.profile0Name !== "" ? SystemData.profile0Name : qsTr("RIDER 1")
+        if (index === 1) return SystemData.profile1Name !== "" ? SystemData.profile1Name : qsTr("RIDER 2")
+        return SystemData.profile2Name !== "" ? SystemData.profile2Name : qsTr("RIDER 3")
     }
 
     function alertTitle(kind) {

@@ -2,8 +2,10 @@
 #include "ClusterInput.h"
 #include "NavigationData.h"
 #include "PhoneData.h"
+#include "PhoneListData.h"
 #include "Simulator.h"
 #include "SystemData.h"
+#include "TripData.h"
 #include "VehicleData.h"
 #include "../src/backend/Backend.h"
 #include "../src/core/can/VehicleCanDecoder.h"
@@ -48,6 +50,12 @@ int main()
     CHECK(!NavigationData::instance().roadName.value().empty());
     CHECK(PhoneData::instance().connected.value());
     CHECK(PhoneData::instance().trackTitle.value() == "Dandelions");
+    CHECK(PhoneListData::instance().contactCount.value() == 3);
+    CHECK(PhoneListData::instance().reminderCount.value() == 3);
+    CHECK(PhoneListData::instance().contact0Name.value() == "Karan");
+    CHECK(PhoneListData::instance().contact0Initial.value() == "K");
+    CHECK(PhoneListData::instance().reminder2Name.value() == "Tyre check");
+
     CHECK(SystemData::instance().clockValid.value());
     CHECK(AlertData::instance().kind.value() == AlertData::NoAlert);
 
@@ -105,6 +113,38 @@ int main()
     CHECK(gotButton == ClusterInput::Ok);
 
     PhoneData::instance().mediaNext();
+
+    // The run above packs fifteen simulated seconds into no real time at all,
+    // and the trip recorder measures against the clock, so give it one.
+    TripData &trip = TripData::instance();
+    trip.reset();
+    VehicleData &vehicle = VehicleData::instance();
+    vehicle.speedKmh.setValue(40);
+    vehicle.batteryPercent.setValue(80);
+    vehicle.rideMode.setValue(VehicleData::Eco);
+    uint32_t clock = 100000;
+    // The first call after a gap only sets the mark; time is measured from
+    // there, which is why the loop is primed.
+    trip.update(clock);
+    for (int i = 0; i < 360; ++i) {
+        if (i == 240)
+            vehicle.rideMode.setValue(VehicleData::Sport);
+        if (i == 350)
+            vehicle.batteryPercent.setValue(71);
+        clock += 1000;
+        trip.update(clock);
+    }
+    CHECK(trip.recorded.value());
+    CHECK(trip.rideMinutes.value() == 6);
+    CHECK(trip.ecoShare.value() == 67);
+    CHECK(trip.sportShare.value() == 33);
+    CHECK(trip.ecoShare.value() + trip.normalShare.value() + trip.sportShare.value() == 100);
+    CHECK(trip.socUsedPercent.value() == 9);
+
+    // Standing still adds nothing.
+    vehicle.speedKmh.setValue(0);
+    trip.update(clock + 2000);
+    CHECK(trip.rideMinutes.value() == 6);
 
     // Let the bus fall silent for longer than the node timeout: the readings
     // must be marked stale, and come back when the frames do.

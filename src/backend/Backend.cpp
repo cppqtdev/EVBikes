@@ -7,7 +7,9 @@
 #include "AlertData.h"
 #include "NavigationData.h"
 #include "PhoneData.h"
+#include "PhoneListData.h"
 #include "SystemData.h"
+#include "TripData.h"
 #include "VehicleData.h"
 
 #include <qul/eventqueue.h>
@@ -76,6 +78,11 @@ public:
         p.notificationSender.setValue(std::string(n.sender));
         p.notificationText.setValue(std::string(n.text));
         p.notificationSeq.setValue(p.notificationSeq.value() + 1);
+    }
+
+    void onListEntry(const evb::link::ListEntry &e) override
+    {
+        PhoneListData::instance().setEntry(static_cast<int>(e.list), e.slot, std::string(e.title), std::string(e.text));
     }
 
     void onTimeSync(const evb::link::TimeSync &t) override
@@ -202,6 +209,7 @@ void periodic(uint32_t nowMs)
     setIfChanged(vehicle.batteryStale, g_decoder.batteryStale());
     setIfChanged(vehicle.lampsStale, g_decoder.lampsStale());
 
+    TripData::instance().update(nowMs);
     evaluateAlerts();
 
     PhoneData &phone = PhoneData::instance();
@@ -209,6 +217,7 @@ void periodic(uint32_t nowMs)
         phone.connected.setValue(false);
         phone.callStatus.setValue(PhoneData::Idle);
         NavigationData::instance().clear();
+        PhoneListData::instance().clear();
         g_phoneParser.reset();
     }
 }

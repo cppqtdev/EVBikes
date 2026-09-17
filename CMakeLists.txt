@@ -35,7 +35,9 @@ set(EVB_BACKEND_SOURCES
     src/backend/VehicleData.cpp
     src/backend/NavigationData.cpp
     src/backend/PhoneData.cpp
+    src/backend/PhoneListData.cpp
     src/backend/SystemData.cpp
+    src/backend/TripData.cpp
     src/backend/AlertData.cpp
     src/backend/ClusterInput.cpp
     src/backend/Simulator.cpp

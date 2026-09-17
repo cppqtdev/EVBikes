@@ -1,5 +1,7 @@
 import QtQuick
 import ClusterCore
+import ClusterBackend
+import ClusterComponents
 
 // Documents list; the middle row is the selected one. View only when stopped.
 PageBase {
@@ -14,8 +16,12 @@ PageBase {
         ListElement { title: "Driving license" }
     }
 
+    DemoNotice {
+        subject: qsTr("Your documents")
+    }
+
     Repeater {
-        model: docs
+        model: SystemData.demoMode ? docs : 0
 
         Item {
             property int slot: (index - Router.subIndex + 4) % 3

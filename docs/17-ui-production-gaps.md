@@ -8,27 +8,37 @@ Ordered by what would embarrass you first on a real bike.
 
 ---
 
-## A. The UI shows numbers that are not real
+## A. Numbers that were not real — closed
 
-A rider cannot tell a fake number from a real one. These read as live data and
-are not.
+What the trip page claimed, and where it comes from now:
 
-| where | shows | truth |
-|---|---|---|
-| `BikeStatusPage` | Ride time `92 mins` | literal |
-| `BikeStatusPage` | Fuel savings `104 Rs` | literal |
-| `BikeStatusPage` | SOC consumed `53 %` | literal |
-| `BikeStatusPage` | `50 % Eco / 40 % Normal / 10 % Sport` | three literals |
-| `Format.reminderBody` | Insurance renewal `12 November` | literal |
-| `MiscPage` | three contacts and three reminders | literals in `Format` |
+- **Ride time, SOC consumed and the Eco / Normal / Sport split** were the
+  literals `92 mins`, `53 %` and `50 / 40 / 10`. A new `TripData` singleton
+  measures them: moving time and time per ride mode accumulated against the
+  clock, state of charge remembered from the moment the bike first moved, and
+  the whole lot reset when the rider zeroes the bike's own trip counter. Before
+  the bike has moved the page shows `--` rather than a figure.
+- **Fuel savings** was `104 Rs`. Both the lifetime card and the trip card now
+  divide by one named figure, `petrolRupeesPerKm`, so they cannot disagree. It
+  is still an assumption, and it is labelled as one: it wants to become a
+  setting the owner can correct for their fuel price.
+- **Contacts and reminders** were six strings inside `Format.qml`. They arrive
+  over the phone link now, as message `0x13 ListEntry` (documented in
+  `docs/03-protocols.md`), three slots per list, held in `PhoneListData`. The
+  simulator sends the sample rows so the demo still shows something. An
+  unpaired phone leaves the lists empty and the page says so; the link going
+  quiet clears them, so nothing about the rider stays on screen after their
+  phone has gone.
+- **Rider names** were `JASH`, `RISHI`, `KEVIN`. They are `SystemData`
+  properties now, empty until somebody enrols a profile, and the screen shows
+  `RIDER 1` and so on until then.
+- **`PaymentPage` and `DigilockerPage`** have no service behind them and cannot
+  get one here. They carry a `DEMO` badge in demo mode, and outside demo mode
+  their sample content is not drawn at all — a shipped cluster will not show a
+  document or a toll that does not exist.
 
-Three whole pages hold no backend reference at all: **`DigilockerPage`**,
-**`PaymentPage`**, **`ProfilePage`** (one reference). They are pictures of
-features, not features.
-
-**To close:** every one of these needs a property on a C++ singleton and a
-signal behind it. Until then they should not ship, or should be marked as
-demo content.
+**Still open:** the payment and document pages need a real service before they
+mean anything; the demo notice only stops them from lying in the meantime.
 
 ---
 

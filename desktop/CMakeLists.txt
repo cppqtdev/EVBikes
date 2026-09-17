@@ -18,7 +18,9 @@ qt_add_library(evb_backend STATIC
     ${EVB_ROOT}/src/backend/VehicleData.cpp
     ${EVB_ROOT}/src/backend/NavigationData.cpp
     ${EVB_ROOT}/src/backend/PhoneData.cpp
+    ${EVB_ROOT}/src/backend/PhoneListData.cpp
     ${EVB_ROOT}/src/backend/SystemData.cpp
+    ${EVB_ROOT}/src/backend/TripData.cpp
     ${EVB_ROOT}/src/backend/AlertData.cpp
     ${EVB_ROOT}/src/backend/ClusterInput.cpp
     ${EVB_ROOT}/src/backend/Simulator.cpp

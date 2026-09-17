@@ -262,21 +262,28 @@ QtObject {
     // Misc: subIndex = tab (0 messages, 1 music, 2 reminders). On a list tab OK
     // steps into the rows (subLevel = 1 + row), where OK calls that contact.
     function handleMiscButton(up, down, ok) {
+        var rows = subIndex === 0 ? PhoneListData.contactCount : PhoneListData.reminderCount
         if (subLevel === 0) {
             if (up) subIndex = (subIndex + 2) % 3
             else if (down) subIndex = (subIndex + 1) % 3
             else if (ok && subIndex === 1) PhoneData.mediaPlayPause()
-            else if (ok) subLevel = 1
+            else if (ok && rows > 0) subLevel = 1
+            return
+        }
+        if (rows < 1) {
+            subLevel = 0
             return
         }
         var row = subLevel - 1
-        if (up) subLevel = 1 + (row + 2) % 3
-        else if (down) subLevel = 1 + (row + 1) % 3
+        if (up) subLevel = 1 + (row + rows - 1) % rows
+        else if (down) subLevel = 1 + (row + 1) % rows
         else if (ok && subIndex === 0) placeCall(row)
     }
 
     function placeCall(row) {
-        PhoneData.callerName = Format.contactName(row)
+        var name = Format.contactName(row)
+        if (name === "") return
+        PhoneData.callerName = name
         PhoneData.callStatus = PhoneData.Active
     }
 

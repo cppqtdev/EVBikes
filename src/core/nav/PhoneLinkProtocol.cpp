@@ -201,6 +201,16 @@ void Parser::dispatch(MsgType type, const uint8_t *payload, std::size_t len)
         if (r.ok()) m_handler.onNotification(n); else m_handler.onFrameError();
         break;
     }
+    case MsgType::ListEntry: {
+        ListEntry e;
+        const uint8_t list = r.u8();
+        e.list = list < static_cast<uint8_t>(ListId::Count) ? static_cast<ListId>(list) : ListId::Contacts;
+        e.slot = r.u8();
+        r.text(e.title, kMaxText);
+        r.text(e.text, kMaxText);
+        if (r.ok() && e.slot < kMaxListSlots) m_handler.onListEntry(e); else m_handler.onFrameError();
+        break;
+    }
     case MsgType::TimeSync: {
         TimeSync t;
         t.unixSeconds = r.u32();
@@ -257,6 +267,19 @@ std::size_t encodeNavUpdate(const NavUpdate &nav, uint8_t *out, std::size_t outS
     if (!w.ok())
         return 0;
     return buildFrame(MsgType::NavUpdate, payload, w.size(), out, outSize);
+}
+
+std::size_t encodeListEntry(const ListEntry &entry, uint8_t *out, std::size_t outSize)
+{
+    uint8_t payload[kMaxPayload];
+    Writer w(payload, sizeof(payload));
+    w.u8(static_cast<uint8_t>(entry.list));
+    w.u8(entry.slot);
+    w.text(entry.title);
+    w.text(entry.text);
+    if (!w.ok())
+        return 0;
+    return buildFrame(MsgType::ListEntry, payload, w.size(), out, outSize);
 }
 
 } // namespace evb::link

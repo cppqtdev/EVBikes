@@ -3,6 +3,8 @@
 #include <qul/property.h>
 #include <qul/singleton.h>
 
+#include <string>
+
 struct SystemData : public Qul::Singleton<SystemData>
 {
     enum AuthState { AuthIdle = 0, AuthScanning, AuthMatched, AuthDenied };
@@ -25,6 +27,12 @@ struct SystemData : public Qul::Singleton<SystemData>
     Qul::Property<int> speedoStyle;
     Qul::Property<bool> antiTheftArmed;
     Qul::Property<int> theftCaptures;
+
+    // Rider names belong to whoever enrolled the profile. Empty until then, so
+    // the screen shows a slot number rather than a person nobody registered.
+    Qul::Property<std::string> profile0Name;
+    Qul::Property<std::string> profile1Name;
+    Qul::Property<std::string> profile2Name;
 
     SystemData();
 

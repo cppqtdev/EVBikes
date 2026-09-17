@@ -10,15 +10,21 @@ PageBase {
 
     pageId: Router.menuBikeStatus
 
-    property int petrolRupeesPerKm: 3
+    // Rupees a petrol bike would have burnt over the same kilometre. An
+    // assumption the cluster cannot measure, so it is named once here and both
+    // the lifetime card and the trip card divide by the same figure. It wants
+    // to become a setting the owner can correct for their own fuel price.
+    property real petrolRupeesPerKm: 3
     property int co2GramsPerKm: 45
     property bool tripView: Router.subLevel === 1
 
-    // Ride-mode split for the last trip. The ring and the caption both read
-    // these, so they cannot drift apart.
-    property int ecoShare: 50
-    property int normalShare: 40
-    property int sportShare: 10
+    // Ride-mode split for the last trip, measured by TripData. The ring and the
+    // caption both read these, so they cannot drift apart. Before the bike has
+    // moved there is no split to draw, and an even third each says that more
+    // honestly than a ring that claims a ride nobody took.
+    property int ecoShare: TripData.recorded ? TripData.ecoShare : 34
+    property int normalShare: TripData.recorded ? TripData.normalShare : 33
+    property int sportShare: TripData.recorded ? TripData.sportShare : 33
 
     readonly property real ringRadius: 85
     readonly property real ringCx: 100
@@ -66,7 +72,7 @@ PageBase {
             x: 666
             y: 118
             title: qsTr("Fuel savings:")
-            value: Math.round(VehicleData.odometerKm * page.petrolRupeesPerKm / 20) + " Rs"
+            value: Math.round(VehicleData.odometerKm * page.petrolRupeesPerKm) + " Rs"
             iconSource: "qrc:/assets/icons/36/fuel_can.png"
         }
 
@@ -217,10 +223,35 @@ PageBase {
             font.pixelSize: 18
         }
 
-        TripStat { x: 382; y: 128; title: qsTr("Ride time:"); value: qsTr("92 mins") }
-        TripStat { x: 750; y: 128; title: qsTr("Distance:"); value: Format.tenths(VehicleData.tripKmX10) + " km" }
-        TripStat { x: 382; y: 254; title: qsTr("Fuel savings:"); value: "104 Rs" }
-        TripStat { x: 750; y: 254; title: qsTr("SOC consumed:"); value: "53 %" }
+        TripStat {
+            x: 382
+            y: 128
+            title: qsTr("Ride time:")
+            value: TripData.recorded ? TripData.rideMinutes + qsTr(" mins") : "--"
+        }
+
+        TripStat {
+            x: 750
+            y: 128
+            title: qsTr("Distance:")
+            value: Format.tenths(VehicleData.tripKmX10) + " km"
+        }
+
+        TripStat {
+            x: 382
+            y: 254
+            title: qsTr("Fuel savings:")
+            value: TripData.recorded
+                   ? Math.round(VehicleData.tripKmX10 * page.petrolRupeesPerKm / 10) + " Rs"
+                   : "--"
+        }
+
+        TripStat {
+            x: 750
+            y: 254
+            title: qsTr("SOC consumed:")
+            value: TripData.recorded ? TripData.socUsedPercent + " %" : "--"
+        }
 
         Rectangle {
             x: 612
