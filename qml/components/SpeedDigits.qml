@@ -34,8 +34,33 @@ Item {
     readonly property int stepHeight: 3
     readonly property int tailTop: fadeTop + fadeSteps * stepHeight
 
+    // The reference carries a soft footing under the number: measured below the
+    // baseline it falls 89, 69, 53, 34, 23, 14 over seven rows, hugging each
+    // stem rather than lying in a band. There is no blur on this renderer, so
+    // it is three copies of the same glyphs pushed down and faded. Matched to
+    // within three levels at every row.
+    readonly property int shadowSteps: 3
+
     width: 460
     height: 200
+
+    Repeater {
+        model: speed.shadowSteps
+
+        Text {
+            x: 0
+            y: 2 + index * 2
+            width: 390
+            horizontalAlignment: Text.AlignRight
+            text: speed.shownText
+            color: speed.inkTail
+            opacity: index === 0 ? 0.55 : (index === 1 ? 0.30 : 0.10)
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSpeed
+            font.bold: true
+            font.italic: true
+        }
+    }
 
     Text {
         id: base
