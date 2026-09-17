@@ -89,25 +89,19 @@ Item {
         }
     }
 
+    // The plate under the mode word is there in every state on the reference,
+    // and it is dark: measured about 32 levels while riding and 30 under the
+    // alert word, where this drew a 78 only when alerting or focused. There is
+    // no bright line along its top either.
     ColorizedImage {
         x: 590
         y: 0
         source: "qrc:/assets/cluster/chip.png"
-        color: dock.modeFocus ? Theme.surfaceSelected : "#4E4E4E"
-        visible: Theme.alertMode || dock.modeFocus
+        color: dock.modeFocus ? Theme.surfaceSelected : "#222222"
 
         Behavior on color {
             ColorAnimation { duration: Theme.animFast }
         }
-    }
-
-    Rectangle {
-        x: 590
-        y: 0
-        width: 96
-        height: 1
-        color: "#9AA0A3"
-        visible: Theme.alertMode || dock.modeFocus
     }
 
     Text {
