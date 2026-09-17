@@ -6,7 +6,7 @@ import ClusterBackend
 Item {
     id: trip
 
-    property int value: Math.floor(VehicleData.tripKmX10 / 10)
+    property int value: Format.distanceValueKm(Math.floor(VehicleData.tripKmX10 / 10))
 
     width: 180
     height: 90

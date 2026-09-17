@@ -158,14 +158,16 @@ PageBase {
         Icon { x: 634; y: 255; size: 20; source: "qrc:/assets/icons/20/back_curve.png"; color: Theme.textPrimary }
     }
 
+    // Six rows now that units are a setting, so each is 30 tall to keep the
+    // list clear of the carousel at 303.
     Column {
         x: 400
-        y: 120
+        y: 118
         spacing: 0
         visible: page.tab === 2
 
         MenuRow {
-            height: 35
+            height: 30
             title: qsTr("Theme")
             value: SystemData.nightMode ? qsTr("Night") : qsTr("Day")
             iconSource: "qrc:/assets/icons/24/sun.png"
@@ -173,7 +175,7 @@ PageBase {
         }
 
         MenuRow {
-            height: 35
+            height: 30
             title: qsTr("Brightness")
             value: SystemData.brightness + "%"
             iconSource: "qrc:/assets/icons/24/sun.png"
@@ -181,7 +183,7 @@ PageBase {
         }
 
         MenuRow {
-            height: 35
+            height: 30
             title: qsTr("Clock format")
             value: SystemData.use24Hour ? "24 h" : "12 h"
             iconSource: "qrc:/assets/icons/24/clock.png"
@@ -189,19 +191,27 @@ PageBase {
         }
 
         MenuRow {
-            height: 35
-            title: qsTr("Speedometer style")
-            value: SystemData.speedoStyle === SystemData.SpeedoHex ? qsTr("Hexagon") : qsTr("Classic")
+            height: 30
+            title: qsTr("Units")
+            value: SystemData.useMiles ? qsTr("Miles") : qsTr("Kilometres")
             iconSource: "qrc:/assets/icons/24/compass.png"
             selected: page.row === 3
         }
 
         MenuRow {
-            height: 35
+            height: 30
+            title: qsTr("Speedometer style")
+            value: SystemData.speedoStyle === SystemData.SpeedoHex ? qsTr("Hexagon") : qsTr("Classic")
+            iconSource: "qrc:/assets/icons/24/compass.png"
+            selected: page.row === 4
+        }
+
+        MenuRow {
+            height: 30
             title: qsTr("Demo mode")
             value: Simulator.running ? qsTr("On") : qsTr("Off")
             iconSource: "qrc:/assets/icons/24/info.png"
-            selected: page.row === 4
+            selected: page.row === 5
         }
     }
 }

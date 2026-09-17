@@ -64,7 +64,7 @@ PageBase {
             x: 423
             y: 118
             title: qsTr("Travelled:")
-            value: VehicleData.odometerKm + " km"
+            value: Format.distanceValueKm(VehicleData.odometerKm) + " " + Format.distanceUnitName()
             iconSource: "qrc:/assets/icons/36/route_loop.png"
         }
 
@@ -234,7 +234,7 @@ PageBase {
             x: 750
             y: 128
             title: qsTr("Distance:")
-            value: Format.tenths(VehicleData.tripKmX10) + " km"
+            value: Format.tenthsKm(VehicleData.tripKmX10) + " " + Format.distanceUnitName()
         }
 
         TripStat {

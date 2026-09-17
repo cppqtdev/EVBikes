@@ -341,6 +341,7 @@ class SystemDataQml : public QObject
     Q_PROPERTY(int minutes READ minutes WRITE qmlWriteMinutes NOTIFY minutesChanged FINAL)
     Q_PROPERTY(bool clockValid READ clockValid WRITE qmlWriteClockValid NOTIFY clockValidChanged FINAL)
     Q_PROPERTY(bool use24Hour READ use24Hour WRITE qmlWriteUse24Hour NOTIFY use24HourChanged FINAL)
+    Q_PROPERTY(bool useMiles READ useMiles WRITE qmlWriteUseMiles NOTIFY useMilesChanged FINAL)
     Q_PROPERTY(bool nightMode READ nightMode WRITE qmlWriteNightMode NOTIFY nightModeChanged FINAL)
     Q_PROPERTY(int brightness READ brightness WRITE qmlWriteBrightness NOTIFY brightnessChanged FINAL)
     Q_PROPERTY(bool softwareDimming READ softwareDimming WRITE qmlWriteSoftwareDimming NOTIFY softwareDimmingChanged FINAL)
@@ -373,6 +374,8 @@ public:
     void qmlWriteClockValid(bool value);
     bool use24Hour() const;
     void qmlWriteUse24Hour(bool value);
+    bool useMiles() const;
+    void qmlWriteUseMiles(bool value);
     bool nightMode() const;
     void qmlWriteNightMode(bool value);
     int brightness() const;
@@ -410,6 +413,7 @@ public:
     Q_INVOKABLE bool submitPin(int pin);
     Q_INVOKABLE void setBrightnessLevel(int level);
     Q_INVOKABLE void toggleClockFormat();
+    Q_INVOKABLE void toggleUnits();
     Q_INVOKABLE void setClock(int unixSeconds, int utcOffsetMinutes);
     Q_INVOKABLE void selectProfile(int index);
     Q_INVOKABLE void startScan();
@@ -423,6 +427,7 @@ signals:
     void minutesChanged();
     void clockValidChanged();
     void use24HourChanged();
+    void useMilesChanged();
     void nightModeChanged();
     void brightnessChanged();
     void softwareDimmingChanged();

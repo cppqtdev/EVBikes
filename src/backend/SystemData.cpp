@@ -20,6 +20,7 @@ int32_t g_clockBaseSecondsOfDay = 0;
 SystemData::SystemData()
 {
     use24Hour.setValue(false);
+    useMiles.setValue(false);
     brightness.setValue(80);
     softwareDimming.setValue(!evb::platform::hasBacklight());
     locked.setValue(true);
@@ -86,6 +87,11 @@ void SystemData::setBrightnessLevel(int level)
 void SystemData::toggleClockFormat()
 {
     use24Hour.setValue(!use24Hour.value());
+}
+
+void SystemData::toggleUnits()
+{
+    useMiles.setValue(!useMiles.value());
 }
 
 void SystemData::selectProfile(int index)

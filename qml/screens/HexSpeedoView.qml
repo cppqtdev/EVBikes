@@ -9,6 +9,7 @@ Item {
     id: hex
 
     property int speed: VehicleData.speedKmh
+    property int shownSpeed: Format.speedValue(speed)
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -69,7 +70,7 @@ Item {
     NumberReadout {
         x: 321
         y: 248
-        value: VehicleData.rangeKm
+        value: Format.distanceValueKm(VehicleData.rangeKm)
         stale: VehicleData.batteryStale
         fit: true
         pixelSize: 48
@@ -119,13 +120,14 @@ Item {
     HexGauge {
         speed: hex.speed
         stale: VehicleData.driveStale
+        miles: SystemData.useMiles
     }
 
     // Centred on 640 with a fixed 37 px cell per digit, the pitch measured on
     // the reference, so the reading counts without shifting under itself.
     DampedInt {
         id: speedDamper
-        source: hex.speed
+        source: hex.shownSpeed
     }
 
     NumberReadout {
@@ -143,7 +145,7 @@ Item {
     Text {
         x: 683
         y: 304
-        text: qsTr("Kmph")
+        text: Format.speedUnitWord()
         color: "#5FE8BE"
         font.family: Theme.fontFamily
         font.pixelSize: 18

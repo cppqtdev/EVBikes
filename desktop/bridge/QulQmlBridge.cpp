@@ -741,6 +741,7 @@ SystemDataQml::SystemDataQml(QObject *parent)
     d.minutes.setOnChanged([this] { emit minutesChanged(); });
     d.clockValid.setOnChanged([this] { emit clockValidChanged(); });
     d.use24Hour.setOnChanged([this] { emit use24HourChanged(); });
+    d.useMiles.setOnChanged([this] { emit useMilesChanged(); });
     d.nightMode.setOnChanged([this] { emit nightModeChanged(); });
     d.brightness.setOnChanged([this] { emit brightnessChanged(); });
     d.softwareDimming.setOnChanged([this] { emit softwareDimmingChanged(); });
@@ -797,6 +798,16 @@ bool SystemDataQml::use24Hour() const
 void SystemDataQml::qmlWriteUse24Hour(bool value)
 {
     SystemData::instance().use24Hour.setValue(value);
+}
+
+bool SystemDataQml::useMiles() const
+{
+    return SystemData::instance().useMiles.value();
+}
+
+void SystemDataQml::qmlWriteUseMiles(bool value)
+{
+    SystemData::instance().useMiles.setValue(value);
 }
 
 bool SystemDataQml::nightMode() const
@@ -982,6 +993,11 @@ void SystemDataQml::setBrightnessLevel(int level)
 void SystemDataQml::toggleClockFormat()
 {
     SystemData::instance().toggleClockFormat();
+}
+
+void SystemDataQml::toggleUnits()
+{
+    SystemData::instance().toggleUnits();
 }
 
 void SystemDataQml::setClock(int unixSeconds, int utcOffsetMinutes)

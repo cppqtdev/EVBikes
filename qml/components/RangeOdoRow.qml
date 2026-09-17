@@ -30,7 +30,7 @@ Item {
         id: rangeValue
         x: 525
         y: 1
-        value: VehicleData.rangeKm
+        value: Format.distanceValueKm(VehicleData.rangeKm)
         stale: VehicleData.batteryStale
         fit: true
         pixelSize: 30
@@ -42,7 +42,7 @@ Item {
     Text {
         x: rangeValue.x + rangeValue.width + 5
         y: 15
-        text: "km"
+        text: Format.distanceUnitName()
         color: Theme.textPrimary
         font.family: Theme.fontFamily
         font.pixelSize: 16
@@ -64,7 +64,7 @@ Item {
         id: odoValue
         x: 728
         y: 1
-        value: VehicleData.odometerKm
+        value: Format.distanceValueKm(VehicleData.odometerKm)
         stale: VehicleData.driveStale
         fit: true
         pixelSize: 30
@@ -77,7 +77,7 @@ Item {
     Text {
         x: odoValue.x + odoValue.width + 5
         y: 15
-        text: "km"
+        text: Format.distanceUnitName()
         color: Theme.textPrimary
         font.family: Theme.fontFamily
         font.pixelSize: 16

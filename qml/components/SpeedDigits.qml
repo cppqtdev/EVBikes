@@ -6,8 +6,8 @@ import ClusterBackend
 Item {
     id: speed
 
-    property int value: VehicleData.speedKmh
-    property string unit: "KPH"
+    property int value: Format.speedValue(VehicleData.speedKmh)
+    property string unit: Format.speedUnit()
     property color bodyColor: Theme.digitGrey
     property color tailColor: Theme.sport || Theme.alertMode ? "#E7B3A6" : Theme.digitShade
 

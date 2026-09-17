@@ -10,6 +10,15 @@ Item {
     property int speed: 0
     property int clamped: Math.max(0, Math.min(150, speed))
     property bool stale: false
+    property bool miles: false
+
+    // The printed scale is calibrated in km/h. In miles the same tick
+    // carries the same speed in the rider's unit, so the numbers and
+    // the needle still agree.
+    function labelText(kmh) {
+        return miles ? "" + Math.round(kmh * 0.621371) : "" + kmh
+    }
+
     property int litHalves: stale ? 0 : Math.round(3 + clamped / 10)
     property color litColor: "#7DFFDB"
     property color offColor: "#3C3C3D"
@@ -187,7 +196,7 @@ Item {
         y: 165
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "0"
+        text: gauge.labelText(0)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18
@@ -199,7 +208,7 @@ Item {
         y: 101
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "20"
+        text: gauge.labelText(20)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18
@@ -211,7 +220,7 @@ Item {
         y: 56
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "40"
+        text: gauge.labelText(40)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18
@@ -223,7 +232,7 @@ Item {
         y: 27
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "60"
+        text: gauge.labelText(60)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18
@@ -235,7 +244,7 @@ Item {
         y: 27
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "80"
+        text: gauge.labelText(80)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18
@@ -247,7 +256,7 @@ Item {
         y: 52
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "100"
+        text: gauge.labelText(100)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18
@@ -259,7 +268,7 @@ Item {
         y: 99
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "120"
+        text: gauge.labelText(120)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18
@@ -271,7 +280,7 @@ Item {
         y: 162
         width: 48
         horizontalAlignment: Text.AlignHCenter
-        text: "140"
+        text: gauge.labelText(140)
         color: "#EEF1F1"
         font.family: Theme.fontFamily
         font.pixelSize: 18

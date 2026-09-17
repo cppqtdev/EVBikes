@@ -23,6 +23,12 @@ Item {
     // The route is drawn, not picked from a set of pictures, so it can move
     // while the trip runs. Lateral says which way the road goes; nearness is
     // how close the turn is, and pulls the bend down towards the rider.
+    // Past a kilometre, or a mile in miles, the turn distance is drawn as plain
+    // text rather than counted down digit by digit.
+    readonly property bool longWay: SystemData.useMiles
+                                    ? NavigationData.distanceToManeuverM * Format.feetPerMetre >= Format.feetPerMile
+                                    : NavigationData.distanceToManeuverM >= 1000
+
     readonly property int startX: 640
     readonly property int startY: 316
     readonly property int endY: 112
@@ -144,14 +150,16 @@ Item {
             color: Theme.textPrimary
         }
 
-        // Under a kilometre the metres count down digit by digit; above it the
-        // reading changes slowly enough to be plain text.
+        // Under a kilometre (or a mile) the small unit counts down digit by
+        // digit; above it the reading changes slowly enough to be plain text.
         NumberReadout {
             id: turnDistance
             x: 620
             y: 88
-            visible: NavigationData.distanceToManeuverM < 1000
-            value: NavigationData.distanceToManeuverM
+            visible: !map.longWay
+            value: SystemData.useMiles
+                   ? Math.round(NavigationData.distanceToManeuverM * Format.feetPerMetre)
+                   : NavigationData.distanceToManeuverM
             fit: true
             pixelSize: 26
             widthFactor: 0.58
@@ -161,7 +169,7 @@ Item {
             x: turnDistance.x + turnDistance.width + 5
             y: 96
             visible: turnDistance.visible
-            text: qsTr("m")
+            text: SystemData.useMiles ? qsTr("ft") : qsTr("m")
             color: Theme.textPrimary
             font.family: Theme.fontFamily
             font.pixelSize: 17
@@ -170,7 +178,7 @@ Item {
         Text {
             x: 620
             y: 92
-            visible: NavigationData.distanceToManeuverM >= 1000
+            visible: map.longWay
             text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
                   + Format.distanceUnit(NavigationData.distanceToManeuverM)
             color: Theme.textPrimary

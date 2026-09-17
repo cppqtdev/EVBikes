@@ -297,8 +297,8 @@ QtObject {
             return
         }
         var row = subLevel - 1
-        if (up) subLevel = 1 + (row + 4) % 5
-        else if (down) subLevel = 1 + (row + 1) % 5
+        if (up) subLevel = 1 + (row + 5) % 6
+        else if (down) subLevel = 1 + (row + 1) % 6
         else if (ok) activateThemeRow(row)
     }
 
@@ -310,8 +310,10 @@ QtObject {
         else if (row === 2)
             SystemData.toggleClockFormat()
         else if (row === 3)
-            SystemData.toggleSpeedoStyle()
+            SystemData.toggleUnits()
         else if (row === 4)
+            SystemData.toggleSpeedoStyle()
+        else if (row === 5)
             Simulator.running = !Simulator.running
     }
 }

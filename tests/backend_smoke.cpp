@@ -98,6 +98,14 @@ int main()
     CHECK(sys.brightness.value() == 10);
     sys.setBrightnessLevel(120);
     CHECK(sys.brightness.value() == 100);
+    // Units are a display choice only: nothing stored changes with them.
+    const int odoBefore = v.odometerKm.value();
+    CHECK(!sys.useMiles.value());
+    sys.toggleUnits();
+    CHECK(sys.useMiles.value());
+    CHECK(v.odometerKm.value() == odoBefore);
+    sys.toggleUnits();
+    CHECK(!sys.useMiles.value());
     sys.selectProfile(2);
     sys.startScan();
     sys.completeScan();

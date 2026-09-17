@@ -22,7 +22,48 @@ QtObject {
         return hours < 12 ? "am" : "pm"
     }
 
+    // Everything below the screen works in kilometres. The rider's choice of
+    // units is applied here, where the number is drawn, so no reading is ever
+    // stored or sent converted.
+    readonly property real milesPerKm: 0.621371
+    readonly property real feetPerMetre: 3.28084
+    readonly property int feetPerMile: 5280
+
+    function speedValue(kmh) {
+        return SystemData.useMiles ? Math.round(kmh * milesPerKm) : kmh
+    }
+
+    function speedUnit() {
+        return SystemData.useMiles ? qsTr("MPH") : qsTr("KPH")
+    }
+
+    function speedUnitWord() {
+        return SystemData.useMiles ? qsTr("Mph") : qsTr("Kmph")
+    }
+
+    function distanceValueKm(km) {
+        return SystemData.useMiles ? Math.round(km * milesPerKm) : km
+    }
+
+    function distanceUnitName() {
+        return SystemData.useMiles ? qsTr("mi") : qsTr("km")
+    }
+
+    function tenthsKm(valueX10) {
+        return tenths(SystemData.useMiles ? Math.round(valueX10 * milesPerKm) : valueX10)
+    }
+
     function distanceValue(meters) {
+        if (SystemData.useMiles) {
+            var feet = meters * feetPerMetre
+            if (feet >= feetPerMile * 10)
+                return "" + Math.round(feet / feetPerMile)
+            if (feet >= feetPerMile)
+                return Math.floor(feet / feetPerMile) + "." + Math.floor((feet % feetPerMile) / (feetPerMile / 10))
+            if (feet >= 500)
+                return "" + Math.round(feet / 100) * 100
+            return "" + Math.round(feet / 10) * 10
+        }
         if (meters >= 10000)
             return "" + Math.round(meters / 1000)
         if (meters >= 1000)
@@ -33,6 +74,8 @@ QtObject {
     }
 
     function distanceUnit(meters) {
+        if (SystemData.useMiles)
+            return meters * feetPerMetre >= feetPerMile ? qsTr("mi") : qsTr("ft")
         return meters >= 1000 ? "km" : "m"
     }
 

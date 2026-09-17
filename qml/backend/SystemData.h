@@ -14,6 +14,9 @@ struct SystemData : public Qul::Singleton<SystemData>
     Qul::Property<int> minutes;
     Qul::Property<bool> clockValid;
     Qul::Property<bool> use24Hour;
+    // Distance and speed are held in kilometres throughout the backend. This
+    // only changes what the screens draw, never what is stored or sent.
+    Qul::Property<bool> useMiles;
     Qul::Property<bool> nightMode;
     Qul::Property<int> brightness;
     // True when brightness has to be applied by dimming the picture, because
@@ -44,6 +47,7 @@ struct SystemData : public Qul::Singleton<SystemData>
     bool submitPin(int pin);
     void setBrightnessLevel(int level);
     void toggleClockFormat();
+    void toggleUnits();
     void setClock(int unixSeconds, int utcOffsetMinutes);
 
     void selectProfile(int index);
