@@ -222,9 +222,15 @@ that is still the measuring tools in `tools/uicompare`.
   flat. Wants pre-rendered art, not a runtime blur.
 - The **bar knee**: `BAR_KNEE_RADIUS` is 30 and applied to the centre line,
   but the segments are cut by straight lines, so the bend can read angular.
-- The **hexagon gauge lights three segments at zero**, because `litHalves` is
-  `Math.round(3 + clamped / 10)`. There is no zero-speed reference frame to
-  check the intent against, so it was left alone.
+- The **hexagon gauge's segment count is right**, and the three-at-zero is the
+  design, not a bug. Sampling each of the twenty piece masks against the only
+  hexagon frames in the capture (around `frame_1280`, at 20 km/h) shows pieces
+  0 to 4 lit and the sixth barely touched: five halves. `Math.round(3 + 20/10)`
+  is five, so the formula lands on it exactly. A count proportional to the
+  printed 0–140 scale would give three at 20, so the reference must carry an
+  offset of its own. There is still no zero-speed or high-speed hexagon frame,
+  so the offset's exact size and what happens at the top of the scale are
+  unconfirmed.
 
 ---
 
