@@ -6,7 +6,7 @@ import ClusterCore
 Item {
     id: chrome
 
-    property real progress: 0.95
+    property real progress: 1.0
     property color printColor: "#5FD6B4"
 
     width: Theme.screenWidth
