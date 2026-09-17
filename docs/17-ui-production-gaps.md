@@ -155,10 +155,26 @@ at all.
 - The title's own size was already right: Inter Regular at 22 measures 141 px
   against the reference's 140.
 
-**Still open:** the bike drawing on this screen is 144 by 135 where the
-reference's is about 180 by 83 — a different motorcycle, as section G says, and
-not something a position tweak fixes. And twenty-two screens have still never
-been compared to anything, the crash and SOS overlays first among them.
+**Crash overlay, measured against `frame_0660`:** the same offset centre line,
+at 656 here. The WARNING ribbon's text was 20 px where the reference measures
+21 (its ink is exactly 100 px wide at that size), the CRASH DETECTED ribbon sat
+4 px right and 3 px low, and the small warning triangle beneath the message was
+2 px low. The redrawn triangle fixes that glyph here too: it is 31 by 31 on the
+reference, and the old squat one could not be.
+
+**Tyre overlay, measured against `frame_0570`:** content sits about x 645 on
+this one. "TIRE PSI LOW" was 28 px and is 26 — the reference ink is 170 by 20,
+which Inter Bold at 26 matches exactly — and its colour was `#D4203A` where the
+reference peaks at `#99102F`. "Tire Inflation Required" was 18 px and is 16.
+The pressure bar was already right: 128 px wide from x 580, to the pixel.
+
+**Still open:** the bike drawings are the wrong shape on all three screens —
+144 by 135 against about 180 by 83 on the overheat screen, 160 by 150 against
+189 by 92 on the crash screen, 87 by 82 against 107 by 52 on the tyre screen.
+That is section G's "different motorcycle", and not something a position tweak
+fixes. Twenty screens have still never been compared to anything, and
+`frame_0450` shows a sport-mode ride screen with a route prompt and a
+quick-action row that this UI does not have at all.
 
 ---
 

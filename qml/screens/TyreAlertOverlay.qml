@@ -5,8 +5,12 @@ import ClusterBackend
 import ClusterComponents
 
 // Low tyre pressure card over the dimmed riding screen.
+//
+// Measured against frame_0570. This screen's content sits about x 645.
 Item {
     id: tyre
+
+    readonly property int axis: 645
 
     property bool front: AlertData.kind === AlertData.LowTyreFront
     property int psiX10: front ? VehicleData.tyreFrontPsiX10 : VehicleData.tyreRearPsiX10
@@ -40,26 +44,26 @@ Item {
     }
 
     Text {
-        x: 0
-        y: 172
+        x: tyre.axis - Theme.screenWidth / 2
+        y: 174
         width: Theme.screenWidth
         horizontalAlignment: Text.AlignHCenter
         text: Format.alertTitle(AlertData.kind)
-        color: "#D4203A"
+        color: "#99102F"
         font.family: Theme.fontFamily
-        font.pixelSize: 28
+        font.pixelSize: 26
         font.bold: true
     }
 
     Text {
-        x: 0
-        y: 234
+        x: tyre.axis - Theme.screenWidth / 2
+        y: 236
         width: Theme.screenWidth
         horizontalAlignment: Text.AlignHCenter
         text: Format.alertAdvice(AlertData.kind) + (tyre.front ? qsTr(" (front)") : qsTr(" (rear)"))
         color: Theme.textPrimary
         font.family: Theme.fontFamily
-        font.pixelSize: 18
+        font.pixelSize: 16
     }
 
     Text {
@@ -123,7 +127,7 @@ Item {
     }
 
     Text {
-        x: 0
+        x: tyre.axis - Theme.screenWidth / 2
         y: 336
         width: Theme.screenWidth
         horizontalAlignment: Text.AlignHCenter

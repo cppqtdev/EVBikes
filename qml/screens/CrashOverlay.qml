@@ -5,8 +5,13 @@ import ClusterBackend
 import ClusterComponents
 
 // Crash card, then SOS countdown with "push right to cancel".
+//
+// Measured against frame_0660. Like the overheat screen, this one is laid out
+// about a centre line at 656 rather than the middle of the display.
 Item {
     id: crash
+
+    readonly property int axis: 656
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -32,8 +37,9 @@ Item {
         }
 
         Ribbon {
-            x: 485
-            y: 97
+            x: crash.axis - width / 2
+            y: 99
+            fontSize: 21
             text: qsTr("WARNING")
         }
 
@@ -52,8 +58,8 @@ Item {
         }
 
         Ribbon {
-            x: 490
-            y: 265
+            x: crash.axis - width / 2
+            y: 262
             text: qsTr("CRASH DETECTED")
             topColor: "#9A1426"
             bottomColor: "#5C0A14"
@@ -63,8 +69,8 @@ Item {
         }
 
         Text {
-            x: 0
-            y: 303
+            x: crash.axis - Theme.screenWidth / 2
+            y: 302
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("SOS will be sent to your emergency contacts")
@@ -75,7 +81,7 @@ Item {
 
         Icon {
             x: 639
-            y: 340
+            y: 338
             size: 34
             source: "qrc:/assets/icons/34/triangle.png"
             color: Theme.red
