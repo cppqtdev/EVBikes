@@ -194,6 +194,15 @@ def symmetric(mask_left):
     return ImageChops.lighter(mask_left, mask_left.transpose(Image.FLIP_LEFT_RIGHT))
 
 
+def polygon_mask(points):
+    """1x alpha mask for a polygon, drawn supersampled so its edge is not a
+    staircase. A mask built straight at 1x keeps every step it was drawn with,
+    and those steps survive whatever is multiplied over it."""
+    img = Image.new("L", (W * SS, H * SS), 0)
+    ImageDraw.Draw(img).polygon(sc(points), fill=255)
+    return img.resize((W, H), Image.LANCZOS)
+
+
 def alpha_image(mask):
     layer = Image.new("RGBA", mask.size, (255, 255, 255, 0))
     layer.putalpha(mask)
@@ -233,11 +242,7 @@ def make_shell():
     save(alpha_image(ImageChops.multiply(edge, vertical_ramp(20, 260, 70, 255))), "shell_edge")
 
     # centre lift: the middle of the panel is slightly lighter than the edges
-    mask = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(mask).polygon(SHELL, fill=255)
-    ride = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(ride).polygon(ride_body_polygon(), fill=255)
-    mask = ImageChops.multiply(mask, ride)
+    mask = ImageChops.multiply(polygon_mask(SHELL), polygon_mask(ride_body_polygon()))
     lift = Image.new("L", (W, H), 0)
     ImageDraw.Draw(lift).ellipse([290, 60, 990, 440], fill=255)
     lift = lift.filter(ImageFilter.GaussianBlur(90))
@@ -461,8 +466,7 @@ def inner_side_mask():
     c = bar_centre()
     first, last = c[0], c[-1]
     poly = [(first[0], -200)] + c + [(last[0] + 400, last[1]), (last[0] + 400, -200)]
-    m = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(m).polygon(poly, fill=255)
+    m = polygon_mask(poly)
     right = Image.new("L", (W, H), 0)
     ImageDraw.Draw(right).rectangle([0, 0, W // 2, H], fill=255)
     return ImageChops.multiply(m, right)
@@ -852,8 +856,7 @@ def make_progress_glow():
 
 
 def make_red_floor():
-    mask = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(mask).polygon(SHELL, fill=255)
+    mask = polygon_mask(SHELL)
     grad = Image.new("L", (W, H), 0)
     gd = ImageDraw.Draw(grad)
     for y in range(H):

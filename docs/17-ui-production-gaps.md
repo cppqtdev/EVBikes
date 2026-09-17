@@ -99,28 +99,32 @@ miles cannot use this build.
 
 ---
 
-## D. Rendering and sharpness, what is left of the class
+## D. Rendering and sharpness — closed
 
 Several faults this session came from one habit: art built at one times, or
-with a filter that does not preserve an edge. The ones found and fixed were
-the housing chamfer, the outer border, the boot bar, the charging ring, the
-last-ride ring and the premultiplied-alpha fringe. What remains of the same
-class:
+with a filter that does not preserve an edge. The ones found and fixed earlier
+were the housing chamfer, the outer border, the boot bar, the charging ring,
+the last-ride ring and the premultiplied-alpha fringe. The rest of the class:
 
-- **Five masks in `generate_cluster_art.py` are still drawn at one times** and
-  then multiplied into other art, so their stair-stepped edges survive into
-  the result: lines 237 and 239 (`shell_vignette`), 242 (the centre lift
-  ellipse), 856 and the bike masks. Every other line in that file draws at
-  `SS` and downsamples.
-- **Nineteen text blocks ask for italic with no bold weight.** Only
-  `Inter-Bold`, `Inter-BoldItalic`, `Inter-Regular` and `Inter-SemiBold`
-  ship - there is no regular italic - so Qt synthesises an oblique by
-  shearing the upright face. It is visibly worse than a real italic, and
-  eight of the nineteen are the `0` to `140` labels around the hexagon gauge,
-  which is the most-looked-at text on that screen. Either ship
-  `Inter-Italic` or drop italic where the weight is not bold.
-- **Two runtime-scaled images**: `StatCard` and `GlassButton` set a width on
-  art that was generated at another size, so it is resampled every frame.
+- **The masks drawn at one times** now go through a `polygon_mask` helper that
+  draws at `SS` and downsamples, like every other line in the generator.
+  `floor_glow`'s left edge went from a single step of 0 → 165 to a ramp of
+  24, 94, 157, 165; `shell_vignette` and `panel_haze` gained the same. Paper-
+  rendering the ride screen before and after moves 654 pixels by at most 13
+  levels, all of them on those edges: the shapes did not move, the staircases
+  went.
+- **The missing italic faces are shipped.** `tools/generate_italic_faces.py`
+  slants the roman outlines at Inter's own italic angle (-9.4 degrees, the
+  figure Inter Bold Italic reports) to build `Inter-Italic` and
+  `Inter-SemiBoldItalic`. Measured on a rendered stem, all five italic faces
+  now slant 9.73 degrees; advance widths are unchanged and ink differs by
+  under 1.5 per cent. `tools/font_check.py` fails the build if a face loses
+  its italic partner, and it runs in CI.
+- **Nothing is resampled at runtime.** Both images turned out to be drawn at
+  their own size, so the audit was wrong about the scaling. The real fault was
+  `GlassButton`'s glow: a fixed 320 x 200 halo on buttons from 112 to 273 wide,
+  nearly three times the width of the small ones. There are two sizes of glow
+  now and the button picks the one that fits.
 
 ---
 
