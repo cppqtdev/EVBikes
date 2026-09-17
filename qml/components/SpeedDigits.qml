@@ -11,13 +11,13 @@ Item {
     property color bodyColor: Theme.digitGrey
     property color tailColor: Theme.sport || Theme.alertMode ? "#E7B3A6" : Theme.digitShade
 
-    // The raw speed steps in whole km/h, which reads as the number flickering.
-    // Follow it instead, and draw the rounded position.
-    property real shown: value
-    readonly property int shownValue: Math.round(shown)
+    // The raw speed changes many times a second, which reads as the number
+    // flickering. Follow it at a readable rate instead.
+    readonly property int shownValue: damper.value
 
-    Behavior on shown {
-        NumberAnimation { duration: Theme.animSlow }
+    DampedInt {
+        id: damper
+        source: speed.value
     }
 
     // Fade band measured on the reference frames: 18 rows, then a flat tail.

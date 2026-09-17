@@ -120,10 +120,15 @@ Item {
 
     // Centred on 640 with a fixed 37 px cell per digit, the pitch measured on
     // the reference, so the reading counts without shifting under itself.
+    DampedInt {
+        id: speedDamper
+        source: hex.speed
+    }
+
     NumberReadout {
         x: 640 - width / 2
         y: 272
-        value: hex.speed
+        value: speedDamper.value
         digits: 3
         centered: true
         pixelSize: 64
