@@ -97,8 +97,19 @@ def down(img, w=W, h=H):
     return img.resize((w, h), Image.LANCZOS)
 
 
+# Alpha below this contributes nothing visible, but it does not survive the
+# premultiplied round trip: a premultiplied (0, 1, 1) at alpha 1 unpremultiplies
+# to pure cyan. That is where the band of #00FFFF and #00FF00 across the top of
+# the screen came from - panel_haze alone had 29000 pixels in that range.
+ALPHA_FLOOR = 5
+
+
 def save(img, name):
     os.makedirs(OUT, exist_ok=True)
+    if img.mode == "RGBA":
+        r, g, b, a = img.split()
+        a = a.point(lambda v: 0 if v < ALPHA_FLOOR else v)
+        img = Image.merge("RGBA", (r, g, b, a))
     img.save(os.path.join(OUT, name + ".png"))
 
 

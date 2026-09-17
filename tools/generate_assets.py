@@ -24,9 +24,19 @@ def canvas(size):
     return img, ImageDraw.Draw(img)
 
 
+# See generate_cluster_art.py: alpha in this range unpremultiplies to saturated
+# colour and shows up as stray cyan and green pixels.
+ALPHA_FLOOR = 5
+
+
 def save(img, size, folder, name):
     os.makedirs(folder, exist_ok=True)
-    img.resize((size, size), Image.LANCZOS).save(os.path.join(folder, name + ".png"))
+    out = img.resize((size, size), Image.LANCZOS)
+    if out.mode == "RGBA":
+        r, g, b, a = out.split()
+        a = a.point(lambda v: 0 if v < ALPHA_FLOOR else v)
+        out = Image.merge("RGBA", (r, g, b, a))
+    out.save(os.path.join(folder, name + ".png"))
 
 
 def s(v):
