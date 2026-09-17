@@ -932,7 +932,23 @@ def wheel(base, cx, cy, r, scale, masks=None):
 # Your own bike render (any size, transparent background). Kept outside assets/cluster
 # so the big source file is not packed into the firmware.
 BIKE_PHOTO = os.path.join(ROOT, "assets", "source", "bike.png")
-BIKE_SIZES = (110, 180, 200, 260)
+# Only the two the ride and pre-ride screens ask for; the alert screens use the
+# side view below.
+BIKE_SIZES = (180, 260)
+# The alert screens want the side view, which the reference draws long and low:
+# about 180 x 83 on the overheat card, 189 x 92 on the crash card and 107 x 52
+# on the tyre card. The photo above is a three-quarter render and cannot be
+# those shapes, so the side view is drawn here and kept as its own family.
+# Keyed by the screen that uses it, and sized to the box the reference draws
+# there, measured on the grey of the bike itself: the tyre card 107 x 52, the
+# overheat card 168 x 79, the crash card 189 x 92.
+# Each entry is the box the reference draws on that screen, measured on the grey
+# of the bike itself, and the tint masks that screen actually uses.
+BIKE_SIDE_SIZES = {
+    "tyre": (107, 52, ("wheel", "front")),
+    "heat": (168, 79, ()),
+    "crash": (189, 92, ("rear",)),
+}
 # Regions on the source photo, as fractions of its width / height
 BIKE_REAR_WHEEL = (0.08, 0.42, 0.28, 0.72)
 BIKE_REAR_PART = 0.40
@@ -974,12 +990,15 @@ def make_bike_side():
     w, h, s = 260, 130, 4
     base = Image.new("RGBA", (w * s, h * s), (0, 0, 0, 0))
     rear_wheel = Image.new("L", base.size, 0)
+    front_wheel = Image.new("L", base.size, 0)
     rear_part = Image.new("L", base.size, 0)
     d = ImageDraw.Draw(base)
     # shadow
     d.ellipse([30 * s, 116 * s, 230 * s, 128 * s], fill=(0, 0, 0, 120))
+    # Drawn nose right and flipped below, so this is the rear wheel and the one
+    # at 206 is the front. The tyre card lights whichever tyre is low.
     wheel(base, 58, 96, 30, s, rear_wheel)
-    wheel(base, 206, 96, 30, s)
+    wheel(base, 206, 96, 30, s, front_wheel)
     # swing arm and fork
     d.line([(58 * s, 96 * s), (112 * s, 82 * s)], fill=(120, 124, 126, 255), width=7 * s)
     d.line([(206 * s, 96 * s), (186 * s, 36 * s)], fill=(160, 164, 166, 255), width=6 * s)
@@ -1003,14 +1022,35 @@ def make_bike_side():
     d.polygon([(198 * s, 34 * s), (206 * s, 36 * s), (200 * s, 44 * s)], fill=(250, 250, 250, 255))
     if os.path.exists(BIKE_PHOTO):
         make_bike_from_photo()
-        return
-    for ow in (110, 180, 200, 260):
-        oh = ow // 2
-        save(base.resize((ow, oh), Image.LANCZOS), f"bike_{ow}")
-        for name, mask in (("wheel", rear_wheel), ("rear", ImageChops.lighter(rear_part, rear_wheel))):
+
+    # The red section on the crash card keeps the wheel's rim and spokes in the
+    # reference. A flat disc mask tints to a flat disc, so the masks carry the
+    # drawing's own shading and the tint follows it.
+    shade = base.convert("RGB").convert("L").point(lambda v: min(255, int(v * 1.6) + 40))
+    rear_wheel = ImageChops.multiply(rear_wheel, shade)
+    front_wheel = ImageChops.multiply(front_wheel, shade)
+    rear_part = ImageChops.multiply(rear_part, shade)
+
+    # The reference draws the bike nose to the left, this was drawn nose right.
+    base = base.transpose(Image.FLIP_LEFT_RIGHT)
+    rear_wheel = rear_wheel.transpose(Image.FLIP_LEFT_RIGHT)
+    front_wheel = front_wheel.transpose(Image.FLIP_LEFT_RIGHT)
+    rear_part = rear_part.transpose(Image.FLIP_LEFT_RIGHT)
+
+    # The cast shadow under the bike is black on a black panel, so it is invisible
+    # on screen but would still count towards a bounding box. Measure the box off
+    # the lit part only, then fit that to each screen's own box.
+    rgb = base.convert("RGB").convert("L")
+    lit = ImageChops.multiply(rgb.point(lambda v: 255 if v > 20 else 0), base.getchannel("A"))
+    box = lit.point(lambda v: 255 if v > 8 else 0).getbbox()
+    masks = {"wheel": rear_wheel, "front": front_wheel,
+             "rear": ImageChops.lighter(rear_part, rear_wheel)}
+    for name, (ow, oh, parts) in BIKE_SIDE_SIZES.items():
+        save(base.crop(box).resize((ow, oh), Image.LANCZOS), f"bikeside_{name}")
+        for part in parts:
             layer = Image.new("RGBA", (ow, oh), (255, 255, 255, 0))
-            layer.putalpha(mask.resize((ow, oh), Image.LANCZOS))
-            save(layer, f"bike_{ow}_{name}")
+            layer.putalpha(masks[part].crop(box).resize((ow, oh), Image.LANCZOS))
+            save(layer, f"bikeside_{name}_{part}")
 
 
 def front_line_parts():

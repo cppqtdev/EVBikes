@@ -41,10 +41,11 @@ Item {
             font.pixelSize: 22
         }
 
+        // The side view, at the box the reference draws it in.
         Image {
-            x: 560
-            y: 98
-            source: "qrc:/assets/cluster/bike_180.png"
+            x: 568
+            y: 131
+            source: "qrc:/assets/cluster/bikeside_heat.png"
         }
 
         // 94 px across on the reference, which is a 108 icon once the outline's

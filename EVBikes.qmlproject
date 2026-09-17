@@ -158,14 +158,12 @@ Project {
             "assets/cluster/battery_slice9.png",
             "assets/cluster/battery_tall.png",
             "assets/cluster/battery_tall_gloss.png",
-            "assets/cluster/bike_110_rear.png",
-            "assets/cluster/bike_110_wheel.png",
             "assets/cluster/bike_180_rear.png",
             "assets/cluster/bike_180_wheel.png",
-            "assets/cluster/bike_200_rear.png",
-            "assets/cluster/bike_200_wheel.png",
             "assets/cluster/bike_260_rear.png",
             "assets/cluster/bike_260_wheel.png",
+            "assets/cluster/bikeside_crash_rear.png",
+            "assets/cluster/bikeside_tyre_wheel.png",
             "assets/cluster/callout.png",
             "assets/cluster/card_crash.png",
             "assets/cluster/card_crash_edge.png",
@@ -282,10 +280,12 @@ Project {
     ImageFiles {
         files: [
             "assets/cluster/album_art.png",
-            "assets/cluster/bike_110.png",
             "assets/cluster/bike_180.png",
-            "assets/cluster/bike_200.png",
             "assets/cluster/bike_260.png",
+            "assets/cluster/bikeside_crash.png",
+            "assets/cluster/bikeside_heat.png",
+            "assets/cluster/bikeside_tyre.png",
+            "assets/cluster/bikeside_tyre_front.png",
             "assets/cluster/payment_card.png",
             "assets/cluster/seat.png"
         ]

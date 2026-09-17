@@ -43,16 +43,17 @@ Item {
             text: qsTr("WARNING")
         }
 
+        // The side view, at the box the reference draws it in.
         Image {
-            x: 555
-            y: 109
-            source: "qrc:/assets/cluster/bike_200.png"
+            x: 562
+            y: 144
+            source: "qrc:/assets/cluster/bikeside_crash.png"
         }
 
         ColorizedImage {
-            x: 555
-            y: 109
-            source: "qrc:/assets/cluster/bike_200_rear.png"
+            x: 562
+            y: 144
+            source: "qrc:/assets/cluster/bikeside_crash_rear.png"
             color: "#D51A2E"
             opacity: 0.9
         }

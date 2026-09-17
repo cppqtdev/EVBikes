@@ -29,16 +29,19 @@ Item {
         opacity: 0.94
     }
 
+    // The side view, at the box the reference draws it in.
     Image {
-        x: 585
-        y: 86
-        source: "qrc:/assets/cluster/bike_110.png"
+        x: 591
+        y: 105
+        source: "qrc:/assets/cluster/bikeside_tyre.png"
     }
 
+    // The reference lights the wheel that is low, not always the same one.
     ColorizedImage {
-        x: 585
-        y: 86
-        source: "qrc:/assets/cluster/bike_110_wheel.png"
+        x: 591
+        y: 105
+        source: tyre.front ? "qrc:/assets/cluster/bikeside_tyre_front.png"
+                           : "qrc:/assets/cluster/bikeside_tyre_wheel.png"
         color: Theme.red
         opacity: 0.85
     }

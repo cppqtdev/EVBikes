@@ -81,8 +81,8 @@ def block(files):
 
 def write_main_project():
     tinted = image_list("icons") + image_list("turns") + image_list("images") + \
-        image_list("cluster", lambda f: f not in COLOUR_IMAGES and not f.startswith("bike_") or f.endswith(("_rear.png", "_wheel.png")))
-    colour = image_list("cluster", lambda f: f in COLOUR_IMAGES or (f.startswith("bike_") and not f.endswith(("_rear.png", "_wheel.png"))))
+        image_list("cluster", lambda f: f not in COLOUR_IMAGES and not f.startswith(("bike_", "bikeside_")) or f.endswith(("_rear.png", "_wheel.png")))
+    colour = image_list("cluster", lambda f: f in COLOUR_IMAGES or (f.startswith(("bike_", "bikeside_")) and not f.endswith(("_rear.png", "_wheel.png"))))
     fonts = [f"assets/fonts/{f}" for f in sorted(os.listdir(os.path.join(ROOT, "assets", "fonts"))) if f.endswith(".ttf")]
     text = f"""import QmlProject 1.3
 

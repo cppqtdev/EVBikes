@@ -168,11 +168,21 @@ which Inter Bold at 26 matches exactly — and its colour was `#D4203A` where th
 reference peaks at `#99102F`. "Tire Inflation Required" was 18 px and is 16.
 The pressure bar was already right: 128 px wide from x 580, to the pixel.
 
-**Still open:** the bike drawings are the wrong shape on all three screens —
-144 by 135 against about 180 by 83 on the overheat screen, 160 by 150 against
-189 by 92 on the crash screen, 87 by 82 against 107 by 52 on the tyre screen.
-That is section G's "different motorcycle", and not something a position tweak
-fixes. Twenty screens have still never been compared to anything, and
+**The bike drawings are fixed.** The source render in `assets/source/bike.png`
+is a three-quarter view and roughly square, so it could never be the long low
+side view the alert screens want. The generator's own side drawing is, and it
+now has a family of its own: `bikeside_tyre`, `bikeside_heat` and
+`bikeside_crash`, each cropped to its lit part and fitted to the exact box the
+reference draws on that screen (107 x 52, 168 x 79, 189 x 92). It was drawn
+nose-right and the reference is nose-left, so it is mirrored, and the tint masks
+carry the drawing's own shading, which keeps the rim and spokes in the crash
+card's red rear wheel instead of a flat disc. The tyre card now lights the wheel
+that is actually low. The photo family stays for the ride and pre-ride screens,
+trimmed to the two sizes they ask for.
+
+**Still open:** the side drawing is flat vector art against the reference's
+shaded render — the silhouette, the direction and the boxes match, the styling
+does not. Twenty screens have still never been compared to anything, and
 `frame_0450` shows a sport-mode ride screen with a route prompt and a
 quick-action row that this UI does not have at all.
 
