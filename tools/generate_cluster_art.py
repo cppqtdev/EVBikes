@@ -37,6 +37,9 @@ HOUSING_BOTTOM = [(416, 410), (864, 410), (929, 458), (351, 458)]
 RIDE_GLOW = [((250, 18.8), 0), ((150, 32), 16), ((88.3, 150.3), 14), ((162.6, 368.8), 24),
              ((350, 456.7), 5), ((416, 406.3), 5), ((545, 406.3), 0)]
 RIDE_TOP = (362, 4)
+# Outer border: how far outside the body it sits, and how wide the line is.
+RIDE_OUTLINE_OFFSET = 18
+RIDE_OUTLINE_WIDTH = 1.6
 
 # Bar centre line (top cut centre -> knee -> end cut centre), width and gap
 BAR_TOP, BAR_KNEE, BAR_END = (122.1, 110.0), (199.5, 337.7), (360.0, 418.5)
@@ -307,16 +310,18 @@ def make_ride_outline():
     """A thin outline sitting outside the ride body.
 
     The reference has nothing here - outside the contour it is pure black at
-    every row - so this is a deliberate addition. Dilating the body mask and
-    subtracting a slightly smaller dilation gives a ring that follows every
-    corner correctly, rounding the convex turns the way a drawn stroke would
-    not. Masked off above the housing, where the strip already closes the top.
+    every row - so this is a deliberate addition.
+
+    Offset geometrically and stroked at the supersampled scale, the way every
+    other line in this file is drawn. Dilating a one-times mask, which is what
+    this used to do, gives a square kernel: the offset comes out eighteen
+    pixels across a flat edge and twenty-five across a diagonal, so the line
+    wanders, and the mask's own stair-stepped edge survives into the result.
     """
-    body = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(body).polygon(ride_body_polygon(), fill=255)
-    outer = body.filter(ImageFilter.MaxFilter(37))
-    inner = body.filter(ImageFilter.MaxFilter(33))
-    ring = ImageChops.subtract(outer, inner).filter(ImageFilter.GaussianBlur(0.8))
+    left = rounded([RIDE_TOP] + [p for p, _ in RIDE_GLOW[:5]],
+                   [0] + [r for _, r in RIDE_GLOW[:4]] + [0], steps=24)
+    outer = offset_path(left, RIDE_OUTLINE_OFFSET)
+    ring = stroke([outer, mirror_x(outer)], RIDE_OUTLINE_WIDTH)
     # Keep it clear of the top housing only, not of the whole top of the
     # screen, so the border still wraps both upper corners.
     keep = Image.new("L", (W, H), 255)

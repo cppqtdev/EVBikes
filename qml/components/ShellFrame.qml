@@ -14,8 +14,8 @@ Item {
     property real centerLift: 0.06
     // Outer border. The reference has nothing outside the contour, so this is
     // an addition by choice; edgeOpacity 0 returns to the measured design.
-    property color edgeColor: "#4A4A4A"
-    property real edgeOpacity: 0.7
+    property color edgeColor: "#5C5C5C"
+    property real edgeOpacity: 0.85
 
     width: Theme.screenWidth
     height: Theme.screenHeight
