@@ -335,9 +335,12 @@ def make_ride_outline():
     ring = stroke([outer, mirror_x(outer)], RIDE_OUTLINE_WIDTH)
     # Keep it clear of the top housing only, not of the whole top of the
     # screen, so the border still wraps both upper corners.
+    # Fade out at the top on the same ramp the contour uses, so the border does
+    # not carry on alone past the point where the glow beside it has ended.
     keep = Image.new("L", (W, H), 255)
     ImageDraw.Draw(keep).rectangle([330, 0, 950, 60], fill=0)
-    save(alpha_image(ImageChops.multiply(ring, keep)), "ride_outline")
+    ring = ImageChops.multiply(ImageChops.multiply(ring, keep), vertical_ramp(44, 78, 0, 255))
+    save(alpha_image(ring), "ride_outline")
 
 
 def make_backing():
@@ -349,8 +352,12 @@ def make_glows():
     backing = backing_mask()
     left = ride_glow_left()
     inner = ride_glow_left(-9)
-    fades = symmetric(fade_mask([("x", 250, 170)]))
-    fades.paste(255, (0, 60, W, H))
+    # The reference has no contour at all above row 50. It first shows at row
+    # 52 at about a quarter strength, reaches two thirds by row 60 and full
+    # near row 80. Ours ran at full brightness right up to the top edge, which
+    # is why the top corners never cut cleanly - the line simply never ended,
+    # and its halo washed across the corner instead.
+    fades = vertical_ramp(44, 78, 0, 255)
     end_fade = symmetric(fade_mask([("x", 545, 470)]))
 
     def mirrored(path):
