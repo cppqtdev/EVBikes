@@ -411,9 +411,13 @@ def icon_station(d):
 
 
 def icon_triangle(d):
-    d.polygon(pts([(24, 4), (46, 42), (2, 42)]), outline=W, width=s(3))
-    line(d, [(24, 16), (24, 30)], 3.5)
-    d.ellipse([s(22), s(33), s(26), s(37)], fill=W)
+    # Measured on the overheat frame: the outline is all but square (94 wide by
+    # 93 tall), its corners are rounded, and the stroke, the bar and the dot are
+    # each about a tenth of the width. This was a squat triangle with a thin
+    # sharp-cornered outline.
+    line(d, [(24, 5.4), (42.6, 41.6), (5.4, 41.6), (24, 5.4)], 4.4)
+    line(d, [(24, 18.6), (24, 29.8)], 4.4)
+    d.ellipse([s(21.8), s(33.4), s(26.2), s(37.8)], fill=W)
 
 
 def icon_back_curve(d):

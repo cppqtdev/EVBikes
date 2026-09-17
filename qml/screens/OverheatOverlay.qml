@@ -5,8 +5,14 @@ import ClusterBackend
 import ClusterComponents
 
 // Overheating: "Slow Down!" first, then the protocol choices.
+//
+// Measured against frame_0770. The art on this screen is laid out about a
+// centre line at 655, not the middle of the display, and the centred text was
+// still at 640, so nothing lined up with anything.
 Item {
     id: heat
+
+    readonly property int axis: 655
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -17,15 +23,15 @@ Item {
         visible: AlertData.phase === 0
 
         GlowBand {
-            x: 500
+            x: heat.axis - width / 2
             y: 72
-            width: 310
-            height: 28
+            width: 256
+            height: 24
             bandColor: "#9A1426"
         }
 
         Text {
-            x: 0
+            x: heat.axis - Theme.screenWidth / 2
             y: 72
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
@@ -41,30 +47,33 @@ Item {
             source: "qrc:/assets/cluster/bike_180.png"
         }
 
+        // 94 px across on the reference, which is a 108 icon once the outline's
+        // own inset is taken off, and it sits at about half opacity over the bike.
         Icon {
-            x: 604
-            y: 112
-            size: 96
-            source: "qrc:/assets/icons/96/triangle.png"
-            color: "#D51A2E"
-            opacity: 0.9
+            x: 599
+            y: 111
+            size: 108
+            source: "qrc:/assets/icons/108/triangle.png"
+            color: "#D60006"
+            opacity: 0.5
         }
 
         Ribbon {
-            x: 485
-            y: 243
+            x: heat.axis - width / 2
+            y: 242
+            fontSize: 22
             text: qsTr("PROTOCOLS")
         }
 
         Text {
-            x: 0
-            y: 292
+            x: heat.axis - 4 - Theme.screenWidth / 2
+            y: 298
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("Slow Down!")
-            color: "#E0142A"
+            color: "#D60006"
             font.family: Theme.fontFamily
-            font.pixelSize: 46
+            font.pixelSize: 52
             font.bold: true
         }
     }

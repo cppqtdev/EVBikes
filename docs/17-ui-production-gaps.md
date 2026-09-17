@@ -128,16 +128,37 @@ the last-ride ring and the premultiplied-alpha fringe. The rest of the class:
 
 ---
 
-## E. Screens nobody has measured
+## E. Screens nobody has measured — one down, twenty-two to go
 
-Two of twenty-five screens have been checked against a reference frame: the
-classic ride screen and the hexagon speedo. The other twenty-three have never
-been compared to anything - including every alert overlay, which is the
-screen a rider sees at the worst possible moment.
+The frame numbers in the generator's comments belong to the old capture; in the
+new `all_frames/` the alert screens are elsewhere. Searching every frame for red
+ink finds them: the overheat screen is around `frame_0770`, and there are six
+other red runs worth looking at, including a sport-mode ride screen with a
+route prompt and a quick-action row (`frame_0450`) that this UI does not have
+at all.
 
-`tools/uicompare/refcluster.py` plus a frame from `all_frames/` is about ten
-minutes per screen. Worth doing for, in order: the three alert overlays, the
-pre-ride screen, the charging page, the auth screen.
+**Overheat overlay, measured against `frame_0770` and fixed:**
+
+- The screen is laid out about a centre line at **x 655**, not the middle of
+  the display. The art on it (ribbon, triangle) was already there; the centred
+  text was still at 640, so the title and "Slow Down!" did not line up with
+  anything above or below them.
+- "Slow Down!" was 46 px and is 52: the reference ink is 296 px wide and 39
+  tall, and Inter Bold at 52 measures 293 by 40. Its colour was `#E0142A` and
+  the reference is `#D60006`.
+- The warning triangle was the wrong shape. The reference outline is all but
+  square — 94 wide by 93 tall — with rounded corners and a stroke about a tenth
+  of its width; ours was 89 by 77 with a thin sharp-cornered outline. Redrawn
+  from those numbers it lands on the reference exactly: x 606..699, y 117..209.
+  It also sits at about half opacity over the bike, not 0.9.
+- The band behind the title was 310 by 28 and is 256 by 24.
+- The title's own size was already right: Inter Regular at 22 measures 141 px
+  against the reference's 140.
+
+**Still open:** the bike drawing on this screen is 144 by 135 where the
+reference's is about 180 by 83 — a different motorcycle, as section G says, and
+not something a position tweak fixes. And twenty-two screens have still never
+been compared to anything, the crash and SOS overlays first among them.
 
 ---
 
