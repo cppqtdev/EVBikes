@@ -692,7 +692,8 @@ def make_glow_blob(w, h):
         for x in range(w):
             dist = math.hypot((x - cx) / cx, (y - cy) / cy)
             a = max(0.0, 1.0 - dist) ** 2.2
-            px[x, y] = (255, 255, 255, int(a * 255))
+            level = int(a * 255)
+            px[x, y] = (255, 255, 255, level if level >= ALPHA_FLOOR else 0)
     img.save(os.path.join(IMAGES, f"glow_blob_{w}x{h}.png"))
 
 
