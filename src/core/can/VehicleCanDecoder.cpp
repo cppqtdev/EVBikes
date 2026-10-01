@@ -35,6 +35,7 @@ int32_t VehicleCanDecoder::timeoutFault(Node node)
 void VehicleCanDecoder::markSeen(Node node, uint32_t timestampMs)
 {
     m_lastSeen[node] = timestampMs;
+    m_everSeen[node] = true;
     if (!m_timedOut[node])
         return;
     m_timedOut[node] = false;

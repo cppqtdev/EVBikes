@@ -24,9 +24,19 @@ def canvas(size):
     return img, ImageDraw.Draw(img)
 
 
+# See generate_cluster_art.py: alpha in this range unpremultiplies to saturated
+# colour and shows up as stray cyan and green pixels.
+ALPHA_FLOOR = 5
+
+
 def save(img, size, folder, name):
     os.makedirs(folder, exist_ok=True)
-    img.resize((size, size), Image.LANCZOS).save(os.path.join(folder, name + ".png"))
+    out = img.resize((size, size), Image.LANCZOS)
+    if out.mode == "RGBA":
+        r, g, b, a = out.split()
+        a = a.point(lambda v: 0 if v < ALPHA_FLOOR else v)
+        out = Image.merge("RGBA", (r, g, b, a))
+    out.save(os.path.join(folder, name + ".png"))
 
 
 def s(v):
@@ -281,6 +291,25 @@ def tt_battery(d):
     d.ellipse([s(40.2), s(33), s(43.8), s(36.6)], fill=W)
 
 
+def icon_battery_bolt(d):
+    # upright battery, bolt cut out
+    d.rounded_rectangle([s(14), s(8), s(34), s(46)], radius=s(3), fill=W)
+    d.rectangle([s(19), s(3), s(29), s(8)], fill=W)
+    d.polygon(pts([(27, 13), (17, 29), (23, 29), (20, 41), (31, 24), (25, 24), (28, 13)]), fill=(0, 0, 0, 0))
+
+
+def icon_thermo(d):
+    # outline thermometer with a small degree circle
+    d.rounded_rectangle([s(12), s(4), s(24), s(32)], radius=s(6), outline=W, width=int(s(3)))
+    d.ellipse([s(7), s(26), s(29), s(46)], outline=W, width=int(s(3)))
+    d.rectangle([s(15), s(27), s(21), s(33)], fill=(0, 0, 0, 0))
+    d.ellipse([s(12), s(31), s(24), s(41)], fill=W)
+    line(d, [(18, 14), (18, 33)], 4)
+    for y in (10, 16, 22):
+        line(d, [(27, y), (31, y)], 2.5)
+    arc(d, (34, 4, 44, 14), 0, 360, 2.5)
+
+
 def icon_sun(d):
     d.ellipse([s(14), s(14), s(34), s(34)], fill=W)
     for i in range(8):
@@ -321,10 +350,15 @@ def icon_watch(d):
 
 
 def icon_compass(d):
-    arc(d, (4, 22, 44, 40), 200, 340, 2.5)
-    arc(d, (4, 22, 44, 40), 20, 160, 2.5)
-    d.polygon(pts([(24, 18), (34, 36), (24, 32), (14, 36)]), fill=W)
-    line(d, [(20, 13), (20, 4), (28, 13), (28, 4)], 2)
+    # Measured on the dock of the reference frames: a letter N above an ellipse
+    # that is open at the top and the bottom, with a solid north arrow across
+    # its foot. This drew a diamond under a zigzag that read as neither.
+    box = (2.7, 12.0, 46.0, 38.7)
+    arc(d, box, 305, 55, 2)
+    arc(d, box, 125, 235, 2)
+    d.polygon(pts([(24, 25.3), (37.3, 38.7), (24, 33.3), (10.7, 38.7)]), fill=W)
+    font = ImageFont.truetype(os.path.join(ROOT, "assets", "fonts", "Inter-Regular.ttf"), int(s(20)))
+    d.text((s(24.7), s(12)), "N", font=font, fill=W, anchor="mm")
 
 
 def icon_flag(d):
@@ -382,9 +416,13 @@ def icon_station(d):
 
 
 def icon_triangle(d):
-    d.polygon(pts([(24, 4), (46, 42), (2, 42)]), outline=W, width=s(3))
-    line(d, [(24, 16), (24, 30)], 3.5)
-    d.ellipse([s(22), s(33), s(26), s(37)], fill=W)
+    # Measured on the overheat frame: the outline is all but square (94 wide by
+    # 93 tall), its corners are rounded, and the stroke, the bar and the dot are
+    # each about a tenth of the width. This was a squat triangle with a thin
+    # sharp-cornered outline.
+    line(d, [(24, 5.4), (42.6, 41.6), (5.4, 41.6), (24, 5.4)], 4.4)
+    line(d, [(24, 18.6), (24, 29.8)], 4.4)
+    d.ellipse([s(21.8), s(33.4), s(26.2), s(37.8)], fill=W)
 
 
 def icon_back_curve(d):
@@ -493,6 +531,8 @@ ICON_SET = {
     "clock": icon_clock,
     "doc": icon_doc,
     "info": icon_info,
+    "battery_bolt": icon_battery_bolt,
+    "thermo": icon_thermo,
     "tt_left": lambda d: tt_chevron(d, True),
     "tt_right": lambda d: tt_chevron(d, False),
     "tt_high_beam": lambda d: tt_beam(d, True),
@@ -661,7 +701,8 @@ def make_glow_blob(w, h):
         for x in range(w):
             dist = math.hypot((x - cx) / cx, (y - cy) / cy)
             a = max(0.0, 1.0 - dist) ** 2.2
-            px[x, y] = (255, 255, 255, int(a * 255))
+            level = int(a * 255)
+            px[x, y] = (255, 255, 255, level if level >= ALPHA_FLOOR else 0)
     img.save(os.path.join(IMAGES, f"glow_blob_{w}x{h}.png"))
 
 

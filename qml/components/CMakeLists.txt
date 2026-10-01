@@ -6,11 +6,14 @@ qt_add_qml_module(cluster_components
     VERSION 1.0
     OUTPUT_DIRECTORY ${EVB_QML_OUT}/ClusterComponents
     QML_FILES
+        BatteryColumn.qml
         BatteryTempBars.qml
         BootChrome.qml
         BottomDock.qml
-        CallBanner.qml
+        CallScreen.qml
         CaptionText.qml
+        DampedInt.qml
+        DemoNotice.qml
         FadeLine.qml
         GlassButton.qml
         GlowBand.qml
@@ -20,6 +23,7 @@ qt_add_qml_module(cluster_components
         MenuLockHint.qml
         MenuRow.qml
         NotificationToast.qml
+        NumberReadout.qml
         PowerBar.qml
         RangeOdoRow.qml
         Ribbon.qml

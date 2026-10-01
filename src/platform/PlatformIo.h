@@ -19,4 +19,8 @@ bool sendPhoneBytes(const uint8_t *data, std::size_t len);
 
 void setBacklight(int percent);
 
+// False when the target has no backlight to turn down, so brightness has to be
+// applied to the picture instead of the panel.
+bool hasBacklight();
+
 } // namespace evb::platform

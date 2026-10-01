@@ -26,22 +26,23 @@ Item {
         font.italic: true
     }
 
-    Text {
+    NumberReadout {
         id: rangeValue
         x: 525
         y: 1
-        text: "" + VehicleData.rangeKm
-        color: Theme.textPrimary
-        font.family: Theme.fontFamily
-        font.pixelSize: 30
-        font.bold: true
-        font.italic: true
+        value: Format.distanceValueKm(VehicleData.rangeKm)
+        stale: VehicleData.batteryStale
+        fit: true
+        pixelSize: 30
+        widthFactor: 0.6
+        bold: true
+        italic: true
     }
 
     Text {
         x: rangeValue.x + rangeValue.width + 5
         y: 15
-        text: "km"
+        text: Format.distanceUnitName()
         color: Theme.textPrimary
         font.family: Theme.fontFamily
         font.pixelSize: 16
@@ -59,22 +60,24 @@ Item {
         font.italic: true
     }
 
-    Text {
+    NumberReadout {
         id: odoValue
         x: 728
         y: 1
-        text: "" + VehicleData.odometerKm
-        color: Theme.textPrimary
-        font.family: Theme.fontFamily
-        font.pixelSize: 30
-        font.bold: true
-        font.italic: true
+        value: Format.distanceValueKm(VehicleData.odometerKm)
+        stale: VehicleData.driveStale
+        fit: true
+        pixelSize: 30
+        widthFactor: 0.6
+        bold: true
+        italic: true
+        duration: Theme.animSlow
     }
 
     Text {
         x: odoValue.x + odoValue.width + 5
         y: 15
-        text: "km"
+        text: Format.distanceUnitName()
         color: Theme.textPrimary
         font.family: Theme.fontFamily
         font.pixelSize: 16

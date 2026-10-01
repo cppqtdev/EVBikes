@@ -50,6 +50,9 @@ def parse(path):
     props = [(TYPE_MAP[p.group(1)], p.group(2), p.group(1)) for p in PROP_RE.finditer(public)]
     signals = [(s.group(2), parse_args(s.group(1))) for s in SIGNAL_RE.finditer(public)]
     funcs = [(f.group(1), f.group(2), parse_args(f.group(3))) for f in FUNC_RE.finditer(public)]
+    # A function whose arguments the bridge cannot express (a std::string by
+    # reference, say) is one the backend calls itself, not one QML calls.
+    funcs = [f for f in funcs if all(t in TYPE_MAP for t, _ in f[2])]
     return {"name": name, "header": os.path.basename(path), "enums": enums, "props": props,
             "signals": signals, "funcs": funcs}
 

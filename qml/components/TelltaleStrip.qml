@@ -16,6 +16,7 @@ Item {
         y: 32 - height / 2
         size: 32
         source: "qrc:/assets/icons/32/tt_left.png"
+        blinking: !strip.selfTest
         on: strip.selfTest || VehicleData.indicatorLeft || VehicleData.hazard
         onColor: Theme.telltaleGreen
     }
@@ -41,6 +42,7 @@ Item {
         size: 28
         source: "qrc:/assets/icons/28/tt_warning.png"
         on: strip.selfTest || VehicleData.faultCode !== 0 || AlertData.level >= AlertData.LevelWarning
+            || VehicleData.driveStale || VehicleData.batteryStale
         onColor: AlertData.level === AlertData.LevelCritical || AlertData.popupVisible ? Theme.telltaleRed : Theme.telltaleAmber
     }
     Telltale {
@@ -65,6 +67,7 @@ Item {
         y: 32 - height / 2
         size: 32
         source: "qrc:/assets/icons/32/tt_right.png"
+        blinking: !strip.selfTest
         on: strip.selfTest || VehicleData.indicatorRight || VehicleData.hazard
         onColor: Theme.telltaleGreen
     }

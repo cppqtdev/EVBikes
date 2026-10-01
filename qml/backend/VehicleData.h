@@ -42,6 +42,13 @@ struct VehicleData : public Qul::Singleton<VehicleData>
     Qul::Property<int> faultCode;
     Qul::Property<bool> crashDetected;
 
+    // Set while the readings in that group are not arriving. The values above
+    // keep their last figure, so anything bound to them must show the stale
+    // look instead of the figure.
+    Qul::Property<bool> driveStale;
+    Qul::Property<bool> batteryStale;
+    Qul::Property<bool> lampsStale;
+
     VehicleData();
 
     void applySignal(int signalId, int value);

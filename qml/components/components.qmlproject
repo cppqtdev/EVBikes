@@ -7,11 +7,14 @@ Project {
 
     QmlFiles {
         files: [
+            "BatteryColumn.qml",
             "BatteryTempBars.qml",
             "BootChrome.qml",
             "BottomDock.qml",
-            "CallBanner.qml",
+            "CallScreen.qml",
             "CaptionText.qml",
+            "DampedInt.qml",
+            "DemoNotice.qml",
             "FadeLine.qml",
             "GlassButton.qml",
             "GlowBand.qml",
@@ -21,6 +24,7 @@ Project {
             "MenuLockHint.qml",
             "MenuRow.qml",
             "NotificationToast.qml",
+            "NumberReadout.qml",
             "PowerBar.qml",
             "RangeOdoRow.qml",
             "Ribbon.qml",

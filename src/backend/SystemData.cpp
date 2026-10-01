@@ -20,7 +20,9 @@ int32_t g_clockBaseSecondsOfDay = 0;
 SystemData::SystemData()
 {
     use24Hour.setValue(false);
+    useMiles.setValue(false);
     brightness.setValue(80);
+    softwareDimming.setValue(!evb::platform::hasBacklight());
     locked.setValue(true);
     pinAttemptsLeft.setValue(kMaxPinAttempts);
     demoMode.setValue(true);
@@ -42,10 +44,16 @@ void SystemData::setClock(int unixSeconds, int utcOffsetMinutes)
     tick();
 }
 
+// Runs several times a second: node timeouts and alert thresholds have to be
+// noticed sooner than the once-a-second clock work below.
+void SystemData::poll()
+{
+    Backend::periodic(evb::platform::millis());
+}
+
 void SystemData::tick()
 {
     const uint32_t now = evb::platform::millis();
-    Backend::periodic(now);
     AlertData::instance().tickSecond();
 
     if (!clockValid.value())
@@ -79,6 +87,11 @@ void SystemData::setBrightnessLevel(int level)
 void SystemData::toggleClockFormat()
 {
     use24Hour.setValue(!use24Hour.value());
+}
+
+void SystemData::toggleUnits()
+{
+    useMiles.setValue(!useMiles.value());
 }
 
 void SystemData::selectProfile(int index)

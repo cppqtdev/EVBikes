@@ -11,6 +11,16 @@ Item {
     property bool showChannel: true
     property color floorColor: Theme.red
     property real floorOpacity: 0.0
+    property real centerLift: 0.06
+    // Outer border. The reference has nothing outside the contour, so this is
+    // an addition by choice; edgeOpacity 0 returns to the measured design.
+    property color edgeColor: "#5C5C5C"
+    property real edgeOpacity: 0.85
+    // The light along the housings is not one colour in every state. Measured
+    // on the reference over the header: cool grey while riding, near white and
+    // about twice as strong in sport, amber on a full-screen alert.
+    property color housingLight: "#DEE8FF"
+    property real housingLightOpacity: 0.62
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -33,9 +43,16 @@ Item {
     }
 
     ColorizedImage {
+        source: "qrc:/assets/cluster/ride_outline.png"
+        color: frame.edgeColor
+        opacity: frame.edgeOpacity
+        visible: frame.glowStyle !== 0 && frame.edgeOpacity > 0
+    }
+
+    ColorizedImage {
         source: "qrc:/assets/cluster/shell_vignette.png"
         color: "#FFFFFF"
-        opacity: 0.06
+        opacity: frame.centerLift
     }
 
     ColorizedImage {
@@ -80,8 +97,16 @@ Item {
 
     ColorizedImage {
         source: "qrc:/assets/cluster/housing_light.png"
-        color: "#FFFFFF"
-        opacity: 0.35
+        color: frame.housingLight
+        opacity: frame.housingLightOpacity
+
+        Behavior on color {
+            ColorAnimation { duration: Theme.animSlow }
+        }
+
+        Behavior on opacity {
+            NumberAnimation { duration: Theme.animSlow }
+        }
     }
 
     ColorizedImage {
@@ -92,13 +117,6 @@ Item {
         Behavior on color {
             ColorAnimation { duration: Theme.animSlow }
         }
-    }
-
-    ColorizedImage {
-        source: "qrc:/assets/cluster/bar_edge.png"
-        color: frame.glowColor
-        opacity: 0.45
-        visible: frame.glowStyle === 1 && frame.showChannel
     }
 
     ColorizedImage {

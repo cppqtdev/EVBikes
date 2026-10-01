@@ -27,19 +27,36 @@ WHITE = (255, 255, 255, 255)
 # Auth / splash body outline
 SHELL = [(363, 5), (141.7, 35), (80.7, 137.7), (158.5, 368.5), (351.3, 461.7),
          (928.7, 461.7), (1121.5, 368.5), (1199.3, 137.7), (1138.3, 35), (938, 5)]
-HOUSING_TOP = [(362, 4), (938, 4), (882, 54), (436, 54)]
+# The chamfer is slightly less steep than it was: the reference lip sits about
+# four and a half pixels outside ours at rows 38 and 50, where the interior is
+# dark enough to locate it, while the 576 px top edge is unchanged.
+HOUSING_TOP = [(362, 4), (938, 4), (886.5, 54), (431.5, 54)]
 HOUSING_BOTTOM = [(416, 410), (864, 410), (929, 458), (351, 458)]
 
 # Ride glow contour, left half: (point, fillet radius)
 RIDE_GLOW = [((250, 18.8), 0), ((150, 32), 16), ((88.3, 150.3), 14), ((162.6, 368.8), 24),
              ((350, 456.7), 5), ((416, 406.3), 5), ((545, 406.3), 0)]
 RIDE_TOP = (362, 4)
+# Outer border: how far outside the body it sits, and how wide the line is.
+RIDE_OUTLINE_OFFSET = 6
+RIDE_OUTLINE_WIDTH = 1.6
 
 # Bar centre line (top cut centre -> knee -> end cut centre), width and gap
 BAR_TOP, BAR_KNEE, BAR_END = (122.1, 110.0), (199.5, 337.7), (360.0, 418.5)
 BAR_WIDTH = 35
 BAR_GAP = 3
 BAR_KNEE_RADIUS = 30
+# How far the top segment stops short of its cut, measured along the bar axis.
+# Along the bar's top axis the reference goes dark at s=245 and its contour
+# core sits at s=260, so thirteen pixels of black separate the MAX tile from
+# the line. Ours had four: the tile ends in the same place but the contour is
+# three pixels closer and its halo reaches further in.
+BAR_TOP_INSET = 8.0
+# How far the last segment stops short of its cut, measured along the bar axis.
+# Zero is what the reference measures: along the bar centre its last tile ends
+# at the same distance ours does. Raise it only to buy visual clearance where
+# the tile's far corner meets the contour elbow.
+BAR_END_INSET = 6.0
 # Segment boundaries, bottom end first: (outer point, inner point)
 BAR_CUTS = [((345.0, 430.0), (375.0, 408.3)),
             ((298.3, 406.7), (328.3, 386.7)),
@@ -51,6 +68,20 @@ BAR_CUTS = [((345.0, 430.0), (375.0, 408.3)),
             ((125.0, 174.3), (156.0, 146.7)),
             ((109.3, 126.7), (135.0, 93.3))]
 BAR_SEGMENTS = len(BAR_CUTS) - 1
+
+
+def _inset_cut(index, toward, amount):
+    """Pull one end cut back along the bar axis, towards the knee."""
+    dx, dy = toward[0] - BAR_KNEE[0], toward[1] - BAR_KNEE[1]
+    length = (dx * dx + dy * dy) ** 0.5
+    ux, uy = dx / length, dy / length
+    (outer, inner) = BAR_CUTS[index]
+    BAR_CUTS[index] = ((outer[0] - ux * amount, outer[1] - uy * amount),
+                       (inner[0] - ux * amount, inner[1] - uy * amount))
+
+
+_inset_cut(0, BAR_END, BAR_END_INSET)
+_inset_cut(-1, BAR_TOP, BAR_TOP_INSET)
 
 
 def canvas(w=W, h=H, scale=SS):
@@ -66,8 +97,19 @@ def down(img, w=W, h=H):
     return img.resize((w, h), Image.LANCZOS)
 
 
+# Alpha below this contributes nothing visible, but it does not survive the
+# premultiplied round trip: a premultiplied (0, 1, 1) at alpha 1 unpremultiplies
+# to pure cyan. That is where the band of #00FFFF and #00FF00 across the top of
+# the screen came from - panel_haze alone had 29000 pixels in that range.
+ALPHA_FLOOR = 5
+
+
 def save(img, name):
     os.makedirs(OUT, exist_ok=True)
+    if img.mode == "RGBA":
+        r, g, b, a = img.split()
+        a = a.point(lambda v: 0 if v < ALPHA_FLOOR else v)
+        img = Image.merge("RGBA", (r, g, b, a))
     img.save(os.path.join(OUT, name + ".png"))
 
 
@@ -152,6 +194,15 @@ def symmetric(mask_left):
     return ImageChops.lighter(mask_left, mask_left.transpose(Image.FLIP_LEFT_RIGHT))
 
 
+def polygon_mask(points):
+    """1x alpha mask for a polygon, drawn supersampled so its edge is not a
+    staircase. A mask built straight at 1x keeps every step it was drawn with,
+    and those steps survive whatever is multiplied over it."""
+    img = Image.new("L", (W * SS, H * SS), 0)
+    ImageDraw.Draw(img).polygon(sc(points), fill=255)
+    return img.resize((W, H), Image.LANCZOS)
+
+
 def alpha_image(mask):
     layer = Image.new("RGBA", mask.size, (255, 255, 255, 0))
     layer.putalpha(mask)
@@ -191,11 +242,7 @@ def make_shell():
     save(alpha_image(ImageChops.multiply(edge, vertical_ramp(20, 260, 70, 255))), "shell_edge")
 
     # centre lift: the middle of the panel is slightly lighter than the edges
-    mask = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(mask).polygon(SHELL, fill=255)
-    ride = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(ride).polygon(ride_body_polygon(), fill=255)
-    mask = ImageChops.multiply(mask, ride)
+    mask = ImageChops.multiply(polygon_mask(SHELL), polygon_mask(ride_body_polygon()))
     lift = Image.new("L", (W, H), 0)
     ImageDraw.Draw(lift).ellipse([290, 60, 990, 440], fill=255)
     lift = lift.filter(ImageFilter.GaussianBlur(90))
@@ -204,25 +251,47 @@ def make_shell():
     # housings: lighter top face fading down
     img, d = canvas()
     d.polygon(sc(HOUSING_TOP), fill=WHITE)
-    face = down(img).getchannel("A")
-    save(alpha_image(ImageChops.multiply(face, vertical_ramp(4, 54, 255, 110))), "housing_top")
+    # Soften the chamfer: across the reference's sloped end a horizontal cut
+    # ramps up over about twenty pixels, where a hard polygon steps in one.
+    top_face = down(img).getchannel("A").filter(ImageFilter.GaussianBlur(3))
+    face = top_face
+    # The reference top housing fades all the way out before its bottom edge:
+    # measured over #141414 it runs 255 at y8 down to about 13 at y52, so it
+    # dissolves into the screen instead of ending on a line.
+    save(alpha_image(ImageChops.multiply(face, vertical_ramp(4, 54, 255, 0))), "housing_top")
     img, d = canvas()
     d.polygon(sc(HOUSING_BOTTOM), fill=WHITE)
     face = down(img).getchannel("A")
     save(alpha_image(ImageChops.multiply(face, vertical_ramp(410, 458, 255, 150))), "housing_bottom")
 
     # bevel highlight along the housing edges and a soft spill below the top housing
-    spill = Image.new("L", (W, H), 0)
-    sd = ImageDraw.Draw(spill)
-    sd.polygon([(436, 54), (882, 54), (872, 74), (446, 74)], fill=70)
-    spill = spill.filter(ImageFilter.GaussianBlur(10))
+    # The glow under the strip is a step, not a blob: the reference jumps from
+    # #010101 at row 52 to #171616 at row 56 and then decays slowly. A hard
+    # band with a downward ramp and only a light blur reproduces that; a
+    # Gaussian blob washes the step out and lifts the housing above it.
+    band = polygon_mask([(432, 55), (886, 55), (876, 88), (442, 88)])
+    spill = ImageChops.multiply(band, vertical_ramp(55, 88, 72, 0)).filter(ImageFilter.GaussianBlur(2))
     bevel = Image.new("L", (W * SS, H * SS), 0)
     bd = ImageDraw.Draw(bevel)
-    bd.line(sc([HOUSING_TOP[0], HOUSING_TOP[3], HOUSING_TOP[2], HOUSING_TOP[1]]), fill=230, width=int(1.4 * SS), joint="curve")
-    bd.line(sc([HOUSING_TOP[0], HOUSING_TOP[1]]), fill=90, width=int(1.0 * SS))
+    # The top housing has a bevel on its two chamfered ends only, never along
+    # the top or bottom edge, and it strengthens downwards: measured against
+    # the interior beside it the reference lip is about +1 at row 14, +5 at
+    # row 26, +13 at row 38 and +17 at row 50. The old fill of 230 across the
+    # whole outline is what drew a white box around the telltales.
+    chamfer = Image.new("L", (W * SS, H * SS), 0)
+    cd = ImageDraw.Draw(chamfer)
+    cd.line(sc([HOUSING_TOP[0], HOUSING_TOP[3]]), fill=255, width=int(1.4 * SS))
+    cd.line(sc([HOUSING_TOP[2], HOUSING_TOP[1]]), fill=255, width=int(1.4 * SS))
+    chamfer = ImageChops.multiply(chamfer.resize((W, H), Image.LANCZOS), vertical_ramp(10, 54, 0, 55))
+    # The housing also throws a soft halo outside its chamfered ends, which is
+    # what gives it weight against the black. Measured on a column just outside
+    # the left chamfer the reference runs 21 at row 32 down to 3 at row 54.
+    halo = ImageChops.subtract(top_face.filter(ImageFilter.GaussianBlur(12)), top_face)
+    halo = halo.point(lambda v: min(255, int(v * 0.7)))
     bd.line(sc([HOUSING_BOTTOM[3], HOUSING_BOTTOM[0], HOUSING_BOTTOM[1], HOUSING_BOTTOM[2]]), fill=150, width=int(1.2 * SS), joint="curve")
     bevel = bevel.resize((W, H), Image.LANCZOS)
-    save(alpha_image(ImageChops.lighter(spill, bevel)), "housing_light")
+    lit = ImageChops.lighter(ImageChops.lighter(spill, bevel), chamfer)
+    save(alpha_image(ImageChops.lighter(lit, halo)), "housing_light")
 
 
 def stroke(paths, width, scale=SS):
@@ -252,22 +321,56 @@ def backing_mask():
     return body.filter(ImageFilter.MaxFilter(29)).filter(ImageFilter.GaussianBlur(2))
 
 
+def make_ride_outline():
+    """A thin outline sitting outside the ride body.
+
+    The reference has nothing here - outside the contour it is pure black at
+    every row - so this is a deliberate addition.
+
+    Offset geometrically and stroked at the supersampled scale, the way every
+    other line in this file is drawn. Dilating a one-times mask, which is what
+    this used to do, gives a square kernel: the offset comes out eighteen
+    pixels across a flat edge and twenty-five across a diagonal, so the line
+    wanders, and the mask's own stair-stepped edge survives into the result.
+    """
+    left = rounded([RIDE_TOP] + [p for p, _ in RIDE_GLOW[:5]],
+                   [0] + [r for _, r in RIDE_GLOW[:4]] + [0], steps=24)
+    outer = offset_path(left, RIDE_OUTLINE_OFFSET)
+    ring = stroke([outer, mirror_x(outer)], RIDE_OUTLINE_WIDTH)
+    # Keep it clear of the top housing only, not of the whole top of the
+    # screen, so the border still wraps both upper corners.
+    # Fade out at the top on the same ramp the contour uses, so the border does
+    # not carry on alone past the point where the glow beside it has ended.
+    keep = Image.new("L", (W, H), 255)
+    ImageDraw.Draw(keep).rectangle([330, 0, 950, 60], fill=0)
+    ring = ImageChops.multiply(ImageChops.multiply(ring, keep), vertical_ramp(44, 78, 0, 255))
+    save(alpha_image(ring), "ride_outline")
+
+
 def make_backing():
     save(alpha_image(backing_mask()), "shell_backing")
+    make_ride_outline()
 
 
 def make_glows():
     backing = backing_mask()
     left = ride_glow_left()
-    inner = ride_glow_left(9)
-    fades = symmetric(fade_mask([("x", 250, 170)]))
-    fades.paste(255, (0, 60, W, H))
+    inner = ride_glow_left(-9)
+    # The reference has no contour at all above row 50. It first shows at row
+    # 52 at about a quarter strength, reaches two thirds by row 60 and full
+    # near row 80. Ours ran at full brightness right up to the top edge, which
+    # is why the top corners never cut cleanly - the line simply never ended,
+    # and its halo washed across the corner instead.
+    fades = vertical_ramp(44, 78, 0, 255)
     end_fade = symmetric(fade_mask([("x", 545, 470)]))
 
     def mirrored(path):
         return [path, mirror_x(path)]
 
-    main_line = draw_glow(mirrored(left), 2.4, 7, 5)
+    # The reference contour is tight: a horizontal cut through it is about
+    # eight pixels wide in total, where a blur of 7 and a spread of 5 gave ours
+    # nearly twenty and washed into the bar beside it.
+    main_line = draw_glow(mirrored(left), 2.4, 3, 3)
     second = scale_mask(stroke(mirrored(inner[:-1]), 1.2), 0.55)
     glow = ImageChops.multiply(ImageChops.lighter(main_line, second), fades)
     glow = ImageChops.multiply(ImageChops.multiply(glow, end_fade), backing)
@@ -276,7 +379,7 @@ def make_glows():
     # alert / pre-ride style: three stacked lines fading inward
     base = Image.new("L", (W, H), 0)
     for k, off in enumerate((0, 8, 16)):
-        path = ride_glow_left(off)
+        path = ride_glow_left(-off)
         g = draw_glow(mirrored(path), 2.0, 6, 4)
         base = ImageChops.lighter(base, scale_mask(g, 1.0 - k * 0.3))
     base = ImageChops.multiply(ImageChops.multiply(ImageChops.multiply(base, fades), end_fade), backing)
@@ -362,8 +465,7 @@ def inner_side_mask():
     c = bar_centre()
     first, last = c[0], c[-1]
     poly = [(first[0], -200)] + c + [(last[0] + 400, last[1]), (last[0] + 400, -200)]
-    m = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(m).polygon(poly, fill=255)
+    m = polygon_mask(poly)
     right = Image.new("L", (W, H), 0)
     ImageDraw.Draw(right).rectangle([0, 0, W // 2, H], fill=255)
     return ImageChops.multiply(m, right)
@@ -469,11 +571,32 @@ def make_trapezoids():
     img, d = canvas(w, h)
     d.polygon(sc([(0, 0), (w, 0), (w - 10, h), (10, h)]), fill=WHITE)
     save(img.resize((w, h), Image.LANCZOS), "tile_slant")
-    # right bottom band behind mute/settings
-    w, h = 170, 50
+    # Selected settings control: a recessed well with a lit bottom lip.
+    # Measured on frame_1318: the left edge runs (770, 414) to (818, 456),
+    # the well bottoms out near black, and the last 12 rows lift to #3B3937.
+    # It has to tuck under the dock's teal line, which runs level to x868 and
+    # then falls away to the right. A straight-topped bar to x940 rides over
+    # that line and out into the RPM limb, which is what it used to do. The
+    # reference well's dark interior ends by x885 and its top drops from y421
+    # to y434 across the last twenty pixels.
+    w, h = 118, 38
     img, d = canvas(w, h)
-    d.polygon(sc([(30, 0), (w - 40, 0), (w, h), (0, h)]), fill=WHITE)
-    save(img.resize((w, h), Image.LANCZOS), "band_right")
+    d.polygon(sc([(0, 0), (98, 0), (w, 14), (w, h), (48, h)]), fill=WHITE)
+    band = img.resize((w, h), Image.LANCZOS)
+    save(band, "band_right")
+    lip = band.copy()
+    ramp = Image.new("L", (w, h))
+    pixels = ramp.load()
+    for y in range(h):
+        bottom = 0.0 if y < h - 12 else (y - (h - 12)) / 11.0
+        for x in range(w):
+            inward = x - 48.0 * y / h
+            # The wedge is narrow: measured across row 440 the reference is
+            # back to the well's dark interior about twenty pixels in.
+            side = max(0.0, 1.0 - inward / 20.0) if inward >= 0 else 0.0
+            pixels[x, y] = int(255 * min(1.0, max(bottom, side * 0.8)))
+    lip.putalpha(ImageChops.multiply(band.split()[3], ramp))
+    save(lip, "band_right_lip")
     # ribbons (WARNING / PROTOCOLS / CRASH DETECTED)
     w, h = 340, 30
     img, d = canvas(w, h)
@@ -511,7 +634,9 @@ def make_card_shapes():
     # tyre alert / crash card: wide rounded octagon
     def octagon(w, h, c):
         return [(c, 0), (w - c, 0), (w, c), (w, h - c), (w - c, h), (c, h), (0, h - c), (0, c)]
-    for name, (w, h, c) in {"card_mid": (560, 300, 50)}.items():
+    # 280 tall, not 300: at 300 the card's foot reached y 368 and the battery
+    # and temperature row starts at 363, so the plate sat on the readings.
+    for name, (w, h, c) in {"card_mid": (560, 280, 50)}.items():
         img, d = canvas(w, h)
         d.polygon(sc(octagon(w, h, c)), fill=WHITE)
         save(img.resize((w, h), Image.LANCZOS), name)
@@ -569,7 +694,7 @@ def make_terrain():
         y = horizon + 40 + (h - horizon - 40) * (1 - v) ** 1.6 - height(u, v) * (0.35 + (1 - v) * 0.5)
         return x * 2, y * 2
 
-    rows, cols = 26, 34
+    rows, cols = 38, 50
     for r in range(rows + 1):
         v = r / rows
         pts = [project(-1.4 + 2.8 * c / cols, v) for c in range(cols + 1)]
@@ -707,6 +832,11 @@ def make_cursor():
     img, d = canvas(w, h)
     d.polygon(sc([(24, 0), (48, 26), (24, 20), (0, 26)]), fill=WHITE)
     save(img.resize((w, h), Image.LANCZOS), "nav_cursor")
+    # smaller cursor for the hex view map (frame_086: 34 x 20)
+    w, h = 34, 20
+    img, d = canvas(w, h)
+    d.polygon(sc([(17, 0), (34, 18), (17, 13), (0, 18)]), fill=WHITE)
+    save(img.resize((w, h), Image.LANCZOS), "nav_cursor_small")
 
 
 def make_orbit():
@@ -727,8 +857,7 @@ def make_progress_glow():
 
 
 def make_red_floor():
-    mask = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(mask).polygon(SHELL, fill=255)
+    mask = polygon_mask(SHELL)
     grad = Image.new("L", (W, H), 0)
     gd = ImageDraw.Draw(grad)
     for y in range(H):
@@ -805,7 +934,24 @@ def wheel(base, cx, cy, r, scale, masks=None):
 # Your own bike render (any size, transparent background). Kept outside assets/cluster
 # so the big source file is not packed into the firmware.
 BIKE_PHOTO = os.path.join(ROOT, "assets", "source", "bike.png")
-BIKE_SIZES = (110, 180, 200, 260)
+# Only the size the ride screen asks for; every other screen uses the side view
+# below, which is the shape the reference draws.
+BIKE_SIZES = (180,)
+# The alert screens want the side view, which the reference draws long and low:
+# about 180 x 83 on the overheat card, 189 x 92 on the crash card and 107 x 52
+# on the tyre card. The photo above is a three-quarter render and cannot be
+# those shapes, so the side view is drawn here and kept as its own family.
+# Keyed by the screen that uses it, and sized to the box the reference draws
+# there, measured on the grey of the bike itself: the tyre card 107 x 52, the
+# overheat card 168 x 79, the crash card 189 x 92.
+# Each entry is the box the reference draws on that screen, measured on the grey
+# of the bike itself, and the tint masks that screen actually uses.
+BIKE_SIDE_SIZES = {
+    "tyre": (107, 52, ("wheel", "front")),
+    "heat": (168, 79, ()),
+    "crash": (189, 92, ("rear",)),
+    "preride": (250, 120, ()),
+}
 # Regions on the source photo, as fractions of its width / height
 BIKE_REAR_WHEEL = (0.08, 0.42, 0.28, 0.72)
 BIKE_REAR_PART = 0.40
@@ -847,12 +993,15 @@ def make_bike_side():
     w, h, s = 260, 130, 4
     base = Image.new("RGBA", (w * s, h * s), (0, 0, 0, 0))
     rear_wheel = Image.new("L", base.size, 0)
+    front_wheel = Image.new("L", base.size, 0)
     rear_part = Image.new("L", base.size, 0)
     d = ImageDraw.Draw(base)
     # shadow
     d.ellipse([30 * s, 116 * s, 230 * s, 128 * s], fill=(0, 0, 0, 120))
+    # Drawn nose right and flipped below, so this is the rear wheel and the one
+    # at 206 is the front. The tyre card lights whichever tyre is low.
     wheel(base, 58, 96, 30, s, rear_wheel)
-    wheel(base, 206, 96, 30, s)
+    wheel(base, 206, 96, 30, s, front_wheel)
     # swing arm and fork
     d.line([(58 * s, 96 * s), (112 * s, 82 * s)], fill=(120, 124, 126, 255), width=7 * s)
     d.line([(206 * s, 96 * s), (186 * s, 36 * s)], fill=(160, 164, 166, 255), width=6 * s)
@@ -876,14 +1025,35 @@ def make_bike_side():
     d.polygon([(198 * s, 34 * s), (206 * s, 36 * s), (200 * s, 44 * s)], fill=(250, 250, 250, 255))
     if os.path.exists(BIKE_PHOTO):
         make_bike_from_photo()
-        return
-    for ow in (110, 180, 200, 260):
-        oh = ow // 2
-        save(base.resize((ow, oh), Image.LANCZOS), f"bike_{ow}")
-        for name, mask in (("wheel", rear_wheel), ("rear", ImageChops.lighter(rear_part, rear_wheel))):
+
+    # The red section on the crash card keeps the wheel's rim and spokes in the
+    # reference. A flat disc mask tints to a flat disc, so the masks carry the
+    # drawing's own shading and the tint follows it.
+    shade = base.convert("RGB").convert("L").point(lambda v: min(255, int(v * 1.6) + 40))
+    rear_wheel = ImageChops.multiply(rear_wheel, shade)
+    front_wheel = ImageChops.multiply(front_wheel, shade)
+    rear_part = ImageChops.multiply(rear_part, shade)
+
+    # The reference draws the bike nose to the left, this was drawn nose right.
+    base = base.transpose(Image.FLIP_LEFT_RIGHT)
+    rear_wheel = rear_wheel.transpose(Image.FLIP_LEFT_RIGHT)
+    front_wheel = front_wheel.transpose(Image.FLIP_LEFT_RIGHT)
+    rear_part = rear_part.transpose(Image.FLIP_LEFT_RIGHT)
+
+    # The cast shadow under the bike is black on a black panel, so it is invisible
+    # on screen but would still count towards a bounding box. Measure the box off
+    # the lit part only, then fit that to each screen's own box.
+    rgb = base.convert("RGB").convert("L")
+    lit = ImageChops.multiply(rgb.point(lambda v: 255 if v > 20 else 0), base.getchannel("A"))
+    box = lit.point(lambda v: 255 if v > 8 else 0).getbbox()
+    masks = {"wheel": rear_wheel, "front": front_wheel,
+             "rear": ImageChops.lighter(rear_part, rear_wheel)}
+    for name, (ow, oh, parts) in BIKE_SIDE_SIZES.items():
+        save(base.crop(box).resize((ow, oh), Image.LANCZOS), f"bikeside_{name}")
+        for part in parts:
             layer = Image.new("RGBA", (ow, oh), (255, 255, 255, 0))
-            layer.putalpha(mask.resize((ow, oh), Image.LANCZOS))
-            save(layer, f"bike_{ow}_{name}")
+            layer.putalpha(masks[part].crop(box).resize((ow, oh), Image.LANCZOS))
+            save(layer, f"bikeside_{name}_{part}")
 
 
 def front_line_parts():
@@ -943,10 +1113,14 @@ def make_fingerprint():
     img = Image.new("L", (size * s, size * s), 0)
     d = ImageDraw.Draw(img)
     c = size * s / 2
+    # Measured on frame_0200 the print is 57 wide and 54 tall; drawn on a circle
+    # it came out 56 by 63, so the arcs are squashed to that ratio.
+    squash = 0.86
     for k, r in enumerate(range(6, 34, 5)):
         start = 200 + (k * 23) % 40
         end = 520 - (k * 31) % 60
-        d.arc([c - r * s, c - r * s + 4 * s, c + r * s, c + r * s + 4 * s], start, end, fill=255, width=int(2.2 * s))
+        d.arc([c - r * s, c - r * s * squash + 4 * s, c + r * s, c + r * s * squash + 4 * s],
+              start, end, fill=255, width=int(2.2 * s))
     save(alpha_layer(img.resize((size, size), Image.LANCZOS)), "fingerprint")
     ring = Image.new("L", (size * s, size * s), 0)
     ImageDraw.Draw(ring).ellipse([2 * s, 2 * s, (size - 2) * s, (size - 2) * s], fill=255)
@@ -954,12 +1128,17 @@ def make_fingerprint():
 
 
 def make_avatar(size=106):
+    # Every coordinate is a fraction of the 106 px drawing, so the smaller
+    # avatar is the same picture rather than the same shapes on a smaller ring.
     s = 4
+    k = size * s / 106.0
     img = Image.new("L", (size * s, size * s), 0)
     d = ImageDraw.Draw(img)
-    d.ellipse([3 * s, 3 * s, (size - 3) * s, (size - 3) * s], outline=255, width=int(3 * s))
-    d.ellipse([38 * s, 20 * s, 68 * s, 50 * s], outline=255, width=int(3 * s))
-    d.rounded_rectangle([24 * s, 62 * s, 82 * s, 88 * s], radius=12 * s, outline=255, width=int(3 * s))
+    stroke = max(1, int(round(3 * k)))
+    d.ellipse([3 * k, 3 * k, 103 * k, 103 * k], outline=255, width=stroke)
+    d.ellipse([38 * k, 20 * k, 68 * k, 50 * k], outline=255, width=stroke)
+    d.rounded_rectangle([24 * k, 62 * k, 82 * k, 88 * k], radius=12 * k,
+                        outline=255, width=stroke)
     save(alpha_layer(img.resize((size, size), Image.LANCZOS)), f"avatar_{size}")
 
 
@@ -988,17 +1167,19 @@ def make_seat():
     save(halo, "seat")
 
 
-def make_album_art():
-    w = h = 100
-    img = vgrad((w, h), (210, 214, 216), (120, 124, 128))
+def make_album_art(size=76):
+    # Drawn at the size it is shown at, so the music page does not scale it.
+    k = size / 100.0
+    img = vgrad((size, size), (210, 214, 216), (120, 124, 128))
     d = ImageDraw.Draw(img)
-    for k in range(5):
-        x = 18 + k * 18
-        d.line([(x, 96), (x + 4, 52 - k * 3)], fill=(60, 60, 64, 255), width=1)
+    for stem in range(5):
+        x = (18 + stem * 18) * k
+        d.line([(x, 96 * k), (x + 4 * k, (52 - stem * 3) * k)], fill=(60, 60, 64, 255), width=1)
         for a in range(0, 360, 30):
-            r = 7 + (k % 2) * 2
-            cx, cy = x + 4, 50 - k * 3
-            d.line([(cx, cy), (cx + math.cos(math.radians(a)) * r, cy + math.sin(math.radians(a)) * r)], fill=(245, 245, 245, 255), width=1)
+            r = (7 + (stem % 2) * 2) * k
+            cx, cy = x + 4 * k, (50 - stem * 3) * k
+            d.line([(cx, cy), (cx + math.cos(math.radians(a)) * r, cy + math.sin(math.radians(a)) * r)],
+                   fill=(245, 245, 245, 255), width=1)
     save(img, "album_art")
 
 
@@ -1025,9 +1206,11 @@ def make_ring(size, width, name):
 
 
 # Hexagon speedometer measured on frame_086 (screen coordinates)
-HEX_CENTER = (647.5, 208.5)
-HEX_OUTER = [(557.5, 333), (469, 208.5), (557.5, 84), (737.5, 84), (826, 208.5), (737.5, 333)]
+HEX_CENTER = (645, 208.5)
+HEX_OUTER = [(555, 333), (467, 208.5), (555, 84), (735, 84), (823, 208.5), (735, 333)]
 HEX_BAND = 40
+# band thickness per side (bottom-left, top-left, top, top-right, bottom-right)
+HEX_BANDS = [46, 46, 38, 46, 46]
 HEX_ORIGIN = (440, 70)          # top-left of the generated hex images
 HEX_SIZE = (420, 290)
 HEX_NEEDLE = 132
@@ -1046,7 +1229,25 @@ def hex_bounds():
 
 
 def hex_inner_outline():
-    return offset_path(HEX_OUTER, HEX_BAND)
+    """Inner edge of the ring: every side moved inward by its own band thickness."""
+    lines = []
+    for (a, b), d in zip(zip(HEX_OUTER, HEX_OUTER[1:]), HEX_BANDS):
+        ux, uy = unit(a, b)
+        nx, ny = -uy, ux
+        lines.append(((a[0] + nx * d, a[1] + ny * d), (ux, uy)))
+
+    def cross(l1, l2):
+        (p, u), (q, v) = l1, l2
+        den = u[0] * v[1] - u[1] * v[0]
+        t = ((q[0] - p[0]) * v[1] - (q[1] - p[1]) * v[0]) / den
+        return (p[0] + u[0] * t, p[1] + u[1] * t)
+    pts = [lines[0][0]]
+    for l1, l2 in zip(lines, lines[1:]):
+        pts.append(cross(l1, l2))
+    (p, u), d = lines[-1], HEX_BANDS[-1]
+    end = HEX_OUTER[-1]
+    pts.append((end[0] - u[1] * d, end[1] + u[0] * d))
+    return pts
 
 
 def hex_path_point(outline, t):
@@ -1063,6 +1264,15 @@ def hex_path_point(outline, t):
 def hex_local(points, scale=SS):
     ox, oy = HEX_ORIGIN
     return [((x - ox) * scale, (y - oy) * scale) for x, y in points]
+
+
+def stroke_local(paths, width):
+    w, h = HEX_SIZE
+    img = Image.new("L", (w * SS, h * SS), 0)
+    d = ImageDraw.Draw(img)
+    for p in paths:
+        d.line(hex_local(p), fill=255, width=max(1, int(width * SS)), joint="curve")
+    return img.resize((w, h), Image.LANCZOS).filter(ImageFilter.GaussianBlur(1.2))
 
 
 def hex_quad(t0, t1):
@@ -1094,9 +1304,19 @@ def write_hex_qml(pieces, labels, angles):
         "",
         "    property int speed: 0",
         "    property int clamped: Math.max(0, Math.min(150, speed))",
-        "    property int litHalves: Math.round(3 + clamped / 10)",
-        "    property color litColor: \"#5FE8BE\"",
-        "    property color offColor: \"#3A3D40\"",
+        "    property bool stale: false",
+        "    property bool miles: false",
+        "",
+        "    // The printed scale is calibrated in km/h. In miles the same tick",
+        "    // carries the same speed in the rider's unit, so the numbers and",
+        "    // the needle still agree.",
+        "    function labelText(kmh) {",
+        "        return miles ? \"\" + Math.round(kmh * 0.621371) : \"\" + kmh",
+        "    }",
+        "",
+        "    property int litHalves: stale ? 0 : Math.round(3 + clamped / 10)",
+        "    property color litColor: \"#7DFFDB\"",
+        "    property color offColor: \"#3C3C3D\"",
         "    property real needleAngle: " + needle_expression(angles),
         "",
         f"    x: {HEX_ORIGIN[0]}",
@@ -1118,8 +1338,14 @@ def write_hex_qml(pieces, labels, angles):
     lines += [
         "    ColorizedImage {",
         "        source: \"qrc:/assets/cluster/hex_shade.png\"",
+        "        color: \"#000000\"",
+        "        opacity: 0.35",
+        "    }",
+        "",
+        "    ColorizedImage {",
+        "        source: \"qrc:/assets/cluster/hex_rim.png\"",
         "        color: \"#FFFFFF\"",
-        "        opacity: 0.16",
+        "        opacity: 0.08",
         "    }",
         "",
         "    ColorizedImage {",
@@ -1129,7 +1355,7 @@ def write_hex_qml(pieces, labels, angles):
         "",
         "    ColorizedImage {",
         "        source: \"qrc:/assets/cluster/hex_inner.png\"",
-        "        color: Theme.teal",
+        "        color: Theme.hexRing",
         "    }",
         "",
     ]
@@ -1140,10 +1366,10 @@ def write_hex_qml(pieces, labels, angles):
             f"        y: {int(round(ly - HEX_ORIGIN[1])) - 13}",
             "        width: 48",
             "        horizontalAlignment: Text.AlignHCenter",
-            f"        text: \"{k * 20}\"",
+            f"        text: gauge.labelText({k * 20})",
             "        color: \"#EEF1F1\"",
             "        font.family: Theme.fontFamily",
-            "        font.pixelSize: 20",
+            "        font.pixelSize: 18",
             "        font.italic: true",
             "    }",
             "",
@@ -1152,18 +1378,20 @@ def write_hex_qml(pieces, labels, angles):
     lines += [
         "    Rectangle {",
         f"        x: {cx:.1f}",
-        f"        y: {cy - 2:.1f}",
+        f"        y: {cy - 2.5:.1f}",
         f"        width: {HEX_NEEDLE}",
-        "        height: 4",
-        "        radius: 2",
+        "        height: 5",
+        "        radius: 2.5",
+        "        opacity: gauge.stale ? 0.25 : 1.0",
         "        gradient: Gradient {",
         "            orientation: Gradient.Horizontal",
-        "            GradientStop { position: 0.0; color: \"#40E0303A\" }",
-        "            GradientStop { position: 1.0; color: \"#E8202C\" }",
+        "            GradientStop { position: 0.0; color: \"#00600010\" }",
+        "            GradientStop { position: 0.35; color: \"#B0900018\" }",
+        "            GradientStop { position: 1.0; color: \"#E8141E\" }",
         "        }",
         "        transform: Rotation {",
         "            origin.x: 0",
-        "            origin.y: 2",
+        "            origin.y: 2.5",
         "            angle: gauge.needleAngle",
         "        }",
         "    }",
@@ -1206,11 +1434,19 @@ def make_hex_gauge():
 
     ring = hex_mask([hex_quad(0, 1)])
     w, h = HEX_SIZE
-    shade = Image.new("L", (w, h), 0)
+    shade = Image.new("L", (w * SS, h * SS), 0)
     sd = ImageDraw.Draw(shade)
-    for y in range(h):
-        sd.line([(0, y), (w, y)], fill=int(255 * max(0.0, 1 - y / h) ** 1.5))
+    steps = 24
+    inner_line = hex_inner_outline()
+    for i in range(steps):
+        t = i / (steps - 1)
+        path = [lerp(o, n, t) for o, n in zip(HEX_OUTER, inner_line)]
+        sd.line(hex_local(path), fill=int(255 * t ** 1.2), width=int(3 * SS), joint="curve")
+    shade = shade.resize((w, h), Image.LANCZOS).filter(ImageFilter.GaussianBlur(1.5))
     save(alpha_layer(ImageChops.multiply(ring, shade)), "hex_shade")
+    # thin bright line just inside the outer edge (the light catches the outer rim)
+    rim = stroke_local([[lerp(o, n, 0.12) for o, n in zip(HEX_OUTER, inner_line)]], 2.0)
+    save(alpha_layer(ImageChops.multiply(rim, ring)), "hex_rim")
 
     div = Image.new("L", (w * SS, h * SS), 0)
     dd = ImageDraw.Draw(div)
@@ -1228,28 +1464,34 @@ def make_hex_gauge():
 
     def hexagon(rx, ry):
         return [(cx - rx, cy), (cx - rx / 2, cy - ry), (cx + rx / 2, cy - ry), (cx + rx, cy), (cx + rx / 2, cy + ry), (cx - rx / 2, cy + ry)]
-    outline = hex_local(hexagon(80, 56))
-    d.line(outline + [outline[0]], fill=230, width=int(1.4 * SS))
-    band = hex_local(hexagon(64, 44))
-    d.line(band + [band[0]], fill=110, width=int(5 * SS), joint="curve")
-    ticks = hexagon(64, 44)
+    outline = hex_local(hexagon(79, 55))
+    d.line(outline + [outline[0]], fill=200, width=int(1.5 * SS))
+    band_img = Image.new("L", (w * SS, h * SS), 0)
+    band = hex_local(hexagon(61, 43.5))
+    ImageDraw.Draw(band_img).line(band + [band[0]], fill=90, width=int(7 * SS), joint="curve")
+    band_img = band_img.resize((w, h), Image.LANCZOS).filter(ImageFilter.GaussianBlur(1.5))
+    ticks = hexagon(61, 43.5)
     for i in range(6):
         a, b = ticks[i], ticks[(i + 1) % 6]
         for t in (0.0, 0.5):
             p = lerp(a, b, t)
-            q = lerp(p, (cx, cy), 0.12)
-            d.line(hex_local([p, q]), fill=255, width=int(1.4 * SS))
-    a = img.resize((w, h), Image.LANCZOS)
-    save(alpha_layer(ImageChops.lighter(a, a.filter(ImageFilter.GaussianBlur(4)))), "hex_inner")
+            q = lerp(p, (cx, cy), 0.1)
+            d.line(hex_local([lerp(p, (cx, cy), -0.03), q]), fill=150, width=int(1.3 * SS))
+    a = ImageChops.lighter(img.resize((w, h), Image.LANCZOS), band_img)
+    save(alpha_layer(ImageChops.lighter(a, a.filter(ImageFilter.GaussianBlur(3)).point(lambda v: int(v * 0.8)))), "hex_inner")
 
     # backdrop panel behind the gauge: rounded hexagon, lighter rim
-    back = [(452, 82), (842, 82), (905, 213), (842, 346), (452, 346), (388, 213)]
+    back = [(440, 80), (850, 80), (902, 168), (814, 341), (476, 341), (388, 168)]
     bw, bh = W, H
     mask = Image.new("L", (bw * SS, bh * SS), 0)
-    ImageDraw.Draw(mask).polygon(sc(rounded(back + [back[0], back[1]], [0, 40, 40, 40, 40, 40, 40, 0])), fill=255)
-    mask = mask.resize((bw, bh), Image.LANCZOS)
-    rim = ImageChops.subtract(mask, mask.filter(ImageFilter.MinFilter(9)).filter(ImageFilter.GaussianBlur(14)))
-    fill = ImageChops.lighter(mask.point(lambda v: int(v * 0.55)), rim)
+    ImageDraw.Draw(mask).polygon(sc(rounded(back + [back[0], back[1]], [0, 34, 34, 30, 30, 30, 34, 0])), fill=255)
+    mask = mask.resize((bw, bh), Image.LANCZOS).filter(ImageFilter.GaussianBlur(1))
+    # the inside of the ring (and the open bottom with the speed) stays black
+    hole = Image.new("L", (bw * SS, bh * SS), 0)
+    inner_pts = hex_inner_outline()
+    ImageDraw.Draw(hole).polygon(sc(inner_pts + [(inner_pts[-1][0], 360), (inner_pts[0][0], 360)]), fill=255)
+    hole = hole.resize((bw, bh), Image.LANCZOS).filter(ImageFilter.GaussianBlur(2))
+    fill = ImageChops.subtract(mask, hole)
     save(alpha_layer(fill.crop((380, 76, 912, 352))), "hex_backdrop")
 
     labels = HEX_LABELS
@@ -1275,6 +1517,94 @@ def make_battery_tall():
     # glossy stripe along the bar
     stripe = ImageChops.multiply(mask, offset_band(-6, 8))
     save(alpha_layer(stripe), "battery_tall_gloss")
+    # thin lines beside the column (hex view): outer and inner edge
+    outer = ImageChops.multiply(stroke([offset_path(bar_centre(extend_top=10, extend_end=20), BAR_WIDTH / 2 + 7)], 1.3),
+                                vertical_ramp(105, 135, 0, 255))
+    inner = ImageChops.multiply(stroke([offset_path(bar_centre(extend_top=10, extend_end=20), -(BAR_WIDTH / 2 + 7))], 1.2),
+                                vertical_ramp(95, 125, 0, 255))
+    save(alpha_layer(outer), "battery_edge_outer")
+    save(alpha_layer(inner), "battery_edge_inner")
+    make_battery_slices(mask)
+
+
+BATTERY_SLICES = 20
+
+
+def cut_at(f):
+    """Slanted cut line at fraction f (0 = bottom end, 1 = top cut) of the bar."""
+    mids = [lerp(o, n, 0.5) for o, n in BAR_CUTS]
+    lens = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(mids, mids[1:])]
+    dist = f * sum(lens)
+    i = 0
+    while i < len(lens) - 1 and dist > lens[i]:
+        dist -= lens[i]
+        i += 1
+    t = min(1.0, dist / lens[i])
+    (oa, ia), (ob, ib) = BAR_CUTS[i], BAR_CUTS[i + 1]
+    return lerp(oa, ob, t), lerp(ia, ib, t)
+
+
+def make_battery_slices(column):
+    geo = []
+    big = column.resize((W * SS, H * SS), Image.LANCZOS)
+    for k in range(BATTERY_SLICES):
+        (o0, i0), (o1, i1) = cut_at(k / BATTERY_SLICES), cut_at((k + 1) / BATTERY_SLICES)
+        mid = lerp(lerp(o0, i0, 0.5), lerp(o1, i1, 0.5), 0.5)
+        # overlap the next slice by 1.5 px so no seam shows between lit slices
+        ux, uy = unit(lerp(o0, i0, 0.5), lerp(o1, i1, 0.5))
+        o1, i1 = (o1[0] + ux * 1.5, o1[1] + uy * 1.5), (i1[0] + ux * 1.5, i1[1] + uy * 1.5)
+        r1 = Image.new("L", big.size, 0)
+        ImageDraw.Draw(r1).polygon(half_plane_region(o0, i0, mid), fill=255)
+        r2 = Image.new("L", big.size, 0)
+        if k == BATTERY_SLICES - 1:
+            r2.paste(255, (0, 0) + big.size)
+        else:
+            ImageDraw.Draw(r2).polygon(half_plane_region(o1, i1, mid), fill=255)
+        if k == 0:
+            r1.paste(255, (0, 0) + big.size)
+        m = ImageChops.multiply(ImageChops.multiply(big, r1), r2).resize((W, H), Image.LANCZOS)
+        box = m.getbbox()
+        if not box:
+            continue
+        save(alpha_layer(m.crop(box)), f"battery_slice{k}")
+        geo.append((k, box[0], box[1]))
+    lines = [
+        "// Generated by tools/generate_cluster_art.py. Do not edit.",
+        "import QtQuick",
+        "import QtQuickUltralite.Extras",
+        "",
+        f"// Tall battery column (hex view): {BATTERY_SLICES} slanted slices, slice 0 at the bottom.",
+        "Item {",
+        "    id: column",
+        "",
+        "    property int percent: 0",
+        f"    property int litCount: Math.round(Math.max(0, Math.min(100, percent)) * {BATTERY_SLICES} / 100)",
+        "    property color litColor: \"#78F0C8\"",
+        "    property color offColor: \"#7E9E93\"",
+        "",
+        "    width: 1280",
+        "    height: 480",
+        "",
+        "    ColorizedImage {",
+        "        source: \"qrc:/assets/cluster/battery_tall.png\"",
+        "        color: column.offColor",
+        "    }",
+        "",
+    ]
+    for k, x, y in geo:
+        lines += [
+            "    ColorizedImage {",
+            f"        x: {x}",
+            f"        y: {y}",
+            f"        source: \"qrc:/assets/cluster/battery_slice{k}.png\"",
+            f"        visible: column.litCount > {k}",
+            "        color: column.litColor",
+            "    }",
+            "",
+        ]
+    lines[-1] = "}"
+    with open(os.path.join(QML, "BatteryColumn.qml"), "w") as f:
+        f.write("\n".join(lines) + "\n")
 
 
 def offset_band(offset, width):

@@ -89,14 +89,68 @@ static void testCanDecoder()
     CHECK(find(out, SignalId::FaultCode) == 0);
 }
 
+static void testStaleness()
+{
+    std::vector<VehicleSignal> out;
+    VehicleCanDecoder dec(collect, &out);
+
+    // Nothing has been heard yet, so every group counts as stale.
+    CHECK(dec.driveStale());
+    CHECK(dec.batteryStale());
+    CHECK(dec.lampsStale());
+
+    CanFrame vcu;
+    vcu.id = canid::VcuStatus;
+    vcu.dlc = 4;
+    vcu.timestampMs = 1000;
+    CHECK(dec.decode(vcu));
+    CanFrame motor;
+    motor.id = canid::MotorStatus;
+    motor.dlc = 6;
+    motor.timestampMs = 1000;
+    CHECK(dec.decode(motor));
+    CanFrame bms;
+    bms.id = canid::BmsStatus;
+    bms.dlc = 8;
+    bms.timestampMs = 1000;
+    CHECK(dec.decode(bms));
+
+    dec.checkTimeouts(1100);
+    CHECK(!dec.driveStale());
+    CHECK(!dec.batteryStale());
+    CHECK(dec.lampsStale());
+
+    // The battery node alone goes quiet.
+    const uint32_t quiet = 1000 + VehicleCanDecoder::kTimeoutMs + 50;
+    vcu.timestampMs = quiet;
+    motor.timestampMs = quiet;
+    CHECK(dec.decode(vcu));
+    CHECK(dec.decode(motor));
+    dec.checkTimeouts(quiet);
+    CHECK(!dec.driveStale());
+    CHECK(dec.batteryStale());
+
+    bms.timestampMs = quiet + 10;
+    CHECK(dec.decode(bms));
+    CHECK(!dec.batteryStale());
+
+    // Then everything stops.
+    dec.checkTimeouts(quiet + 10 + VehicleCanDecoder::kTimeoutMs + 1);
+    CHECK(dec.driveStale());
+    CHECK(dec.batteryStale());
+}
+
 struct Capture : link::Handler
 {
     int navCount = 0;
     int errors = 0;
     link::NavUpdate last;
     link::CallState call;
+    int entryCount = 0;
+    link::ListEntry entry;
     void onNavUpdate(const link::NavUpdate &n) override { ++navCount; last = n; }
     void onCallState(const link::CallState &c) override { call = c; }
+    void onListEntry(const link::ListEntry &e) override { ++entryCount; entry = e; }
     void onFrameError() override { ++errors; }
 };
 
@@ -143,6 +197,34 @@ static void testPhoneLink()
     CHECK(cap.errors == errBefore + 1);
 }
 
+static void testListEntries()
+{
+    Capture capture;
+    link::Parser parser(capture);
+    uint8_t frame[link::kMaxFrame];
+
+    link::ListEntry out;
+    out.list = link::ListId::Reminders;
+    out.slot = 2;
+    std::strcpy(out.title, "Tyre check");
+    std::strcpy(out.text, "Every 15 days");
+    std::size_t n = link::encodeListEntry(out, frame, sizeof(frame));
+    CHECK(n > 0);
+    parser.feed(frame, n);
+    CHECK(capture.entryCount == 1);
+    CHECK(capture.entry.list == link::ListId::Reminders);
+    CHECK(capture.entry.slot == 2);
+    CHECK(std::strcmp(capture.entry.title, "Tyre check") == 0);
+    CHECK(std::strcmp(capture.entry.text, "Every 15 days") == 0);
+
+    // A slot the cluster has no room for is a bad frame, not a silent write.
+    out.slot = link::kMaxListSlots;
+    n = link::encodeListEntry(out, frame, sizeof(frame));
+    parser.feed(frame, n);
+    CHECK(capture.entryCount == 1);
+    CHECK(capture.errors == 1);
+}
+
 static void testAlerts()
 {
     AlertEvaluator ev;
@@ -183,7 +265,9 @@ static void testUtils()
 int main()
 {
     testCanDecoder();
+    testStaleness();
     testPhoneLink();
+    testListEntries();
     testAlerts();
     testUtils();
     std::printf(g_failures ? "%d FAILURE(S)\n" : "ALL TESTS PASSED\n", g_failures);

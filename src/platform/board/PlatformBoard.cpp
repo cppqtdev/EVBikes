@@ -60,4 +60,9 @@ void setBacklight(int percent)
     // TODO: PWM duty cycle
 }
 
+bool hasBacklight()
+{
+    return true;
+}
+
 } // namespace evb::platform

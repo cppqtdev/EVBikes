@@ -3,6 +3,8 @@
 #include <qul/property.h>
 #include <qul/singleton.h>
 
+#include <string>
+
 struct SystemData : public Qul::Singleton<SystemData>
 {
     enum AuthState { AuthIdle = 0, AuthScanning, AuthMatched, AuthDenied };
@@ -12,8 +14,14 @@ struct SystemData : public Qul::Singleton<SystemData>
     Qul::Property<int> minutes;
     Qul::Property<bool> clockValid;
     Qul::Property<bool> use24Hour;
+    // Distance and speed are held in kilometres throughout the backend. This
+    // only changes what the screens draw, never what is stored or sent.
+    Qul::Property<bool> useMiles;
     Qul::Property<bool> nightMode;
     Qul::Property<int> brightness;
+    // True when brightness has to be applied by dimming the picture, because
+    // this target's panel has no backlight the cluster can turn down.
+    Qul::Property<bool> softwareDimming;
     Qul::Property<bool> locked;
     Qul::Property<int> pinAttemptsLeft;
     Qul::Property<bool> demoMode;
@@ -26,12 +34,20 @@ struct SystemData : public Qul::Singleton<SystemData>
     Qul::Property<bool> antiTheftArmed;
     Qul::Property<int> theftCaptures;
 
+    // Rider names belong to whoever enrolled the profile. Empty until then, so
+    // the screen shows a slot number rather than a person nobody registered.
+    Qul::Property<std::string> profile0Name;
+    Qul::Property<std::string> profile1Name;
+    Qul::Property<std::string> profile2Name;
+
     SystemData();
 
     void tick();
+    void poll();
     bool submitPin(int pin);
     void setBrightnessLevel(int level);
     void toggleClockFormat();
+    void toggleUnits();
     void setClock(int unixSeconds, int utcOffsetMinutes);
 
     void selectProfile(int index);

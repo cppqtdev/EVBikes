@@ -18,6 +18,15 @@ QtObject {
     property int viewMap: 1
     property int centerView: viewBike
 
+    // Bottom dock focus while riding. Left and right walk it, OK acts on it.
+    property int dockMap: 0
+    property int dockMode: 1
+    property int dockAlerts: 2
+    property int dockSettings: 3
+    property int dockCount: 4
+    property int dockIndex: dockMode
+    property bool alertsMuted: false
+
     // Menu carousel
     property bool menuOpen: false
     property int menuIndex: 1
@@ -126,18 +135,51 @@ QtObject {
                 PhoneData.rejectCall()
             return
         }
+        if (PhoneData.callStatus === PhoneData.Active) {
+            if (button === ClusterInput.Back)
+                PhoneData.rejectCall()
+            return
+        }
         if (menuOpen) {
             handleMenuButton(button)
             return
         }
-        if (button === ClusterInput.Left || button === ClusterInput.Right)
-            centerView = centerView === viewBike ? viewMap : viewBike
+        if (button === ClusterInput.Left)
+            moveDock(-1)
+        else if (button === ClusterInput.Right)
+            moveDock(1)
         else if (button === ClusterInput.Up)
             SystemData.toggleSpeedoStyle()
+        else if (button === ClusterInput.Mode)
+            cycleRideMode()
         else if (button === ClusterInput.Ok)
-            openMenu()
+            activateDock()
         else if (button === ClusterInput.Back)
             centerView = viewBike
+    }
+
+    function moveDock(step) {
+        dockIndex = (dockIndex + step + dockCount) % dockCount
+    }
+
+    function activateDock() {
+        if (dockIndex === dockMap)
+            centerView = centerView === viewBike ? viewMap : viewBike
+        else if (dockIndex === dockMode)
+            cycleRideMode()
+        else if (dockIndex === dockAlerts)
+            alertsMuted = !alertsMuted
+        else if (dockIndex === dockSettings)
+            openMenu()
+    }
+
+    function cycleRideMode() {
+        if (VehicleData.rideMode === VehicleData.Eco)
+            VehicleData.rideMode = VehicleData.Normal
+        else if (VehicleData.rideMode === VehicleData.Normal)
+            VehicleData.rideMode = VehicleData.Sport
+        else
+            VehicleData.rideMode = VehicleData.Eco
     }
 
     function handleAlertButton(button) {
@@ -213,10 +255,36 @@ QtObject {
         } else if (menuIndex === menuCustomize) {
             handleCustomizeButton(up, down, ok)
         } else if (menuIndex === menuMisc) {
+            handleMiscButton(up, down, ok)
+        }
+    }
+
+    // Misc: subIndex = tab (0 messages, 1 music, 2 reminders). On a list tab OK
+    // steps into the rows (subLevel = 1 + row), where OK calls that contact.
+    function handleMiscButton(up, down, ok) {
+        var rows = subIndex === 0 ? PhoneListData.contactCount : PhoneListData.reminderCount
+        if (subLevel === 0) {
             if (up) subIndex = (subIndex + 2) % 3
             else if (down) subIndex = (subIndex + 1) % 3
             else if (ok && subIndex === 1) PhoneData.mediaPlayPause()
+            else if (ok && rows > 0) subLevel = 1
+            return
         }
+        if (rows < 1) {
+            subLevel = 0
+            return
+        }
+        var row = subLevel - 1
+        if (up) subLevel = 1 + (row + rows - 1) % rows
+        else if (down) subLevel = 1 + (row + 1) % rows
+        else if (ok && subIndex === 0) placeCall(row)
+    }
+
+    function placeCall(row) {
+        var name = Format.contactName(row)
+        if (name === "") return
+        PhoneData.callerName = name
+        PhoneData.callStatus = PhoneData.Active
     }
 
     // Customize: subIndex = tab (0 help, 1 shortcut keys, 2 theme).
@@ -229,8 +297,8 @@ QtObject {
             return
         }
         var row = subLevel - 1
-        if (up) subLevel = 1 + (row + 4) % 5
-        else if (down) subLevel = 1 + (row + 1) % 5
+        if (up) subLevel = 1 + (row + 5) % 6
+        else if (down) subLevel = 1 + (row + 1) % 6
         else if (ok) activateThemeRow(row)
     }
 
@@ -242,8 +310,10 @@ QtObject {
         else if (row === 2)
             SystemData.toggleClockFormat()
         else if (row === 3)
-            SystemData.toggleSpeedoStyle()
+            SystemData.toggleUnits()
         else if (row === 4)
+            SystemData.toggleSpeedoStyle()
+        else if (row === 5)
             Simulator.running = !Simulator.running
     }
 }

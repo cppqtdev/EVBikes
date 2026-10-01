@@ -114,11 +114,18 @@ int32_t  canGetSignedLE(const uint8_t *data, uint8_t startBit, uint8_t length);
 | 0x10 | CallState | phone → cluster | `u8 status (0 idle, 1 ringing, 2 active), text caller` |
 | 0x11 | MediaState | phone → cluster | `u8 playing, u8 volume, u16 position_s, u16 duration_s, text title, text artist` |
 | 0x12 | Notification | phone → cluster | `u8 appId, text sender, text message` |
+| 0x13 | ListEntry | phone → cluster | `u8 list (0 contacts, 1 reminders), u8 slot (0..2), text title, text text` |
 | 0x20 | TimeSync | phone → cluster | `u32 unixSeconds, i16 utcOffsetMinutes` |
 | 0x21 | PhoneStatus | phone → cluster | `u8 battery%, u8 signalBars, u8 internet` |
 | 0x30 | Heartbeat | both | — (send every 2 s; link is "lost" after 5 s of silence) |
 | 0x40 | MediaCommand | cluster → phone | `u8 cmd (1 play/pause, 2 next, 3 previous)` |
 | 0x41 | CallCommand | cluster → phone | `u8 cmd (1 answer, 2 reject)` |
+
+ListEntry carries one row of a list the phone owns. The cluster keeps three
+slots per list and draws whatever it was last sent; a slot outside that range is
+treated as a bad frame. Sending an empty title clears the row, and the link
+going quiet clears both lists, so nothing about the rider stays on screen after
+their phone has gone.
 
 ### Maneuver codes
 

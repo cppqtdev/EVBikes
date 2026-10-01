@@ -7,7 +7,9 @@
 #include "AlertData.h"
 #include "NavigationData.h"
 #include "PhoneData.h"
+#include "PhoneListData.h"
 #include "SystemData.h"
+#include "TripData.h"
 #include "VehicleData.h"
 
 #include <qul/eventqueue.h>
@@ -78,6 +80,11 @@ public:
         p.notificationSeq.setValue(p.notificationSeq.value() + 1);
     }
 
+    void onListEntry(const evb::link::ListEntry &e) override
+    {
+        PhoneListData::instance().setEntry(static_cast<int>(e.list), e.slot, std::string(e.title), std::string(e.text));
+    }
+
     void onTimeSync(const evb::link::TimeSync &t) override
     {
         SystemData::instance().setClock(static_cast<int>(t.unixSeconds), t.utcOffsetMinutes);
@@ -124,6 +131,12 @@ PhoneQueue &phoneQueue()
     return q;
 }
 
+void setIfChanged(Qul::Property<bool> &property, bool value)
+{
+    if (property.value() != value)
+        property.setValue(value);
+}
+
 void evaluateAlerts()
 {
     const VehicleData &v = VehicleData::instance();
@@ -165,6 +178,11 @@ void init()
     canQueue();
     phoneQueue();
     evb::platform::init();
+
+    // Push the stored brightness to the panel, so the first frame is at the
+    // level the rider left it rather than whatever the driver came up at.
+    SystemData &system = SystemData::instance();
+    system.setBrightnessLevel(system.brightness.value());
 }
 
 void postCanFrame(const evb::CanFrame &frame)
@@ -190,6 +208,13 @@ void postPhoneBytesFromIsr(const uint8_t *data, std::size_t len)
 void periodic(uint32_t nowMs)
 {
     g_decoder.checkTimeouts(nowMs);
+
+    VehicleData &vehicle = VehicleData::instance();
+    setIfChanged(vehicle.driveStale, g_decoder.driveStale());
+    setIfChanged(vehicle.batteryStale, g_decoder.batteryStale());
+    setIfChanged(vehicle.lampsStale, g_decoder.lampsStale());
+
+    TripData::instance().update(nowMs);
     evaluateAlerts();
 
     PhoneData &phone = PhoneData::instance();
@@ -197,6 +222,7 @@ void periodic(uint32_t nowMs)
         phone.connected.setValue(false);
         phone.callStatus.setValue(PhoneData::Idle);
         NavigationData::instance().clear();
+        PhoneListData::instance().clear();
         g_phoneParser.reset();
     }
 }

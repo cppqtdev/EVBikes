@@ -112,6 +112,44 @@ void sendPhoneTraffic(int scenario)
     (void)scenario;
 }
 
+// The phone owns these lists; the simulator stands in for it so the rows have
+// something to draw before a real handset is paired.
+void sendListsOnce()
+{
+    static bool sent = false;
+    if (sent)
+        return;
+    sent = true;
+
+    struct Row
+    {
+        evb::link::ListId list;
+        const char *title;
+        const char *text;
+    };
+    static const Row kRows[] = {
+        {evb::link::ListId::Contacts, "Karan", "Reached the office, see you soon"},
+        {evb::link::ListId::Contacts, "Akash", "Lunch at 1?"},
+        {evb::link::ListId::Contacts, "Myra", "Call me when you are free"},
+        {evb::link::ListId::Reminders, "Service due", "In 240 km"},
+        {evb::link::ListId::Reminders, "Insurance renewal", "12 November"},
+        {evb::link::ListId::Reminders, "Tyre check", "Every 15 days"},
+    };
+
+    uint8_t frame[evb::link::kMaxFrame];
+    uint8_t slot[2] = {0, 0};
+    for (const Row &row : kRows) {
+        evb::link::ListEntry entry;
+        entry.list = row.list;
+        const int which = static_cast<int>(row.list);
+        entry.slot = slot[which]++;
+        std::strncpy(entry.title, row.title, evb::link::kMaxText);
+        std::strncpy(entry.text, row.text, evb::link::kMaxText);
+        const std::size_t n = evb::link::encodeListEntry(entry, frame, sizeof(frame));
+        Backend::postPhoneBytes(frame, n);
+    }
+}
+
 void sendTimeSyncOnce()
 {
     static bool sent = false;
@@ -160,6 +198,7 @@ void Simulator::step(int elapsedMs)
     const int sc = scenario.value();
     g.timeMs += elapsedMs;
     sendTimeSyncOnce();
+    sendListsOnce();
 
     const int phase = (g.timeMs / 1000) % 40;
     if (sc == SportRun && !parked.value())

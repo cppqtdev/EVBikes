@@ -26,6 +26,7 @@ enum class MsgType : uint8_t {
     CallState = 0x10,
     MediaState = 0x11,
     Notification = 0x12,
+    ListEntry = 0x13,
     TimeSync = 0x20,
     PhoneStatus = 0x21,
     Heartbeat = 0x30,
@@ -93,6 +94,22 @@ struct Notification
     char text[kMaxText + 1] = {};
 };
 
+// One row of a list the phone keeps: the recent contacts and the owner's
+// reminders. The cluster holds a few slots per list and redraws whatever the
+// phone last sent, so nothing about who the rider knows is built into the
+// firmware.
+enum class ListId : uint8_t { Contacts = 0, Reminders = 1, Count };
+
+constexpr uint8_t kMaxListSlots = 3;
+
+struct ListEntry
+{
+    ListId list = ListId::Contacts;
+    uint8_t slot = 0;
+    char title[kMaxText + 1] = {};
+    char text[kMaxText + 1] = {};
+};
+
 struct TimeSync
 {
     uint32_t unixSeconds = 0;
@@ -115,6 +132,7 @@ public:
     virtual void onCallState(const CallState &) {}
     virtual void onMediaState(const MediaState &) {}
     virtual void onNotification(const Notification &) {}
+    virtual void onListEntry(const ListEntry &) {}
     virtual void onTimeSync(const TimeSync &) {}
     virtual void onPhoneStatus(const PhoneStatus &) {}
     virtual void onHeartbeat() {}
@@ -148,6 +166,7 @@ private:
 // Builds a frame into `out`. Returns total size or 0 if it does not fit.
 std::size_t buildFrame(MsgType type, const uint8_t *payload, std::size_t len, uint8_t *out, std::size_t outSize);
 std::size_t encodeNavUpdate(const NavUpdate &nav, uint8_t *out, std::size_t outSize);
+std::size_t encodeListEntry(const ListEntry &entry, uint8_t *out, std::size_t outSize);
 
 } // namespace link
 } // namespace evb
