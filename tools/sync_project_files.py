@@ -131,9 +131,10 @@ def block(files):
 
 
 def write_main_project():
-    tinted = image_list("icons") + image_list("turns") + image_list("images") + \
-        image_list("cluster", lambda f: f not in COLOUR_IMAGES and not f.startswith(("bike_", "bikeside_")) or f.endswith(("_rear.png", "_wheel.png")))
-    colour = image_list("cluster", lambda f: f in COLOUR_IMAGES or (f.startswith(("bike_", "bikeside_")) and not f.endswith(("_rear.png", "_wheel.png"))))
+    #  No ImageFiles here. Each module declares the images its own QML names,
+    #  and declaring them again at the root puts every one in two resource
+    #  sets: qulrcc then emits the root's copy as a file-local buffer and the
+    #  handle the module links against is never written. Main.qml names none.
     fonts = [f"assets/fonts/{f}" for f in sorted(os.listdir(os.path.join(ROOT, "assets", "fonts"))) if f.endswith(".ttf")]
     text = f"""import QmlProject 1.3
 
@@ -179,24 +180,6 @@ Project {{
         MCU.qulModules: ["Shapes"]
     }}
 
-    // White artwork tinted with ColorizedImage: only the alpha channel is stored.
-    ImageFiles {{
-        files: [
-{block(tinted)}
-        ]
-        MCU.resourceImagePixelFormat: "Alpha8"
-        MCU.resourceCompression: true
-    }}
-
-    // Colour artwork.
-    ImageFiles {{
-        files: [
-{block(colour)}
-        ]
-        MCU.resourceImagePixelFormat: "Automatic"
-        MCU.resourceCompression: true
-    }}
-
     FontFiles {{
         files: [
 {block(fonts)}
@@ -206,14 +189,14 @@ Project {{
 """
     with open(os.path.join(ROOT, "EVBikes.qmlproject"), "w") as fh:
         fh.write(text)
-    return len(tinted), len(colour)
+    return len(fonts)
 
 
 def main():
     for name, (uri, target, singletons, imports, qul_modules) in MODULES.items():
         print(name, write_module(name, uri, target, singletons, imports, qul_modules),
               "qml files")
-    print("images (alpha, colour):", write_main_project())
+    print("root project: %d font file(s), no images of its own" % write_main_project())
 
 
 if __name__ == "__main__":
