@@ -11,7 +11,19 @@ Project {
         defaultFontFamily: "Inter"
         addDefaultFonts: false
         autoGenerateGlyphs: true
-        mergeStaticTextGlyphs: true
+        Experimental.mergeStaticTextGlyphs: true
+
+        //  Compressed resources are decompressed into this cache at runtime,
+        //  so it has to exist and hold at least the biggest single image: the
+        //  full-width layers are 1280 x 480 Alpha8, 600 KB each. 21 MB holds
+        //  every declared image at once, which is what the uncompressed build
+        //  would keep in RAM anyway, so nothing is evicted mid-frame. The
+        //  second entry covers the board's default allocation type as well
+        //  as type 1.
+        maxResourceCacheSize: [
+            [22020096, 1],
+            [22020096]
+        ]
     }
 
     QmlFiles {
