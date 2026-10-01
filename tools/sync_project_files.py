@@ -25,8 +25,28 @@ MODULES = {
                 ["backend", "core", "components"], ["Shapes"]),
 }
 
-# Colour artwork (not tinted) keeps its RGB channels.
-COLOUR_IMAGES = {"payment_card.png", "album_art.png", "seat.png"}
+_alpha_only_cache = {}
+
+
+def alpha_only(path):
+    """True when only the alpha channel carries anything.
+
+    Qt for MCUs rejects an image declared Alpha8 unless it really is alpha
+    only, so this reads the file instead of guessing from its name: every
+    visible pixel has to be pure white. Which way round a given piece of art
+    goes has been wrong in both directions before.
+    """
+    if path in _alpha_only_cache:
+        return _alpha_only_cache[path]
+    from PIL import Image
+    image = Image.open(os.path.join(ROOT, path)).convert("RGBA")
+    red, green, blue, alpha = image.split()
+    white = Image.new("L", image.size, 255)
+    visible = alpha.point(lambda v: 255 if v else 0)
+    verdict = all(Image.composite(channel, white, visible).getextrema() == (255, 255)
+                  for channel in (red, green, blue))
+    _alpha_only_cache[path] = verdict
+    return verdict
 
 
 def qml_files(folder, singletons):
@@ -42,8 +62,8 @@ def module_images(folder):
             continue
         with open(os.path.join(folder, f), encoding="utf-8") as fh:
             found.update(re.findall(r'"qrc:/([^"]+\.png)"', fh.read()))
-    tinted = sorted(p for p in found if os.path.basename(p) not in COLOUR_IMAGES)
-    colour = sorted(p for p in found if os.path.basename(p) in COLOUR_IMAGES)
+    tinted = sorted(p for p in found if alpha_only(p))
+    colour = sorted(p for p in found if not alpha_only(p))
     return tinted, colour
 
 

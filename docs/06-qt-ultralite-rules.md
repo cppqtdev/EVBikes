@@ -47,6 +47,8 @@ Modules other than QtQuick / Extras must be enabled in the `.qmlproject`: `Modul
 | Reading a font back (`someFont.pixelSize`) | A font can be built but not read: keep the size in its own property beside the font, and let `qul_lint` check the two agree |
 | `font.weight` | The static font engine picks a face by family, `bold` and `italic`; the weight enum only compiles for the Monotype Spark engine |
 | A ternary mixing an enum constant with an `int` property | Pass both through a typed function instead — the two types cannot be merged into one value |
+| Declaring art `Alpha8` by its file name | The exporter checks the pixels: an image is Alpha8 only if every visible pixel is pure white. `sync_project_files.py` measures each file instead of matching names |
+| The same image declared by a module **and** by the root project | It lands in two resource sets, and the handle the module links against is never written. Only the project whose QML names an image declares it |
 | `Control` just for `background:` | A `Rectangle` child behind the rest — `import QtQuick.Controls` is remapped to `QtQuick.Controls.StyleDefault`, which a module only gets through `MCU.qulModules` and which costs flash |
 
 ## Patterns used in this project
