@@ -128,6 +128,7 @@ PageBase {
         y: 193
         value: page.soc
         fit: true
+        digitSize: 30
         digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 30, bold: true })
         widthFactor: 0.6
         color: "#C0603F"

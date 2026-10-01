@@ -43,6 +43,7 @@ Item {
         value: VehicleData.batteryPercent
         stale: VehicleData.batteryStale
         fit: true
+        digitSize: 57
         digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 57, bold: true })
         widthFactor: 0.63
         color: "#A8F0D8"
@@ -72,6 +73,7 @@ Item {
         value: Format.distanceValueKm(VehicleData.rangeKm)
         stale: VehicleData.batteryStale
         fit: true
+        digitSize: 48
         digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 48, bold: true })
         widthFactor: 0.55
         color: "#D8B3AA"
@@ -135,6 +137,7 @@ Item {
         stale: VehicleData.driveStale
         digits: 3
         centered: true
+        digitSize: 64
         digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 64 })
         widthFactor: 0.58
         color: "#2EFED8"

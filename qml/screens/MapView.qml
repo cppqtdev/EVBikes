@@ -164,6 +164,7 @@ Item {
                    ? Math.round(NavigationData.distanceToManeuverM * Format.feetPerMetre)
                    : NavigationData.distanceToManeuverM
             fit: true
+            digitSize: 26
             digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 26 })
             widthFactor: 0.58
         }

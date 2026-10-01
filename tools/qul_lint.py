@@ -139,6 +139,41 @@ def runtime_font_binding(line):
             f"engine; bind the whole font to a readonly Qt.font(...) instead")
 
 
+#  A font can be built but not read back, so NumberReadout is told its digit
+#  size twice. The two have to agree.
+DIGIT_SIZE = re.compile(r"^\s*digitSize:\s*(\d+)\s*$")
+DIGIT_FONT = re.compile(r"^\s*digitFont:\s*Qt\.font\(\{[^}]*pixelSize:\s*(\d+)")
+FONT_READ = re.compile(r"\b\w+[Ff]ont\.(pixelSize|family|bold|italic|weight)\b")
+
+
+def font_problems(path, lines):
+    """Size/font mismatches, and reads of a font's subproperties."""
+    out = []
+    pending = None
+    for n, line in enumerate(lines, 1):
+        m = DIGIT_SIZE.match(line)
+        if m:
+            pending = (n, int(m.group(1)))
+            continue
+        m = DIGIT_FONT.match(line)
+        if m:
+            if pending is None:
+                out.append(f"{path}:{n}: digitFont without a digitSize beside it")
+            elif pending[1] != int(m.group(1)):
+                out.append(f"{path}:{n}: digitSize {pending[1]} does not match "
+                           f"the font's pixelSize {m.group(1)}")
+            pending = None
+            continue
+        bare = re.sub(r'"[^"]*"', '""', line)
+        if re.match(r"\s*font\.", bare) or "Qt.font(" in bare:
+            continue
+        r = FONT_READ.search(bare)
+        if r:
+            out.append(f"{path}:{n}: a font's '{r.group(1)}' cannot be read back "
+                       f"in Qt for MCUs; keep the value in its own property")
+    return out
+
+
 def collect_local_types(root):
     names = set()
     for dirpath, _, files in os.walk(root):
@@ -210,6 +245,9 @@ def lint(root):
                               f"constant and the other is not; Qt for MCUs "
                               f"cannot merge the two types")
                         problems += 1
+            for msg in font_problems(path, open(path, encoding="utf-8").read().split("\n")):
+                print(msg)
+                problems += 1
             for name, n in sorted(missing_import.items(), key=lambda kv: kv[1]):
                 module = NEEDS_IMPORT[name]
                 if module not in imported:

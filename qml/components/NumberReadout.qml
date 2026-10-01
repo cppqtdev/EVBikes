@@ -13,6 +13,9 @@ Item {
 
     property int value: 0
     property int digits: 2
+    // digitSize has to repeat the font's pixelSize: a font can be built but its
+    // subproperties cannot be read back, and the cells are sized from it.
+    property int digitSize: 24
     property font digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 24 })
     property color color: Theme.textPrimary
     property bool centered: false
@@ -28,7 +31,7 @@ Item {
     property real shown: value
 
     readonly property int shownValue: Math.round(shown)
-    readonly property int cellWidth: Math.round(digitFont.pixelSize * widthFactor)
+    readonly property int cellWidth: Math.round(digitSize * widthFactor)
     // Digit count by arithmetic: String.length is not part of the JavaScript
     // subset Qt for MCUs provides.
     readonly property int used: {
@@ -45,7 +48,7 @@ Item {
     readonly property color ink: stale ? Theme.textMuted : color
 
     width: cells * cellWidth
-    height: Math.round(digitFont.pixelSize * 1.25)
+    height: Math.round(digitSize * 1.25)
 
     Behavior on shown {
         NumberAnimation { duration: readout.duration }
