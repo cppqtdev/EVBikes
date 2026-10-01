@@ -50,10 +50,10 @@ def module_images(folder):
 def write_module(name, uri, target, singletons, imports, qul_modules):
     folder = os.path.join(ROOT, "qml", name)
     files = qml_files(folder, singletons)
-    listing = ",\n".join(f'            "{f}"' for f in files)
+    listing = ",\n".join(f'            "qml/{name}/{f}"' for f in files)
     deps = ""
     if imports or qul_modules:
-        dep_list = ",\n".join(f'            "../{d}/{d}.qmlproject"' for d in imports)
+        dep_list = ",\n".join(f'            "qml/{d}/{d}.qmlproject"' for d in imports)
         quls = ""
         if qul_modules:
             names = ", ".join(f'"{m}"' for m in qul_modules)
@@ -70,7 +70,7 @@ def write_module(name, uri, target, singletons, imports, qul_modules):
     for group, fmt in ((tinted, "Alpha8"), (colour, "Automatic")):
         if not group:
             continue
-        rows = ",\n".join(f'            "../../{f}"' for f in group)
+        rows = ",\n".join(f'            "{f}"' for f in group)
         images += f"""
     ImageFiles {{
         files: [
@@ -84,6 +84,8 @@ def write_module(name, uri, target, singletons, imports, qul_modules):
         fh.write(f"""import QmlProject 1.3
 
 Project {{
+    projectRootPath: "../.."
+
     MCU.Module {{
         uri: "{uri}"
     }}
