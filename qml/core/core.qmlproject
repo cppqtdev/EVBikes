@@ -5,6 +5,12 @@ Project {
         uri: "ClusterCore"
     }
 
+    ModuleFiles {
+        files: [
+            "../backend/backend.qmlproject"
+        ]
+    }
+
     QmlFiles {
         files: [
             "Theme.qml",

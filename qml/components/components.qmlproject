@@ -5,6 +5,13 @@ Project {
         uri: "ClusterComponents"
     }
 
+    ModuleFiles {
+        files: [
+            "../backend/backend.qmlproject",
+            "../core/core.qmlproject"
+        ]
+    }
+
     QmlFiles {
         files: [
             "BatteryColumn.qml",

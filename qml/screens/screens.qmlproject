@@ -5,6 +5,14 @@ Project {
         uri: "ClusterScreens"
     }
 
+    ModuleFiles {
+        files: [
+            "../backend/backend.qmlproject",
+            "../core/core.qmlproject",
+            "../components/components.qmlproject"
+        ]
+    }
+
     QmlFiles {
         files: [
             "AuthScreen.qml",

@@ -12,10 +12,16 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# name: (uri, cmake target, singletons, modules this one imports)
+# Qt for MCUs resolves a module import against the importing project's own
+# ModuleFiles, not the root's, so every module has to name what it imports.
 MODULES = {
-    "core": ("ClusterCore", "cluster_core", ["Theme.qml", "Router.qml", "Format.qml"]),
-    "components": ("ClusterComponents", "cluster_components", []),
-    "screens": ("ClusterScreens", "cluster_screens", []),
+    "core": ("ClusterCore", "cluster_core", ["Theme.qml", "Router.qml", "Format.qml"],
+             ["backend"]),
+    "components": ("ClusterComponents", "cluster_components", [],
+                   ["backend", "core"]),
+    "screens": ("ClusterScreens", "cluster_screens", [],
+                ["backend", "core", "components"]),
 }
 
 # Colour artwork (not tinted) keeps its RGB channels.
@@ -27,10 +33,20 @@ def qml_files(folder, singletons):
     return singletons + [f for f in files if f not in singletons]
 
 
-def write_module(name, uri, target, singletons):
+def write_module(name, uri, target, singletons, imports):
     folder = os.path.join(ROOT, "qml", name)
     files = qml_files(folder, singletons)
     listing = ",\n".join(f'            "{f}"' for f in files)
+    deps = ""
+    if imports:
+        dep_list = ",\n".join(f'            "../{d}/{d}.qmlproject"' for d in imports)
+        deps = f"""
+    ModuleFiles {{
+        files: [
+{dep_list}
+        ]
+    }}
+"""
     with open(os.path.join(folder, f"{name}.qmlproject"), "w") as fh:
         fh.write(f"""import QmlProject 1.3
 
@@ -38,7 +54,7 @@ Project {{
     MCU.Module {{
         uri: "{uri}"
     }}
-
+{deps}
     QmlFiles {{
         files: [
 {listing}
@@ -147,8 +163,8 @@ Project {{
 
 
 def main():
-    for name, (uri, target, singletons) in MODULES.items():
-        print(name, write_module(name, uri, target, singletons), "qml files")
+    for name, (uri, target, singletons, imports) in MODULES.items():
+        print(name, write_module(name, uri, target, singletons, imports), "qml files")
     print("images (alpha, colour):", write_main_project())
 
 
