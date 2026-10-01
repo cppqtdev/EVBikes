@@ -3,11 +3,11 @@ import QtQuick
 import ClusterBackend
 
 QtObject {
-    function pad2(value) {
+    function pad2(value: int) : string {
         return (value < 10 ? "0" : "") + value
     }
 
-    function clockText(hours, minutes, use24) {
+    function clockText(hours: int, minutes: int, use24: bool) : string {
         if (use24)
             return pad2(hours) + ":" + pad2(minutes)
         var h = hours % 12
@@ -16,7 +16,7 @@ QtObject {
         return h + ":" + pad2(minutes)
     }
 
-    function amPm(hours, use24) {
+    function amPm(hours: int, use24: bool) : string {
         if (use24)
             return ""
         return hours < 12 ? "am" : "pm"
@@ -29,31 +29,31 @@ QtObject {
     readonly property real feetPerMetre: 3.28084
     readonly property int feetPerMile: 5280
 
-    function speedValue(kmh) {
+    function speedValue(kmh: int) : int {
         return SystemData.useMiles ? Math.round(kmh * milesPerKm) : kmh
     }
 
-    function speedUnit() {
+    function speedUnit() : string {
         return SystemData.useMiles ? qsTr("MPH") : qsTr("KPH")
     }
 
-    function speedUnitWord() {
+    function speedUnitWord() : string {
         return SystemData.useMiles ? qsTr("Mph") : qsTr("Kmph")
     }
 
-    function distanceValueKm(km) {
+    function distanceValueKm(km: int) : int {
         return SystemData.useMiles ? Math.round(km * milesPerKm) : km
     }
 
-    function distanceUnitName() {
+    function distanceUnitName() : string {
         return SystemData.useMiles ? qsTr("mi") : qsTr("km")
     }
 
-    function tenthsKm(valueX10) {
+    function tenthsKm(valueX10: int) : string {
         return tenths(SystemData.useMiles ? Math.round(valueX10 * milesPerKm) : valueX10)
     }
 
-    function distanceValue(meters) {
+    function distanceValue(meters: int) : string {
         if (SystemData.useMiles) {
             var feet = meters * feetPerMetre
             if (feet >= feetPerMile * 10)
@@ -73,27 +73,27 @@ QtObject {
         return "" + Math.round(meters / 10) * 10
     }
 
-    function distanceUnit(meters) {
+    function distanceUnit(meters: int) : string {
         if (SystemData.useMiles)
             return meters * feetPerMetre >= feetPerMile ? qsTr("mi") : qsTr("ft")
         return meters >= 1000 ? "km" : "m"
     }
 
-    function tenths(valueX10) {
+    function tenths(valueX10: int) : string {
         return Math.floor(valueX10 / 10) + "." + Math.abs(valueX10 % 10)
     }
 
-    function durationText(seconds) {
+    function durationText(seconds: int) : string {
         return Math.floor(seconds / 60) + ":" + pad2(seconds % 60)
     }
 
-    function etaText(minutes) {
+    function etaText(minutes: int) : string {
         if (minutes < 60)
             return minutes + " min"
         return Math.floor(minutes / 60) + " h " + (minutes % 60) + " min"
     }
 
-    function turnIcon(maneuver) {
+    function turnIcon(maneuver: int) : string {
         if (maneuver === NavigationData.Straight) return "qrc:/assets/turns/28/straight.png"
         if (maneuver === NavigationData.SlightLeft) return "qrc:/assets/turns/28/slight_left.png"
         if (maneuver === NavigationData.Left) return "qrc:/assets/turns/28/left.png"
@@ -113,7 +113,7 @@ QtObject {
         return "qrc:/assets/icons/28/nav.png"
     }
 
-    function turnText(maneuver, exitNumber) {
+    function turnText(maneuver: int, exitNumber: int) : string {
         if (maneuver === NavigationData.Straight) return qsTr("Continue straight")
         if (maneuver === NavigationData.SlightLeft) return qsTr("Keep slight left")
         if (maneuver === NavigationData.Left) return qsTr("Turn left")
@@ -131,7 +131,7 @@ QtObject {
         return ""
     }
 
-    function digitAt(value, position) {
+    function digitAt(value: int, position: int) : string {
         var v = Math.floor(value)
         for (var i = 0; i < position; i++)
             v = Math.floor(v / 10)
@@ -141,49 +141,49 @@ QtObject {
     // Contacts and reminders come off the phone link, three slots each. An
     // unpaired phone leaves them empty, which is the truth rather than a list
     // of people the firmware made up.
-    function contactName(index) {
+    function contactName(index: int) : string {
         if (index === 0) return PhoneListData.contact0Name
         if (index === 1) return PhoneListData.contact1Name
         return PhoneListData.contact2Name
     }
 
-    function contactBody(index) {
+    function contactBody(index: int) : string {
         if (index === 0) return PhoneListData.contact0Text
         if (index === 1) return PhoneListData.contact1Text
         return PhoneListData.contact2Text
     }
 
-    function contactInitial(index) {
+    function contactInitial(index: int) : string {
         if (index === 0) return PhoneListData.contact0Initial
         if (index === 1) return PhoneListData.contact1Initial
         return PhoneListData.contact2Initial
     }
 
-    function reminderName(index) {
+    function reminderName(index: int) : string {
         if (index === 0) return PhoneListData.reminder0Name
         if (index === 1) return PhoneListData.reminder1Name
         return PhoneListData.reminder2Name
     }
 
-    function reminderBody(index) {
+    function reminderBody(index: int) : string {
         if (index === 0) return PhoneListData.reminder0Text
         if (index === 1) return PhoneListData.reminder1Text
         return PhoneListData.reminder2Text
     }
 
-    function reminderInitial(index) {
+    function reminderInitial(index: int) : string {
         if (index === 0) return PhoneListData.reminder0Initial
         if (index === 1) return PhoneListData.reminder1Initial
         return PhoneListData.reminder2Initial
     }
 
-    function profileName(index) {
+    function profileName(index: int) : string {
         if (index === 0) return SystemData.profile0Name !== "" ? SystemData.profile0Name : qsTr("RIDER 1")
         if (index === 1) return SystemData.profile1Name !== "" ? SystemData.profile1Name : qsTr("RIDER 2")
         return SystemData.profile2Name !== "" ? SystemData.profile2Name : qsTr("RIDER 3")
     }
 
-    function alertTitle(kind) {
+    function alertTitle(kind: int) : string {
         if (kind === AlertData.LowTyreFront) return qsTr("TIRE PSI LOW")
         if (kind === AlertData.LowTyreRear) return qsTr("TIRE PSI LOW")
         if (kind === AlertData.LowBattery) return qsTr("BATTERY LOW")
@@ -196,7 +196,7 @@ QtObject {
         return ""
     }
 
-    function alertAdvice(kind) {
+    function alertAdvice(kind: int) : string {
         if (kind === AlertData.LowTyreFront || kind === AlertData.LowTyreRear) return qsTr("Tire Inflation Required")
         if (kind === AlertData.LowBattery) return qsTr("Find a charging station")
         if (kind === AlertData.SideStandDown) return qsTr("Lift the side stand")
@@ -207,7 +207,7 @@ QtObject {
         return ""
     }
 
-    function routeImage(maneuver) {
+    function routeImage(maneuver: int) : string {
         if (maneuver === NavigationData.SlightLeft || maneuver === NavigationData.ForkLeft || maneuver === NavigationData.MergeLeft)
             return "qrc:/assets/cluster/route_slight_left.png"
         if (maneuver === NavigationData.SlightRight || maneuver === NavigationData.ForkRight || maneuver === NavigationData.MergeRight)
@@ -224,7 +224,7 @@ QtObject {
         return "qrc:/assets/cluster/route_straight.png"
     }
 
-    function hexRouteImage(maneuver) {
+    function hexRouteImage(maneuver: int) : string {
         if (maneuver === NavigationData.SlightLeft || maneuver === NavigationData.ForkLeft || maneuver === NavigationData.MergeLeft)
             return "qrc:/assets/cluster/hexroute_slight_left.png"
         if (maneuver === NavigationData.SlightRight || maneuver === NavigationData.ForkRight || maneuver === NavigationData.MergeRight)
@@ -241,7 +241,7 @@ QtObject {
         return "qrc:/assets/cluster/hexroute_straight.png"
     }
 
-    function alertIcon(kind) {
+    function alertIcon(kind: int) : string {
         if (kind === AlertData.LowTyreFront || kind === AlertData.LowTyreRear) return "qrc:/assets/icons/72/tyre.png"
         if (kind === AlertData.LowBattery) return "qrc:/assets/icons/72/battery_fault.png"
         if (kind === AlertData.SideStandDown) return "qrc:/assets/icons/72/side_stand.png"

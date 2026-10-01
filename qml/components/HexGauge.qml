@@ -15,7 +15,7 @@ Item {
     // The printed scale is calibrated in km/h. In miles the same tick
     // carries the same speed in the rider's unit, so the numbers and
     // the needle still agree.
-    function labelText(kmh) {
+    function labelText(kmh: int) : string {
         return miles ? "" + Math.round(kmh * 0.621371) : "" + kmh
     }
 

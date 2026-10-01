@@ -36,11 +36,11 @@ PageBase {
     readonly property real normalEnd: ecoEnd + normalShare * 3.6
     readonly property real sportEnd: normalEnd + sportShare * 3.6
 
-    function ringX(degrees) {
+    function ringX(degrees: real) : real {
         return ringCx + ringRadius * Math.cos(degrees * Math.PI / 180)
     }
 
-    function ringY(degrees) {
+    function ringY(degrees: real) : real {
         return ringCy + ringRadius * Math.sin(degrees * Math.PI / 180)
     }
 

@@ -53,7 +53,7 @@ QtObject {
             closeMenu()
     }
 
-    function menuTitle(index) {
+    function menuTitle(index: int) : string {
         if (index === menuProfile) return qsTr("Profile")
         if (index === menuDigilocker) return qsTr("Digilocker")
         if (index === menuSeat) return qsTr("Seat")
@@ -66,7 +66,7 @@ QtObject {
         return ""
     }
 
-    function wrap(index) {
+    function wrap(index: int) : int {
         return (index + menuCount) % menuCount
     }
 
@@ -101,14 +101,14 @@ QtObject {
         subLevel = 0
     }
 
-    function moveMenu(step) {
+    function moveMenu(step: int) {
         menuIndex = wrap(menuIndex + step)
         subIndex = 0
         subLevel = 0
         paymentDone = false
     }
 
-    function handleButton(button, action) {
+    function handleButton(button: int, action: int) {
         if (action === ClusterInput.LongPress && button === ClusterInput.Mode) {
             Simulator.nextScenario()
             return
@@ -158,7 +158,7 @@ QtObject {
             centerView = viewBike
     }
 
-    function moveDock(step) {
+    function moveDock(step: int) {
         dockIndex = (dockIndex + step + dockCount) % dockCount
     }
 
@@ -182,7 +182,7 @@ QtObject {
             VehicleData.rideMode = VehicleData.Eco
     }
 
-    function handleAlertButton(button) {
+    function handleAlertButton(button: int) {
         if (AlertData.kind === AlertData.CrashDetected) {
             if (AlertData.phase === 1 && button === ClusterInput.Right)
                 AlertData.cancelSos()
@@ -201,7 +201,7 @@ QtObject {
             AlertData.acknowledge()
     }
 
-    function handleAuthButton(button) {
+    function handleAuthButton(button: int) {
         if (SystemData.authState === SystemData.AuthScanning)
             return
         if (button === ClusterInput.Left)
@@ -212,7 +212,7 @@ QtObject {
             SystemData.startScan()
     }
 
-    function handleMenuButton(button) {
+    function handleMenuButton(button: int) {
         if (button === ClusterInput.Back) {
             if (subLevel > 0)
                 subLevel = 0
@@ -261,7 +261,7 @@ QtObject {
 
     // Misc: subIndex = tab (0 messages, 1 music, 2 reminders). On a list tab OK
     // steps into the rows (subLevel = 1 + row), where OK calls that contact.
-    function handleMiscButton(up, down, ok) {
+    function handleMiscButton(up: bool, down: bool, ok: bool) {
         var rows = subIndex === 0 ? PhoneListData.contactCount : PhoneListData.reminderCount
         if (subLevel === 0) {
             if (up) subIndex = (subIndex + 2) % 3
@@ -280,7 +280,7 @@ QtObject {
         else if (ok && subIndex === 0) placeCall(row)
     }
 
-    function placeCall(row) {
+    function placeCall(row: int) {
         var name = Format.contactName(row)
         if (name === "") return
         PhoneData.callerName = name
@@ -289,7 +289,7 @@ QtObject {
 
     // Customize: subIndex = tab (0 help, 1 shortcut keys, 2 theme).
     // On the theme tab OK enters the list (subLevel = 1 + row).
-    function handleCustomizeButton(up, down, ok) {
+    function handleCustomizeButton(up: bool, down: bool, ok: bool) {
         if (subLevel === 0) {
             if (up) subIndex = (subIndex + 2) % 3
             else if (down) subIndex = (subIndex + 1) % 3
@@ -302,7 +302,7 @@ QtObject {
         else if (ok) activateThemeRow(row)
     }
 
-    function activateThemeRow(row) {
+    function activateThemeRow(row: int) {
         if (row === 0)
             SystemData.nightMode = !SystemData.nightMode
         else if (row === 1)
