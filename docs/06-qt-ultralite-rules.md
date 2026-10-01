@@ -36,6 +36,12 @@ Modules other than QtQuick / Extras must be enabled in the `.qmlproject`: `Modul
 | `JSON`, `XMLHttpRequest`, heavy JavaScript | Do it in C++ |
 | `anchors.baseline` (avoid) | `anchors.bottom` + margin |
 | `States` with `when:` conditions (known issue) | Plain property bindings |
+| `Text.contentWidth` / `contentHeight` | A `Text` with no `width` set is exactly as wide as its text: read its `width` |
+| `parent.<custom property>` | `parent` is typed as a plain `Item`: give the parent an `id` and read it through that |
+| `ListModel` roles (`model.title`) | A `required property` in the delegate, or an `int` model with the values on the delegate |
+| A model that switches between a `ListModel` and a count | One `int` model; hide the delegate with `visible` |
+| A property named `on<Something>` | `on<X>:` is also how a signal handler is spelled: name it `active`, `activeColor`, … |
+| `transform` / `rotation` / `scale` on `Item` or `Rectangle` | Only `Image`, `Text` and `StaticText` transform: draw it as art and tint with `ColorizedImage` |
 
 ## Patterns used in this project
 
@@ -56,4 +62,8 @@ Modules other than QtQuick / Extras must be enabled in the `.qmlproject`: `Modul
 - Property order: `id`, custom properties, geometry, visual, behaviours, children.
 - No magic numbers in pages: use `Theme.*`.
 - Every new C++ decode function gets a host unit test.
-- `qul_lint.py` and host tests must pass before commit.
+- `qul_lint.py` and host tests must pass before commit. It also runs
+  `qul_types.py`, which checks every property assigned and every `id.member`
+  read against the members Qt for MCUs actually has — the desktop build accepts
+  far more than the MCU compiler does, so this is what catches the difference
+  before a build round does.

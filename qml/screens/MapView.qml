@@ -233,6 +233,8 @@ Item {
             model: 5
 
             Item {
+                id: shortcut
+
                 property bool big: index === 2
 
                 x: index < 2 ? 494 + index * 52 : (index === 2 ? 598 : 674 + (index - 3) * 52)
@@ -243,15 +245,15 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     radius: 4
-                    color: parent.big ? "#323232" : "#202020"
-                    opacity: parent.big ? 1.0 : 0.8
+                    color: shortcut.big ? "#323232" : "#202020"
+                    opacity: shortcut.big ? 1.0 : 0.8
                 }
 
                 Icon {
                     x: (parent.width - size) / 2
                     y: 5
                     size: 18
-                    visible: !parent.big
+                    visible: !shortcut.big
                     source: index === 0 ? "qrc:/assets/icons/18/wrench.png"
                           : (index === 1 ? "qrc:/assets/icons/18/building.png"
                           : (index === 3 ? "qrc:/assets/icons/18/station.png" : "qrc:/assets/icons/18/triangle.png"))
@@ -262,13 +264,13 @@ Item {
                     x: (parent.width - size) / 2
                     y: 6
                     size: 30
-                    visible: parent.big
+                    visible: shortcut.big
                     source: "qrc:/assets/icons/30/pin.png"
                     color: Theme.white
                 }
 
                 Text {
-                    y: parent.big ? 40 : 26
+                    y: shortcut.big ? 40 : 26
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
@@ -276,9 +278,9 @@ Item {
                         : (index === 1 ? qsTr("Commute")
                         : (index === 2 ? qsTr("Explore")
                         : (index === 3 ? qsTr("Charging") : qsTr("Emergency"))))
-                    color: parent.big ? Theme.white : "#7B8285"
+                    color: shortcut.big ? Theme.white : "#7B8285"
                     font.family: Theme.fontFamily
-                    font.pixelSize: parent.big ? 13 : 9
+                    font.pixelSize: shortcut.big ? 13 : 9
                 }
             }
         }

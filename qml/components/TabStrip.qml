@@ -17,9 +17,11 @@ Item {
     property int inset: 3
     property int labelSize: 15
 
-    readonly property int firstWidth: Math.round(firstLabel.contentWidth) + padding * 2
-    readonly property int secondWidth: Math.round(secondLabel.contentWidth) + padding * 2
-    readonly property int thirdWidth: Math.round(thirdLabel.contentWidth) + padding * 2
+    //  A Text with no width of its own is exactly as wide as its text, so the
+    //  label's width is the content width. Qt for MCUs has no contentWidth.
+    readonly property int firstWidth: firstLabel.width + padding * 2
+    readonly property int secondWidth: secondLabel.width + padding * 2
+    readonly property int thirdWidth: thirdLabel.width + padding * 2
 
     readonly property int currentX: tabs.current === 0 ? 0
                                   : (tabs.current === 1 ? tabs.firstWidth
@@ -58,10 +60,8 @@ Item {
 
     Text {
         id: firstLabel
-        x: tabs.inset + (tabs.firstWidth - contentWidth) / 2
-        y: tabs.inset
-        height: tabs.cellHeight
-        verticalAlignment: Text.AlignVCenter
+        x: tabs.inset + tabs.padding
+        y: tabs.inset + (tabs.cellHeight - height) / 2
         text: tabs.first
         color: tabs.current === 0 ? Theme.textPrimary : Theme.textSecondary
         font.family: Theme.fontFamily
@@ -70,10 +70,8 @@ Item {
 
     Text {
         id: secondLabel
-        x: tabs.inset + tabs.firstWidth + (tabs.secondWidth - contentWidth) / 2
-        y: tabs.inset
-        height: tabs.cellHeight
-        verticalAlignment: Text.AlignVCenter
+        x: tabs.inset + tabs.firstWidth + tabs.padding
+        y: tabs.inset + (tabs.cellHeight - height) / 2
         text: tabs.second
         color: tabs.current === 1 ? Theme.textPrimary : Theme.textSecondary
         font.family: Theme.fontFamily
@@ -82,10 +80,8 @@ Item {
 
     Text {
         id: thirdLabel
-        x: tabs.inset + tabs.firstWidth + tabs.secondWidth + (tabs.thirdWidth - contentWidth) / 2
-        y: tabs.inset
-        height: tabs.cellHeight
-        verticalAlignment: Text.AlignVCenter
+        x: tabs.inset + tabs.firstWidth + tabs.secondWidth + tabs.padding
+        y: tabs.inset + (tabs.cellHeight - height) / 2
         text: tabs.third
         color: tabs.current === 2 ? Theme.textPrimary : Theme.textSecondary
         font.family: Theme.fontFamily

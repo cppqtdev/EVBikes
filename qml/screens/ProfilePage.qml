@@ -10,6 +10,8 @@ PageBase {
         model: 3
 
         Item {
+            id: tile
+
             property bool selected: SystemData.profileIndex === index
 
             x: (index === 0 ? 500 : (index === 1 ? 651 : 805)) - 60
@@ -20,7 +22,7 @@ PageBase {
             ColorizedImage {
                 x: 7
                 y: 10
-                visible: parent.selected
+                visible: tile.selected
                 source: "qrc:/assets/cluster/avatar_106.png"
                 color: "#DADDDE"
             }
@@ -28,7 +30,7 @@ PageBase {
             ColorizedImage {
                 x: 14
                 y: 17
-                visible: !parent.selected
+                visible: !tile.selected
                 source: "qrc:/assets/cluster/avatar_92.png"
                 color: "#8C9194"
             }
@@ -38,7 +40,7 @@ PageBase {
                 width: 120
                 horizontalAlignment: Text.AlignHCenter
                 text: Format.profileName(index)
-                color: parent.selected ? Theme.textPrimary : "#7B8285"
+                color: tile.selected ? Theme.textPrimary : "#7B8285"
                 font.family: Theme.fontFamily
                 font.pixelSize: 16
             }

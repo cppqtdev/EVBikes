@@ -9,23 +9,25 @@ PageBase {
 
     pageId: Router.menuDigilocker
 
-    ListModel {
-        id: docs
-        ListElement { title: "Insurance" }
-        ListElement { title: "Aadhar card" }
-        ListElement { title: "Driving license" }
-    }
-
     DemoNotice {
         subject: qsTr("Your documents")
     }
 
     Repeater {
-        model: SystemData.demoMode ? docs : 0
+        //  Three fixed titles carried by the delegate: a Qt for MCUs ListModel
+        //  reaches its roles only through a required property, and the model
+        //  itself cannot be swapped for a count.
+        model: 3
 
         Item {
-            property int slot: (index - Router.subIndex + 4) % 3
+            id: row
 
+            property int slot: (index - Router.subIndex + 4) % 3
+            readonly property string title: index === 0 ? qsTr("Insurance")
+                                          : (index === 1 ? qsTr("Aadhar card")
+                                                         : qsTr("Driving license"))
+
+            visible: SystemData.demoMode
             x: 512
             y: slot === 0 ? 119 : (slot === 1 ? 166 : 221)
             width: 273
@@ -47,10 +49,10 @@ PageBase {
 
             Text {
                 anchors.centerIn: parent
-                text: model.title
+                text: row.title
                 color: "#B8BDBF"
                 font.family: Theme.fontFamily
-                font.pixelSize: parent.slot === 1 ? 22 : 20
+                font.pixelSize: row.slot === 1 ? 22 : 20
                 font.bold: true
                 font.italic: true
             }

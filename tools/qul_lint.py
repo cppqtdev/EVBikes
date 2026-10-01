@@ -169,4 +169,8 @@ if __name__ == "__main__":
     target = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "..", "qml")
     count = lint(target)
     print("qul_lint: %d problem(s)" % count)
+    #  Imports and types are only half of it; qul_types checks the members.
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import qul_types
+    count += qul_types.scan(target)
     sys.exit(1 if count else 0)
