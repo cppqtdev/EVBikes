@@ -74,6 +74,10 @@ NEEDS_IMPORT = {
     "SwipeView": "QtQuick.Controls",
 }
 
+# qmltocpp wants a type on every function parameter, and a return type on any
+# function that returns a value. An untyped parameter is a build error.
+FUNCTION_RE = re.compile(r"^\s*function\s+(\w+)\s*\(([^)]*)\)")
+
 TYPE_RE = re.compile(r"^\s*([A-Z][A-Za-z0-9_]*)\s*\{")
 ANIM_ON_RE = re.compile(r"^\s*([A-Z][A-Za-z0-9_]*)\s+on\s+\w+\s*\{")
 IMPORT_RE = re.compile(r"^\s*import\s+([A-Za-z0-9_.]+)")
@@ -142,6 +146,13 @@ def lint(root):
                     if on_match and on_match.group(1) != "Behavior":
                         print(f"{path}:{n}: '<Animation> on <property>' syntax: prefer an explicit animation with target/property")
                         problems += 1
+                    fn = FUNCTION_RE.match(stripped)
+                    if fn and fn.group(2).strip():
+                        for arg in fn.group(2).split(","):
+                            if ":" not in arg:
+                                print(f"{path}:{n}: parameter '{arg.strip()}' of "
+                                      f"{fn.group(1)}() needs a type")
+                                problems += 1
                     for rx, msg in BANNED_PATTERNS:
                         if rx.search(stripped):
                             print(f"{path}:{n}: {msg}")

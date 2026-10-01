@@ -19,7 +19,7 @@ Item {
 
     Connections {
         target: PhoneData
-        function onNotificationSeqChanged() {
+        function onNotificationSeqChanged(notificationSeq: int) {
             toast.shown = true
             hideTimer.restart()
         }
