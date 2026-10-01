@@ -42,6 +42,7 @@ Modules other than QtQuick / Extras must be enabled in the `.qmlproject`: `Modul
 | A model that switches between a `ListModel` and a count | One `int` model; hide the delegate with `visible` |
 | A property named `on<Something>` | `on<X>:` is also how a signal handler is spelled: name it `active`, `activeColor`, … |
 | `transform` / `rotation` / `scale` on `Item` or `Rectangle` | Only `Image`, `Text` and `StaticText` transform: draw it as art and tint with `ColorizedImage` |
+| `font.weight` | The static font engine picks a face by family, `bold` and `italic`; the weight enum only compiles for the Monotype Spark engine |
 
 ## Patterns used in this project
 

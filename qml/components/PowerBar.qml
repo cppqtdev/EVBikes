@@ -83,7 +83,7 @@ Item {
         color: Theme.segLabelOnLight
         font.family: Theme.fontFamily
         font.pixelSize: 12
-        font.weight: Font.DemiBold
+        font.bold: true
         font.italic: true
     }
 
@@ -96,7 +96,7 @@ Item {
         color: Theme.textPrimary
         font.family: Theme.fontFamily
         font.pixelSize: 12
-        font.weight: Font.DemiBold
+        font.bold: true
         font.italic: true
     }
 }

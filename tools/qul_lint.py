@@ -92,6 +92,9 @@ BANNED_PATTERNS = [
      "String methods are not in the Qt for MCUs JavaScript subset"),
     (re.compile(r"\"\s*\+[^\n]*\)\.length\b|\bstring[A-Za-z0-9_]*\.length\b"),
      "String.length is not in the Qt for MCUs JavaScript subset"),
+    (re.compile(r"\bfont\.weight\b"),
+     "font.weight compiles only for the Monotype Spark font engine; "
+     "the static engine picks a face by family, bold and italic"),
 ]
 
 
