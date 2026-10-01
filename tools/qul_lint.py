@@ -98,6 +98,22 @@ BANNED_PATTERNS = [
 ]
 
 
+#  One ternary, two types. Qt for MCUs will not merge an enum constant with an
+#  int property into one value: "could not load value of ambiguous type".
+TERNARY = re.compile(r"\?([^?:]+):([^?:]+?)(?:$|\))")
+ENUM_SHAPE = re.compile(r"^\w+\.[A-Z]\w*$")
+
+
+def mixed_enum_ternary(line):
+    m = TERNARY.search(line)
+    if not m:
+        return False
+    left, right = m.group(1).strip(), m.group(2).strip()
+    if not left or not right:
+        return False
+    return bool(ENUM_SHAPE.match(left)) != bool(ENUM_SHAPE.match(right))
+
+
 def collect_local_types(root):
     names = set()
     for dirpath, _, files in os.walk(root):
@@ -160,6 +176,11 @@ def lint(root):
                         if rx.search(stripped):
                             print(f"{path}:{n}: {msg}")
                             problems += 1
+                    if mixed_enum_ternary(stripped):
+                        print(f"{path}:{n}: one side of this ternary is an enum "
+                              f"constant and the other is not; Qt for MCUs "
+                              f"cannot merge the two types")
+                        problems += 1
             for name, n in sorted(missing_import.items(), key=lambda kv: kv[1]):
                 module = NEEDS_IMPORT[name]
                 if module not in imported:

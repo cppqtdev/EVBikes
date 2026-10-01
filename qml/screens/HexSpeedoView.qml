@@ -90,7 +90,7 @@ Item {
     ColorizedImage {
         x: 700
         y: 40
-        source: Format.hexRouteImage(NavigationData.active ? NavigationData.maneuver : NavigationData.Straight)
+        source: Format.hexRouteImage(NavigationData.active, NavigationData.maneuver)
         color: Theme.white
     }
 

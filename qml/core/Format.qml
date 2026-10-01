@@ -224,7 +224,8 @@ QtObject {
         return "qrc:/assets/cluster/route_straight.png"
     }
 
-    function hexRouteImage(maneuver: int) : string {
+    function hexRouteImage(active: bool, maneuver: int) : string {
+        if (!active) return "qrc:/assets/cluster/hexroute_straight.png"
         if (maneuver === NavigationData.SlightLeft || maneuver === NavigationData.ForkLeft || maneuver === NavigationData.MergeLeft)
             return "qrc:/assets/cluster/hexroute_slight_left.png"
         if (maneuver === NavigationData.SlightRight || maneuver === NavigationData.ForkRight || maneuver === NavigationData.MergeRight)

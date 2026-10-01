@@ -43,6 +43,7 @@ Modules other than QtQuick / Extras must be enabled in the `.qmlproject`: `Modul
 | A property named `on<Something>` | `on<X>:` is also how a signal handler is spelled: name it `active`, `activeColor`, … |
 | `transform` / `rotation` / `scale` on `Item` or `Rectangle` | Only `Image`, `Text` and `StaticText` transform: draw it as art and tint with `ColorizedImage` |
 | `font.weight` | The static font engine picks a face by family, `bold` and `italic`; the weight enum only compiles for the Monotype Spark engine |
+| A ternary mixing an enum constant with an `int` property | Pass both through a typed function instead — the two types cannot be merged into one value |
 | `Control` just for `background:` | A `Rectangle` child behind the rest — `import QtQuick.Controls` is remapped to `QtQuick.Controls.StyleDefault`, which a module only gets through `MCU.qulModules` and which costs flash |
 
 ## Patterns used in this project
