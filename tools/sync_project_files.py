@@ -54,20 +54,28 @@ def qml_files(folder, singletons):
     return singletons + [f for f in files if f not in singletons]
 
 
-def module_images(folder):
-    """The qrc: images this module's own QML names, as paths from the module."""
+def module_images(folder, already_declared):
+    """The qrc: images this module's QML names and no module it imports declares.
+
+    An image belongs to exactly one resource set. Declared twice, the merged
+    qulrcc keeps one and the handle the other module links against is never
+    written. A module sees its dependencies' images through ModuleFiles, so
+    whoever names it first owns it.
+    """
     found = set()
     for f in os.listdir(folder):
         if not f.endswith(".qml"):
             continue
         with open(os.path.join(folder, f), encoding="utf-8") as fh:
             found.update(re.findall(r'"qrc:/([^"]+\.png)"', fh.read()))
-    tinted = sorted(p for p in found if alpha_only(p))
-    colour = sorted(p for p in found if not alpha_only(p))
+    mine = found - already_declared
+    tinted = sorted(p for p in mine if alpha_only(p))
+    colour = sorted(p for p in mine if not alpha_only(p))
     return tinted, colour
 
 
-def write_module(name, uri, target, singletons, imports, qul_modules):
+def write_module(name, uri, target, singletons, imports, qul_modules,
+                 already_declared):
     folder = os.path.join(ROOT, "qml", name)
     files = qml_files(folder, singletons)
     listing = ",\n".join(f'            "qml/{name}/{f}"' for f in files)
@@ -85,7 +93,9 @@ def write_module(name, uri, target, singletons, imports, qul_modules):
         ]{quls}
     }}
 """
-    tinted, colour = module_images(folder)
+    tinted, colour = module_images(folder, already_declared)
+    already_declared.update(tinted)
+    already_declared.update(colour)
     images = ""
     for group, fmt in ((tinted, "Alpha8"), (colour, "Automatic")):
         if not group:
@@ -213,9 +223,12 @@ Project {{
 
 
 def main():
+    #  MODULES is in dependency order, so a module's images are claimed before
+    #  anything that imports it is written.
+    declared = set()
     for name, (uri, target, singletons, imports, qul_modules) in MODULES.items():
-        print(name, write_module(name, uri, target, singletons, imports, qul_modules),
-              "qml files")
+        print(name, write_module(name, uri, target, singletons, imports,
+                                 qul_modules, declared), "qml files")
     print("root project: %d font file(s), no images of its own" % write_main_project())
 
 
