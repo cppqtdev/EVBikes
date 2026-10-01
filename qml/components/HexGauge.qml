@@ -287,19 +287,16 @@ Item {
         font.italic: true
     }
 
-    Rectangle {
+    // An image, not a Rectangle: Qt for MCUs only transforms Image, Text and
+    // StaticText. The old gradient is the alpha ramp baked into the art.
+    ColorizedImage {
         x: 205.0
         y: 136.0
         width: 132
         height: 5
-        radius: 2.5
         opacity: gauge.stale ? 0.25 : 1.0
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: "#00600010" }
-            GradientStop { position: 0.35; color: "#B0900018" }
-            GradientStop { position: 1.0; color: "#E8141E" }
-        }
+        source: "qrc:/assets/cluster/needle_amp.png"
+        color: "#E8141E"
         transform: Rotation {
             origin.x: 0
             origin.y: 2.5

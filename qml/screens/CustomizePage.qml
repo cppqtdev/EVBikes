@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuickUltralite.Extras
 import ClusterCore
 import ClusterBackend
 import ClusterComponents
@@ -70,12 +71,12 @@ PageBase {
 
         Icon { x: 352; y: 238; size: 24; source: "qrc:/assets/icons/24/high_beam.png"; color: "#C3C8CA" }
 
-        Rectangle {
+        ColorizedImage {
             x: 425
             y: 148
             width: 200
             height: 96
-            radius: 10
+            source: "qrc:/assets/cluster/card_tilt.png"
             color: "#2D2D2D"
             transform: Rotation { origin.x: 100; origin.y: 48; angle: -8 }
         }
@@ -101,12 +102,12 @@ PageBase {
             font.pixelSize: 14
         }
 
-        Rectangle {
+        ColorizedImage {
             x: 662
             y: 148
             width: 200
             height: 96
-            radius: 10
+            source: "qrc:/assets/cluster/card_tilt.png"
             color: "#2D2D2D"
             transform: Rotation { origin.x: 100; origin.y: 48; angle: 8 }
         }

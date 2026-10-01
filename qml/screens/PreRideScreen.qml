@@ -51,11 +51,12 @@ Item {
             color: "#E3263A"
         }
 
-        Rectangle {
+        ColorizedImage {
             x: 618
             y: 204
             width: 168
             height: 2
+            source: "qrc:/assets/cluster/preride_rule.png"
             color: "#C0283A"
             transform: Rotation {
                 origin.x: 0
