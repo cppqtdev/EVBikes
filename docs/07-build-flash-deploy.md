@@ -49,6 +49,11 @@ Rules so both builds keep working:
 
 - After changing any header in `qml/backend/`, run `python3 tools/generate_desktop_bridge.py`.
 - A new QML file must be added to **both** the module `.qmlproject` and the module `CMakeLists.txt`.
+- The root `project()` must keep `ASM` in its languages. The exporter writes the
+  image data into `qulrcc_assets_s.S` and the font glyphs into
+  `qul_font_files_loader.S`; with the assembler disabled CMake leaves both out
+  silently and the link fails on `qul_rasterBuffer_*_handle` and
+  `qul_font_*_alphaMaps_source`.
 - The Qt 6 build accepts more QML than Ultralite does. Always run `python3 tools/qul_lint.py qml` too.
 - `Connections` handlers use `function onFoo(arg: type) { ... }` (works in both builds).
 - `Keys.onPressed` keeps the injected `event` form from the Qt for MCUs docs; the desktop build hides that one deprecation warning (`qt.qml.context`) in `desktop/main.cpp`.

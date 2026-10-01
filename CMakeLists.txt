@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.21.1)
 
-project(EVBikes VERSION 0.1.0 LANGUAGES C CXX)
+# ASM is not optional: the exporter writes the image blobs into
+# qulrcc_assets_s.S and the font glyphs into qul_font_files_loader.S, and
+# without the assembler CMake drops both from the target without a word.
+project(EVBikes VERSION 0.1.0 LANGUAGES C CXX ASM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
