@@ -9,6 +9,9 @@ Item {
     property alias iconSource: rowIcon.source
     property bool selected: false
 
+    readonly property font titleFont: Qt.font({ family: Theme.fontFamily, pixelSize: Theme.fontBody })
+    readonly property font titleBoldFont: Qt.font({ family: Theme.fontFamily, pixelSize: Theme.fontBody, bold: true })
+
     width: 480
     height: 52
 
@@ -46,9 +49,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         text: row.title
         color: Theme.textPrimary
-        font.family: Theme.fontFamily
-        font.pixelSize: Theme.fontBody
-        font.bold: row.selected
+        font: row.selected ? row.titleBoldFont : row.titleFont
     }
 
     Text {

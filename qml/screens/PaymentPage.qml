@@ -57,7 +57,7 @@ PageBase {
             y: 222
             width: 124
             height: 30
-            fontSize: 14
+            textFont: Qt.font({ family: Theme.fontFamily, pixelSize: 14 })
             text: Router.paymentDone ? qsTr("PAID ✓") : qsTr("CONFIRM")
             selected: true
             glowColor: Router.paymentDone ? Theme.green : Theme.teal

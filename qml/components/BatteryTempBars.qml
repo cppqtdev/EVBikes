@@ -40,9 +40,8 @@ Item {
         value: bars.battery
         stale: bars.stale
         fit: true
-        pixelSize: 14
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 14, italic: true })
         widthFactor: 0.58
-        italic: true
     }
 
     Text {
@@ -109,9 +108,8 @@ Item {
         value: bars.temperature
         stale: bars.stale
         fit: true
-        pixelSize: 16
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 16, italic: true })
         widthFactor: 0.58
-        italic: true
     }
 
     Text {

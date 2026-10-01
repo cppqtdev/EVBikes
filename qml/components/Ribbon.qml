@@ -9,9 +9,7 @@ Item {
     property string text: ""
     property color topColor: Theme.goldTop
     property color bottomColor: Theme.goldBottom
-    property int fontSize: 20
-    property bool bold: false
-    property bool italic: false
+    property font textFont: Qt.font({ family: Theme.fontFamily, pixelSize: 20 })
 
     width: 340
     height: 30
@@ -36,9 +34,6 @@ Item {
         anchors.centerIn: parent
         text: ribbon.text
         color: Theme.textPrimary
-        font.family: Theme.fontFamily
-        font.pixelSize: ribbon.fontSize
-        font.bold: ribbon.bold
-        font.italic: ribbon.italic
+        font: ribbon.textFont
     }
 }

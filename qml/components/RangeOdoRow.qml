@@ -33,10 +33,8 @@ Item {
         value: Format.distanceValueKm(VehicleData.rangeKm)
         stale: VehicleData.batteryStale
         fit: true
-        pixelSize: 30
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 30, bold: true, italic: true })
         widthFactor: 0.6
-        bold: true
-        italic: true
     }
 
     Text {
@@ -67,10 +65,8 @@ Item {
         value: Format.distanceValueKm(VehicleData.odometerKm)
         stale: VehicleData.driveStale
         fit: true
-        pixelSize: 30
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 30, bold: true, italic: true })
         widthFactor: 0.6
-        bold: true
-        italic: true
         duration: Theme.animSlow
     }
 

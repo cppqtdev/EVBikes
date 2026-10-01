@@ -43,10 +43,9 @@ Item {
         value: VehicleData.batteryPercent
         stale: VehicleData.batteryStale
         fit: true
-        pixelSize: 57
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 57, bold: true })
         widthFactor: 0.63
         color: "#A8F0D8"
-        bold: true
     }
 
     Text {
@@ -73,10 +72,9 @@ Item {
         value: Format.distanceValueKm(VehicleData.rangeKm)
         stale: VehicleData.batteryStale
         fit: true
-        pixelSize: 48
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 48, bold: true })
         widthFactor: 0.55
         color: "#D8B3AA"
-        bold: true
     }
 
     ColorizedImage {
@@ -137,7 +135,7 @@ Item {
         stale: VehicleData.driveStale
         digits: 3
         centered: true
-        pixelSize: 64
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 64 })
         widthFactor: 0.58
         color: "#2EFED8"
     }

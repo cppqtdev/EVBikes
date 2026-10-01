@@ -9,6 +9,9 @@ PageBase {
 
     pageId: Router.menuDigilocker
 
+    readonly property font selectedFont: Qt.font({ family: Theme.fontFamily, pixelSize: 22, bold: true, italic: true })
+    readonly property font restFont: Qt.font({ family: Theme.fontFamily, pixelSize: 20, bold: true, italic: true })
+
     DemoNotice {
         subject: qsTr("Your documents")
     }
@@ -51,10 +54,7 @@ PageBase {
                 anchors.centerIn: parent
                 text: row.title
                 color: "#B8BDBF"
-                font.family: Theme.fontFamily
-                font.pixelSize: row.slot === 1 ? 22 : 20
-                font.bold: true
-                font.italic: true
+                font: row.slot === 1 ? page.selectedFont : page.restFont
             }
         }
     }

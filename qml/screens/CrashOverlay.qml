@@ -39,7 +39,7 @@ Item {
         Ribbon {
             x: crash.axis - width / 2
             y: 99
-            fontSize: 21
+            textFont: Qt.font({ family: Theme.fontFamily, pixelSize: 21 })
             text: qsTr("WARNING")
         }
 
@@ -64,9 +64,7 @@ Item {
             text: qsTr("CRASH DETECTED")
             topColor: "#9A1426"
             bottomColor: "#5C0A14"
-            fontSize: 24
-            bold: true
-            italic: true
+            textFont: Qt.font({ family: Theme.fontFamily, pixelSize: 24, bold: true, italic: true })
         }
 
         Text {

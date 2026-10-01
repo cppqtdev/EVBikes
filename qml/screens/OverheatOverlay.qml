@@ -62,7 +62,7 @@ Item {
         Ribbon {
             x: heat.axis - width / 2
             y: 242
-            fontSize: 22
+            textFont: Qt.font({ family: Theme.fontFamily, pixelSize: 22 })
             text: qsTr("PROTOCOLS")
         }
 

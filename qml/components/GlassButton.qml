@@ -11,7 +11,7 @@ Item {
     property color glowColor: Theme.goldTop
     property color topColor: "#404040"
     property color bottomColor: "#282828"
-    property int fontSize: 22
+    property font textFont: Qt.font({ family: Theme.fontFamily, pixelSize: 22 })
 
     // The glow is pre-rendered art drawn at its own size, never scaled: a blur
     // stretched at runtime costs fill rate on the board and comes out soft.
@@ -59,7 +59,6 @@ Item {
         wrapMode: Text.WordWrap
         text: button.text
         color: Theme.textPrimary
-        font.family: Theme.fontFamily
-        font.pixelSize: button.fontSize
+        font: button.textFont
     }
 }

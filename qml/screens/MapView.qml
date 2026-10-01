@@ -29,6 +29,9 @@ Item {
                                     ? NavigationData.distanceToManeuverM * Format.feetPerMetre >= Format.feetPerMile
                                     : NavigationData.distanceToManeuverM >= 1000
 
+    readonly property font tileBigFont: Qt.font({ family: Theme.fontFamily, pixelSize: 13 })
+    readonly property font tileFont: Qt.font({ family: Theme.fontFamily, pixelSize: 9 })
+
     readonly property int startX: 640
     readonly property int startY: 316
     readonly property int endY: 112
@@ -161,7 +164,7 @@ Item {
                    ? Math.round(NavigationData.distanceToManeuverM * Format.feetPerMetre)
                    : NavigationData.distanceToManeuverM
             fit: true
-            pixelSize: 26
+            digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 26 })
             widthFactor: 0.58
         }
 
@@ -279,8 +282,7 @@ Item {
                         : (index === 2 ? qsTr("Explore")
                         : (index === 3 ? qsTr("Charging") : qsTr("Emergency"))))
                     color: shortcut.big ? Theme.white : "#7B8285"
-                    font.family: Theme.fontFamily
-                    font.pixelSize: shortcut.big ? 13 : 9
+                    font: shortcut.big ? map.tileBigFont : map.tileFont
                 }
             }
         }

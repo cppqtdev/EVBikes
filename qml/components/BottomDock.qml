@@ -20,9 +20,14 @@ Item {
 
     // The mode word has to sit inside its 96 px chip. NORMAL at 22 measured 95
     // wide, edge to edge with no room either side; the reference's ECO is 51.
-    readonly property int modeSize: Theme.alertMode ? 22
-                                  : (VehicleData.rideMode === VehicleData.Eco ? 26
-                                  : (VehicleData.rideMode === VehicleData.Sport ? 19 : 18))
+    //  Whole fonts, not sizes: the static font engine only takes a font
+    //  configuration it can resolve at compile time.
+    readonly property font gearOnFont: Qt.font({ family: Theme.fontFamily, pixelSize: 30 })
+    readonly property font gearOffFont: Qt.font({ family: Theme.fontFamily, pixelSize: 18 })
+    readonly property font modeAlertFont: Qt.font({ family: Theme.fontFamily, pixelSize: 22, bold: true, italic: true })
+    readonly property font modeEcoFont: Qt.font({ family: Theme.fontFamily, pixelSize: 26, bold: true, italic: true })
+    readonly property font modeSportFont: Qt.font({ family: Theme.fontFamily, pixelSize: 19, bold: true, italic: true })
+    readonly property font modeNormalFont: Qt.font({ family: Theme.fontFamily, pixelSize: 18, bold: true, italic: true })
 
     width: Theme.screenWidth
     height: 60
@@ -32,8 +37,7 @@ Item {
         y: 17
         text: "R"
         color: dock.gear === VehicleData.Reverse ? Theme.textPrimary : Theme.textSecondary
-        font.family: Theme.fontFamily
-        font.pixelSize: dock.gear === VehicleData.Reverse ? 30 : 18
+        font: dock.gear === VehicleData.Reverse ? dock.gearOnFont : dock.gearOffFont
     }
 
     Text {
@@ -41,8 +45,7 @@ Item {
         y: 17
         text: "P"
         color: dock.gear === VehicleData.Park ? Theme.textPrimary : Theme.textSecondary
-        font.family: Theme.fontFamily
-        font.pixelSize: dock.gear === VehicleData.Park ? 30 : 18
+        font: dock.gear === VehicleData.Park ? dock.gearOnFont : dock.gearOffFont
     }
 
     Text {
@@ -50,8 +53,7 @@ Item {
         y: dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral ? 7 : 17
         text: dock.gear === VehicleData.Neutral ? "N" : "D"
         color: dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral ? Theme.textPrimary : Theme.textSecondary
-        font.family: Theme.fontFamily
-        font.pixelSize: dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral ? 30 : 18
+        font: dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral ? dock.gearOnFont : dock.gearOffFont
     }
 
     ColorizedImage {
@@ -115,10 +117,9 @@ Item {
                               : (VehicleData.rideMode === VehicleData.Sport ? qsTr("SPORTS")
                                                                             : (VehicleData.rideMode === VehicleData.Normal ? qsTr("NORMAL") : qsTr("ECO")))
         color: Theme.alertMode || Theme.sport ? Theme.textPrimary : Theme.teal
-        font.family: Theme.fontFamily
-        font.pixelSize: dock.modeSize
-        font.bold: true
-        font.italic: true
+        font: Theme.alertMode ? dock.modeAlertFont
+              : (VehicleData.rideMode === VehicleData.Eco ? dock.modeEcoFont
+              : (VehicleData.rideMode === VehicleData.Sport ? dock.modeSportFont : dock.modeNormalFont))
     }
 
     ColorizedImage {

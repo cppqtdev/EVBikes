@@ -114,6 +114,31 @@ def mixed_enum_ternary(line):
     return bool(ENUM_SHAPE.match(left)) != bool(ENUM_SHAPE.match(right))
 
 
+#  The static font engine takes a font configuration only if qmltocpp can
+#  resolve every subproperty at compile time. A literal counts, and so does a
+#  binding to a readonly property; anything else has to become a whole font.
+FONT_SUB = re.compile(r"^\s*font\.(\w+)\s*:\s*(.+?)\s*$")
+FONT_CONST = {
+    "family": re.compile(r'^"[^"]*"$|^Theme\.fontFamily$'),
+    "pixelSize": re.compile(r"^\d+$|^Theme\.font[A-Z]\w*$|^\w+\.labelSize$"),
+    "bold": re.compile(r"^(true|false)$"),
+    "italic": re.compile(r"^(true|false)$"),
+    "weight": re.compile(r"^$"),
+}
+
+
+def runtime_font_binding(line):
+    m = FONT_SUB.match(line)
+    if not m:
+        return None
+    prop, value = m.group(1), m.group(2)
+    rx = FONT_CONST.get(prop)
+    if rx is None or rx.match(value):
+        return None
+    return (f"font.{prop} cannot be bound to '{value}' with the static font "
+            f"engine; bind the whole font to a readonly Qt.font(...) instead")
+
+
 def collect_local_types(root):
     names = set()
     for dirpath, _, files in os.walk(root):
@@ -176,6 +201,10 @@ def lint(root):
                         if rx.search(stripped):
                             print(f"{path}:{n}: {msg}")
                             problems += 1
+                    bad_font = runtime_font_binding(line)
+                    if bad_font:
+                        print(f"{path}:{n}: {bad_font}")
+                        problems += 1
                     if mixed_enum_ternary(stripped):
                         print(f"{path}:{n}: one side of this ternary is an enum "
                               f"constant and the other is not; Qt for MCUs "

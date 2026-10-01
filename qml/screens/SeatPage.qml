@@ -44,7 +44,7 @@ PageBase {
         width: 112
         height: 32
         text: qsTr("RESET")
-        fontSize: 16
+        textFont: Qt.font({ family: Theme.fontFamily, pixelSize: 16 })
         selected: SystemData.seatLevel === 2
         glowColor: Theme.teal
     }

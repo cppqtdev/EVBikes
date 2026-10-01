@@ -13,10 +13,8 @@ Item {
 
     property int value: 0
     property int digits: 2
-    property int pixelSize: 24
+    property font digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 24 })
     property color color: Theme.textPrimary
-    property bool bold: false
-    property bool italic: false
     property bool centered: false
     // stale means the reading stopped arriving. Showing the last figure would
     // claim the bike is still doing that, so the cells show dashes instead.
@@ -30,7 +28,7 @@ Item {
     property real shown: value
 
     readonly property int shownValue: Math.round(shown)
-    readonly property int cellWidth: Math.round(pixelSize * widthFactor)
+    readonly property int cellWidth: Math.round(digitFont.pixelSize * widthFactor)
     // Digit count by arithmetic: String.length is not part of the JavaScript
     // subset Qt for MCUs provides.
     readonly property int used: {
@@ -47,7 +45,7 @@ Item {
     readonly property color ink: stale ? Theme.textMuted : color
 
     width: cells * cellWidth
-    height: Math.round(pixelSize * 1.25)
+    height: Math.round(digitFont.pixelSize * 1.25)
 
     Behavior on shown {
         NumberAnimation { duration: readout.duration }
@@ -72,10 +70,7 @@ Item {
                 text: readout.stale ? "-"
                       : (index < readout.blanks ? "" : Format.digitAt(readout.shownValue, readout.cells - 1 - index))
                 color: readout.ink
-                font.family: Theme.fontFamily
-                font.pixelSize: readout.pixelSize
-                font.bold: readout.bold
-                font.italic: readout.italic
+                font: readout.digitFont
             }
         }
     }
