@@ -71,16 +71,16 @@ QtObject {
     property color telltaleOff: "#8E9396"
 
     // Typography (Inter, SIL OFL)
-    property string fontFamily: "Inter"
-    property int fontSpeed: 150
-    property int fontHuge: 44
-    property int fontDisplay: 34
-    property int fontTitle: 30
-    property int fontHeading: 22
-    property int fontBody: 18
-    property int fontLabel: 16
-    property int fontSmall: 14
-    property int fontCaption: 12
+    readonly property string fontFamily: "Inter"
+    readonly property int fontSpeed: 150
+    readonly property int fontHuge: 44
+    readonly property int fontDisplay: 34
+    readonly property int fontTitle: 30
+    readonly property int fontHeading: 22
+    readonly property int fontBody: 18
+    readonly property int fontLabel: 16
+    readonly property int fontSmall: 14
+    readonly property int fontCaption: 12
 
     // Spacing, radius, motion
     property int spaceXs: 4

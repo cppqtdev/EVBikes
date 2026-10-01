@@ -15,7 +15,7 @@ Item {
     property int padding: 16
     property int cellHeight: 30
     property int inset: 3
-    property int labelSize: 15
+    readonly property int labelSize: 15
 
     //  A Text with no width of its own is exactly as wide as its text, so the
     //  label's width is the content width. Qt for MCUs has no contentWidth.

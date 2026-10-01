@@ -12,6 +12,12 @@ Item {
     readonly property int cellWidth: 120
     readonly property int cellHeight: 34
 
+    //  The static font engine takes a whole font only when it can resolve it at
+    //  compile time, so the two sizes are two finished configurations and the
+    //  binding picks between them.
+    readonly property font titleFont: Qt.font({ family: Theme.fontFamily, pixelSize: 18, italic: true })
+    readonly property font restFont: Qt.font({ family: Theme.fontFamily, pixelSize: 15, italic: true })
+
     width: Theme.screenWidth
     height: 70
 
@@ -73,9 +79,7 @@ Item {
                 text: Router.menuTitle(index)
                 color: cell.selected ? Theme.textPrimary : "#5E666A"
                 elide: Text.ElideRight
-                font.family: Theme.fontFamily
-                font.pixelSize: cell.selected ? 18 : 15
-                font.italic: true
+                font: cell.selected ? carousel.titleFont : carousel.restFont
             }
         }
     }
