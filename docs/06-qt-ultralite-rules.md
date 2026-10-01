@@ -48,7 +48,7 @@ Modules other than QtQuick / Extras must be enabled in the `.qmlproject`: `Modul
 | `font.weight` | The static font engine picks a face by family, `bold` and `italic`; the weight enum only compiles for the Monotype Spark engine |
 | A ternary mixing an enum constant with an `int` property | Pass both through a typed function instead — the two types cannot be merged into one value |
 | Declaring art `Alpha8` by its file name | The exporter checks the pixels: an image is Alpha8 only if every visible pixel is pure white. `sync_project_files.py` measures each file instead of matching names |
-| The same image declared in two resource sets — by a module and the root, or by two modules | The merged `qulrcc` keeps one and the other's `qul_rasterBuffer_*_handle` is never written. One owner per image; a module sees its dependencies' images through `ModuleFiles` |
+| The same image named from two modules | A module must declare every image its own QML names — it does **not** inherit a dependency's images — and no image may be declared twice, or the merged `qulrcc` keeps one and the other's `qul_rasterBuffer_*_handle` is never written. So one module names a given file: put the reference in a component there and use that component. `sync_project_files.py` fails if two modules name one image |
 | `Control` just for `background:` | A `Rectangle` child behind the rest — `import QtQuick.Controls` is remapped to `QtQuick.Controls.StyleDefault`, which a module only gets through `MCU.qulModules` and which costs flash |
 
 ## Patterns used in this project

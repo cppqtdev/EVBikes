@@ -17,6 +17,7 @@ qt_add_qml_module(cluster_components
         FadeLine.qml
         GlassButton.qml
         GlowBand.qml
+        GlowSpot.qml
         HexGauge.qml
         Icon.qml
         MenuCarousel.qml

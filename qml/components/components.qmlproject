@@ -141,6 +141,7 @@ Project {
             "qml/components/FadeLine.qml",
             "qml/components/GlassButton.qml",
             "qml/components/GlowBand.qml",
+            "qml/components/GlowSpot.qml",
             "qml/components/HexGauge.qml",
             "qml/components/Icon.qml",
             "qml/components/MenuCarousel.qml",

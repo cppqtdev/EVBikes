@@ -9,6 +9,7 @@ Run after adding or removing a QML file or an image:
     python3 tools/sync_project_files.py
 """
 import os
+import sys
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,13 +55,14 @@ def qml_files(folder, singletons):
     return singletons + [f for f in files if f not in singletons]
 
 
-def module_images(folder, already_declared):
-    """The qrc: images this module's QML names and no module it imports declares.
+def module_images(folder):
+    """The qrc: images this module's own QML names.
 
-    An image belongs to exactly one resource set. Declared twice, the merged
-    qulrcc keeps one and the handle the other module links against is never
-    written. A module sees its dependencies' images through ModuleFiles, so
-    whoever names it first owns it.
+    Qt for MCUs pulls an image into the resource set of the module whose QML
+    names it, and a module does not see a dependency's images -- so the module
+    has to declare every image it uses. It must also be the only one: declared
+    in two sets, the merged qulrcc keeps one and the handle the other module
+    links against is never written. main() refuses that case.
     """
     found = set()
     for f in os.listdir(folder):
@@ -68,14 +70,12 @@ def module_images(folder, already_declared):
             continue
         with open(os.path.join(folder, f), encoding="utf-8") as fh:
             found.update(re.findall(r'"qrc:/([^"]+\.png)"', fh.read()))
-    mine = found - already_declared
-    tinted = sorted(p for p in mine if alpha_only(p))
-    colour = sorted(p for p in mine if not alpha_only(p))
+    tinted = sorted(p for p in found if alpha_only(p))
+    colour = sorted(p for p in found if not alpha_only(p))
     return tinted, colour
 
 
-def write_module(name, uri, target, singletons, imports, qul_modules,
-                 already_declared):
+def write_module(name, uri, target, singletons, imports, qul_modules, owners):
     folder = os.path.join(ROOT, "qml", name)
     files = qml_files(folder, singletons)
     listing = ",\n".join(f'            "qml/{name}/{f}"' for f in files)
@@ -93,9 +93,9 @@ def write_module(name, uri, target, singletons, imports, qul_modules,
         ]{quls}
     }}
 """
-    tinted, colour = module_images(folder, already_declared)
-    already_declared.update(tinted)
-    already_declared.update(colour)
+    tinted, colour = module_images(folder)
+    for image in tinted + colour:
+        owners.setdefault(image, []).append(name)
     images = ""
     for group, fmt in ((tinted, "Alpha8"), (colour, "Automatic")):
         if not group:
@@ -223,12 +223,19 @@ Project {{
 
 
 def main():
-    #  MODULES is in dependency order, so a module's images are claimed before
-    #  anything that imports it is written.
-    declared = set()
+    owners = {}
     for name, (uri, target, singletons, imports, qul_modules) in MODULES.items():
         print(name, write_module(name, uri, target, singletons, imports,
-                                 qul_modules, declared), "qml files")
+                                 qul_modules, owners), "qml files")
+    shared = {i: m for i, m in owners.items() if len(m) > 1}
+    if shared:
+        print("\nERROR: one image, two modules. Each module must declare every")
+        print("image its QML names, and no image may be declared twice, so a")
+        print("file can only be named from one module. Move the reference into")
+        print("a component in one of them and use that component:")
+        for image, mods in sorted(shared.items()):
+            print(f"    {image}  <-  {', '.join(mods)}")
+        sys.exit(1)
     print("root project: %d font file(s), no images of its own" % write_main_project())
 
 

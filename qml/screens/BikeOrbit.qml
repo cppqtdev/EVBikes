@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuickUltralite.Extras
 import ClusterCore
+import ClusterComponents
 
 // Bike picture on its orbit ring with the small 360° handle.
 Item {
@@ -14,12 +15,9 @@ Item {
         color: "#C9CED0"
     }
 
-    ColorizedImage {
+    GlowSpot {
         x: 60
         y: 70
-        width: 150
-        height: 40
-        source: "qrc:/assets/images/glow_blob_150x40.png"
         color: Theme.accent
         opacity: 0.18
     }
