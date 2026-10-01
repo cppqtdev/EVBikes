@@ -9,6 +9,7 @@ Run after adding or removing a QML file or an image:
     python3 tools/sync_project_files.py
 """
 import os
+import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -33,6 +34,19 @@ def qml_files(folder, singletons):
     return singletons + [f for f in files if f not in singletons]
 
 
+def module_images(folder):
+    """The qrc: images this module's own QML names, as paths from the module."""
+    found = set()
+    for f in os.listdir(folder):
+        if not f.endswith(".qml"):
+            continue
+        with open(os.path.join(folder, f), encoding="utf-8") as fh:
+            found.update(re.findall(r'"qrc:/([^"]+\.png)"', fh.read()))
+    tinted = sorted(p for p in found if os.path.basename(p) not in COLOUR_IMAGES)
+    colour = sorted(p for p in found if os.path.basename(p) in COLOUR_IMAGES)
+    return tinted, colour
+
+
 def write_module(name, uri, target, singletons, imports, qul_modules):
     folder = os.path.join(ROOT, "qml", name)
     files = qml_files(folder, singletons)
@@ -51,6 +65,21 @@ def write_module(name, uri, target, singletons, imports, qul_modules):
         ]{quls}
     }}
 """
+    tinted, colour = module_images(folder)
+    images = ""
+    for group, fmt in ((tinted, "Alpha8"), (colour, "Automatic")):
+        if not group:
+            continue
+        rows = ",\n".join(f'            "../../{f}"' for f in group)
+        images += f"""
+    ImageFiles {{
+        files: [
+{rows}
+        ]
+        MCU.resourceImagePixelFormat: "{fmt}"
+        MCU.resourceCompression: true
+    }}
+"""
     with open(os.path.join(folder, f"{name}.qmlproject"), "w") as fh:
         fh.write(f"""import QmlProject 1.3
 
@@ -58,7 +87,7 @@ Project {{
     MCU.Module {{
         uri: "{uri}"
     }}
-{deps}
+{deps}{images}
     QmlFiles {{
         files: [
 {listing}

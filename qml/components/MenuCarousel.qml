@@ -28,10 +28,9 @@ Item {
         pathItemCount: 3
         currentIndex: carousel.index
         interactive: false
-        highlightMoveDuration: Theme.animNormal
+        // Qt for MCUs always enforces the range and does not animate the move.
         preferredHighlightBegin: 0.5
         preferredHighlightEnd: 0.5
-        highlightRangeMode: PathView.StrictlyEnforceRange
 
         path: Path {
             startX: 0
