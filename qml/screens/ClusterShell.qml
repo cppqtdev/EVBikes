@@ -1,12 +1,11 @@
 import QtQuick
-import QtQuick.Controls
 import ClusterCore
 import ClusterBackend
 import ClusterComponents
 
 // Screen composition (1280 x 480). Layers from back to front:
 // shell -> bars -> stage content -> dock -> alerts -> telltales and status.
-Control {
+Item {
     id: shell
 
     property bool riding: Router.stage === Router.stageRide
@@ -24,7 +23,8 @@ Control {
     width: Theme.screenWidth
     height: Theme.screenHeight
 
-    background: Rectangle {
+    Rectangle {
+        anchors.fill: parent
         color: Theme.black
         radius: 4
     }
