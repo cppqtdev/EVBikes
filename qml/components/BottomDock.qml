@@ -22,7 +22,7 @@ Item {
     // wide, edge to edge with no room either side; the reference's ECO is 51.
     //  Whole fonts, not sizes: the static font engine only takes a font
     //  configuration it can resolve at compile time.
-    readonly property font gearOnFont: Qt.font({ family: Theme.fontFamily, pixelSize: 30 })
+    readonly property font gearOnFont: Qt.font({ family: Theme.fontFamily, pixelSize: 26 })
     readonly property font gearOffFont: Qt.font({ family: Theme.fontFamily, pixelSize: 18 })
     readonly property font modeAlertFont: Qt.font({ family: Theme.fontFamily, pixelSize: 22, bold: true, italic: true })
     readonly property font modeEcoFont: Qt.font({ family: Theme.fontFamily, pixelSize: 26, bold: true, italic: true })
@@ -32,28 +32,23 @@ Item {
     width: Theme.screenWidth
     height: 60
 
-    Text {
-        x: 393
-        y: 17
-        text: "R"
-        color: dock.gear === VehicleData.Reverse ? Theme.textPrimary : Theme.textSecondary
-        font: dock.gear === VehicleData.Reverse ? dock.gearOnFont : dock.gearOffFont
-    }
-
-    Text {
-        x: 411
-        y: 17
-        text: "P"
-        color: dock.gear === VehicleData.Park ? Theme.textPrimary : Theme.textSecondary
-        font: dock.gear === VehicleData.Park ? dock.gearOnFont : dock.gearOffFont
-    }
-
-    Text {
-        x: 427
-        y: dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral ? 7 : 17
-        text: dock.gear === VehicleData.Neutral ? "N" : "D"
-        color: dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral ? Theme.textPrimary : Theme.textSecondary
-        font: dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral ? dock.gearOnFont : dock.gearOffFont
+    // Fixed slots: selecting a larger glyph never moves into its neighbour.
+    Repeater {
+        model: 3
+        Text {
+            x: 386 + index * 30
+            y: 4
+            width: 30
+            height: 42
+            readonly property bool selected: index === 0 ? dock.gear === VehicleData.Reverse
+                : (index === 1 ? dock.gear === VehicleData.Park
+                   : dock.gear === VehicleData.Drive || dock.gear === VehicleData.Neutral)
+            text: index === 0 ? "R" : (index === 1 ? "P" : (dock.gear === VehicleData.Neutral ? "N" : "D"))
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            color: VehicleData.driveStale ? Theme.textMuted : (selected ? Theme.textPrimary : Theme.textSecondary)
+            font: selected ? dock.gearOnFont : dock.gearOffFont
+        }
     }
 
     ColorizedImage {

@@ -32,6 +32,7 @@ Item {
         id: icon
         anchors.centerIn: parent
         size: telltale.size
+        fillMode: Image.PreserveAspectFit
         color: telltale.active ? telltale.activeColor : telltale.inactiveColor
         opacity: telltale.flashing ? telltale.blinkPhase : 1.0
 

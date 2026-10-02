@@ -4,12 +4,14 @@ import ClusterBackend
 
 // Extra warning lamps from the project CAN powertrain frame.
 Row {
+    id: warnings
+    property int iconSize: 24
     spacing: 2
-    height: 24
+    height: iconSize
     Repeater {
         model: 16
         Telltale {
-            size: 24
+            size: warnings.iconSize
             readonly property bool applicable: index < 5 ? VehicleData.powertrain === VehicleData.Petrol
                 : ((index >= 6 && index <= 10) || index === 15 ? VehicleData.powertrain === VehicleData.Electric : true)
             visible: applicable && !VehicleData.powertrainStale && (VehicleData.telltaleFlags & (1 << index)) !== 0

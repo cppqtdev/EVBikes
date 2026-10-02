@@ -9,7 +9,7 @@ Item {
     id: hex
 
     property int speed: VehicleData.speedKmh
-    property int shownSpeed: Format.speedValue(speed)
+    property int shownSpeed: Math.max(0, Math.min(999, Format.speedValue(speed)))
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -61,22 +61,34 @@ Item {
     Text {
         x: 241
         y: 277
-        text: qsTr("Range:")
+        width: 78
+        height: 32
+        text: qsTr("Range")
         color: "#C5AFA9"
         font.family: Theme.fontFamily
         font.pixelSize: 22
     }
 
     NumberReadout {
-        x: 321
-        y: 248
+        id: rangeText
+        x: 320
+        y: 267
         value: Format.distanceValueKm(VehicleData.rangeKm)
         stale: VehicleData.batteryStale
         fit: true
-        digitSize: 48
-        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 48, bold: true })
-        widthFactor: 0.55
+        digitSize: 32
+        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 32, bold: true })
+        widthFactor: 0.65
         color: "#D8B3AA"
+    }
+
+    Text {
+        x: rangeText.x + rangeText.width + 6
+        y: 280
+        text: SystemData.useMiles ? "mi" : "km"
+        color: Theme.textSecondary
+        font.family: Theme.fontFamily
+        font.pixelSize: 14
     }
 
     ColorizedImage {
@@ -123,28 +135,35 @@ Item {
         miles: SystemData.useMiles
     }
 
-    // Centred on 640 with a fixed 37 px cell per digit, the pitch measured on
-    // the reference, so the reading counts without shifting under itself.
-    NumberReadout {
-        x: 640 - width / 2
-        y: 272
-        value: hex.shownSpeed
-        stale: VehicleData.driveStale
-        digits: 3
-        centered: true
-        digitSize: 64
-        digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 64 })
-        widthFactor: 0.58
-        color: "#2EFED8"
+    // Permanent cells: two visible digits below 100, optional hundreds.
+    // The unit has its own line, clear of both the digits and gauge segments.
+    Repeater {
+        model: 3
+        Text {
+            x: 568 + index * 38
+            y: 282
+            width: 38
+            height: 62
+            visible: index > 0 || (!VehicleData.driveStale && hex.shownSpeed >= 100)
+            text: VehicleData.driveStale ? "-" : Format.digitAt(hex.shownSpeed, 2 - index)
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            font.family: Theme.fontFamily
+            font.pixelSize: 54
+            color: VehicleData.driveStale ? Theme.textMuted : Theme.teal
+        }
     }
-
     Text {
-        x: 683
-        y: 304
-        text: Format.speedUnitWord()
-        color: "#5FE8BE"
+        x: 594
+        y: 342
+        width: 100
+        height: 20
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        text: Format.speedUnit()
+        color: Theme.textSecondary
         font.family: Theme.fontFamily
-        font.pixelSize: 18
+        font.pixelSize: 14
     }
 
     Text {
