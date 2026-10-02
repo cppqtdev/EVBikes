@@ -31,7 +31,12 @@ Item {
     property int duration: Theme.animNormal
     property real widthFactor: 0.62
 
-    property real shown: value
+    //  shown is assigned, never bound. A Behavior animates an assignment. On a
+    //  bound property Qt for MCUs re-runs the binding whenever the value is read,
+    //  the Behavior restarts from there, and a frame that reads it never ends.
+    property real shown: 0
+    onValueChanged: shown = value
+    Component.onCompleted: shown = value
 
     readonly property int shownValue: Math.round(shown)
     readonly property int cellWidth: Math.round(digitSize * widthFactor)

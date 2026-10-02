@@ -11,7 +11,11 @@ PageBase {
 
     property int soc: VehicleData.batteryPercent
     property real target: Math.max(0.01, Math.min(0.999, soc / 100))
-    property real fraction: target
+    //  Assigned, not bound: a Behavior on a bound property that other bindings
+    //  read re-runs that binding on every read and the frame never finishes.
+    property real fraction: 0
+    onTargetChanged: page.fraction = page.target
+    Component.onCompleted: page.fraction = page.target
     // Two half-sweeps, so neither arc ever exceeds 180 degrees and the ring
     // never needs useLargeArc, which is where the old one rendered ragged.
     property real midAngle: (-90 + 180 * fraction) * Math.PI / 180

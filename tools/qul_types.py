@@ -193,6 +193,7 @@ def scan(root):
 
         #  Pass 2b: every property assigned, and every member read by id.
         stack = []
+        root = True
         for n, line in enumerate(lines, 1):
             s = line.strip()
             if not s or s.startswith("//"):
@@ -202,7 +203,10 @@ def scan(root):
                 ind = len(m.group(1))
                 while stack and stack[-1][1] >= ind:
                     stack.pop()
-                stack.append((m.group(2), ind))
+                #  As in pass 2a: the root element is this component, so the
+                #  properties the file declares count as its own.
+                stack.append((this if root else m.group(2), ind))
+                root = False
             elif s.startswith("}") and stack:
                 stack.pop()
             elif stack and not MEMBER.match(line):

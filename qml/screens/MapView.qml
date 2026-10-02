@@ -54,8 +54,16 @@ Item {
 
     readonly property real nearness: Math.max(0, Math.min(1, 1 - NavigationData.distanceToManeuverM / 800))
 
-    property real routeLateral: map.lateral
-    property real routeNearness: map.nearness
+    //  Assigned, not bound: a Behavior on a bound property that other bindings
+    //  read re-runs that binding on every read and the frame never finishes.
+    property real routeLateral: 0
+    property real routeNearness: 0
+    onLateralChanged: map.routeLateral = map.lateral
+    onNearnessChanged: map.routeNearness = map.nearness
+    Component.onCompleted: {
+        map.routeLateral = map.lateral
+        map.routeNearness = map.nearness
+    }
 
     Behavior on routeLateral {
         NumberAnimation { duration: Theme.animSlow }

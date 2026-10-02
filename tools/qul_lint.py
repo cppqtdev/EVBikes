@@ -174,6 +174,35 @@ def font_problems(path, lines):
     return out
 
 
+PROP_DECL = re.compile(r"\s*(?:readonly\s+)?property\s+\w+\s+(\w+)\s*:\s*(.+?)\s*$")
+LITERAL = re.compile(r'^(-?\d+(\.\d+)?|"[^"]*"|true|false)$')
+BEHAVIOR_ON = re.compile(r"\s*Behavior\s+on\s+(\w+)")
+
+
+def behavior_problems(path, lines):
+    """A Behavior on a declared property that also carries a binding.
+
+    Qt for MCUs re-runs a dirty property's binding every time the value is
+    read. The Behavior catches that write and restarts, which dirties the
+    property again, so any binding that reads it keeps the frame alive and the
+    engine never finishes it. Assign the property from a signal handler
+    instead; a Behavior is for assignments.
+    """
+    bound = {}
+    for n, line in enumerate(lines, 1):
+        m = PROP_DECL.match(line.split("//")[0])
+        if m and not LITERAL.match(m.group(2)):
+            bound[m.group(1)] = n
+    out = []
+    for n, line in enumerate(lines, 1):
+        m = BEHAVIOR_ON.match(line)
+        if m and m.group(1) in bound:
+            out.append(f"{path}:{n}: Behavior on '{m.group(1)}', which is bound "
+                       f"at line {bound[m.group(1)]}; assign it from a signal "
+                       f"handler instead or the frame never finishes")
+    return out
+
+
 def collect_local_types(root):
     names = set()
     for dirpath, _, files in os.walk(root):
@@ -245,7 +274,8 @@ def lint(root):
                               f"constant and the other is not; Qt for MCUs "
                               f"cannot merge the two types")
                         problems += 1
-            for msg in font_problems(path, open(path, encoding="utf-8").read().split("\n")):
+            text = open(path, encoding="utf-8").read().split("\n")
+            for msg in font_problems(path, text) + behavior_problems(path, text):
                 print(msg)
                 problems += 1
             for name, n in sorted(missing_import.items(), key=lambda kv: kv[1]):
