@@ -1,5 +1,7 @@
 #include "Backend.h"
 
+#include <cstdio>
+
 #include "../core/alerts/AlertEvaluator.h"
 #include "../core/can/VehicleCanDecoder.h"
 #include "../platform/PlatformIo.h"
@@ -102,10 +104,30 @@ public:
 PhoneHandler g_phoneHandler;
 evb::link::Parser g_phoneParser(g_phoneHandler);
 
+//  TEMPORARY. On the real runtime these arrive from the event loop after the
+//  tick has returned, which is outside the tick trace and is where the
+//  desktop shim differs most: it delivers them inside step() instead.
+uint32_t g_traceEvents = 0;
+
 class CanQueue : public Qul::EventQueue<evb::CanFrame>
 {
 public:
-    void onEvent(const evb::CanFrame &frame) override { g_decoder.decode(frame); }
+    void onEvent(const evb::CanFrame &frame) override
+    {
+        ++g_traceEvents;
+        const bool trace = g_traceEvents <= 60;
+        if (trace) {
+            std::printf("[can %u] decode id=0x%X\n",
+                        static_cast<unsigned>(g_traceEvents),
+                        static_cast<unsigned>(frame.id));
+            std::fflush(stdout);
+        }
+        g_decoder.decode(frame);
+        if (trace) {
+            std::printf("[can %u] decoded\n", static_cast<unsigned>(g_traceEvents));
+            std::fflush(stdout);
+        }
+    }
 };
 
 class PhoneQueue : public Qul::EventQueue<PhoneChunk>
@@ -188,6 +210,13 @@ void init()
 
 void postCanFrame(const evb::CanFrame &frame)
 {
+    static uint32_t posted = 0;
+    ++posted;
+    if (posted <= 60) {
+        std::printf("[can] post %u id=0x%X\n", static_cast<unsigned>(posted),
+                    static_cast<unsigned>(frame.id));
+        std::fflush(stdout);
+    }
     canQueue().postEvent(frame);
 }
 
