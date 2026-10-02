@@ -10,7 +10,12 @@ Item {
 
     property bool standDown: VehicleData.sideStandDown
     property bool ready: !standDown
-    property bool preRideDelayDone: check.visible && check.ready && SystemData.preRideElapsedMs >= 2500
+    //  Only the backend clock, with no visible or ready in it: the handler
+    //  below hides this screen, and a binding that reads its own visibility
+    //  re-evaluates inside its own change handler. The wait is already gated
+    //  where it belongs -- the counter runs only while setPreRideReady says
+    //  so, and finishPreRide does nothing unless the stage is still pre-ride.
+    property bool preRideDelayDone: SystemData.preRideElapsedMs >= 2500
 
     width: Theme.screenWidth
     height: Theme.screenHeight
