@@ -12,14 +12,14 @@ class AlertDataQml : public QObject
     Q_OBJECT
     QML_NAMED_ELEMENT(AlertData)
     QML_SINGLETON
-    Q_PROPERTY(quint8 kind READ kind WRITE qmlWriteKind NOTIFY kindChanged FINAL)
-    Q_PROPERTY(quint8 level READ level WRITE qmlWriteLevel NOTIFY levelChanged FINAL)
+    Q_PROPERTY(int kind READ kind WRITE qmlWriteKind NOTIFY kindChanged FINAL)
+    Q_PROPERTY(int level READ level WRITE qmlWriteLevel NOTIFY levelChanged FINAL)
     Q_PROPERTY(bool popupVisible READ popupVisible WRITE qmlWritePopupVisible NOTIFY popupVisibleChanged FINAL)
-    Q_PROPERTY(quint8 phase READ phase WRITE qmlWritePhase NOTIFY phaseChanged FINAL)
-    Q_PROPERTY(quint8 sosSecondsLeft READ sosSecondsLeft WRITE qmlWriteSosSecondsLeft NOTIFY sosSecondsLeftChanged FINAL)
+    Q_PROPERTY(int phase READ phase WRITE qmlWritePhase NOTIFY phaseChanged FINAL)
+    Q_PROPERTY(int sosSecondsLeft READ sosSecondsLeft WRITE qmlWriteSosSecondsLeft NOTIFY sosSecondsLeftChanged FINAL)
     Q_PROPERTY(bool sosSent READ sosSent WRITE qmlWriteSosSent NOTIFY sosSentChanged FINAL)
-    Q_PROPERTY(quint8 protocolIndex READ protocolIndex WRITE qmlWriteProtocolIndex NOTIFY protocolIndexChanged FINAL)
-    Q_PROPERTY(qint8 activeProtocol READ activeProtocol WRITE qmlWriteActiveProtocol NOTIFY activeProtocolChanged FINAL)
+    Q_PROPERTY(int protocolIndex READ protocolIndex WRITE qmlWriteProtocolIndex NOTIFY protocolIndexChanged FINAL)
+    Q_PROPERTY(int activeProtocol READ activeProtocol WRITE qmlWriteActiveProtocol NOTIFY activeProtocolChanged FINAL)
 
 public:
     enum Kind { NoAlert = 0, LowTyreFront, LowTyreRear, LowBattery, SideStandDown, AbsFault, MotorOverheat, BatteryOverheat, CommunicationLost, CrashDetected };
@@ -28,24 +28,24 @@ public:
     Q_ENUM(Level)
     explicit AlertDataQml(QObject *parent = nullptr);
 
-    quint8 kind() const;
-    void qmlWriteKind(quint8 value);
-    quint8 level() const;
-    void qmlWriteLevel(quint8 value);
+    int kind() const;
+    void qmlWriteKind(int value);
+    int level() const;
+    void qmlWriteLevel(int value);
     bool popupVisible() const;
     void qmlWritePopupVisible(bool value);
-    quint8 phase() const;
-    void qmlWritePhase(quint8 value);
-    quint8 sosSecondsLeft() const;
-    void qmlWriteSosSecondsLeft(quint8 value);
+    int phase() const;
+    void qmlWritePhase(int value);
+    int sosSecondsLeft() const;
+    void qmlWriteSosSecondsLeft(int value);
     bool sosSent() const;
     void qmlWriteSosSent(bool value);
-    quint8 protocolIndex() const;
-    void qmlWriteProtocolIndex(quint8 value);
-    qint8 activeProtocol() const;
-    void qmlWriteActiveProtocol(qint8 value);
+    int protocolIndex() const;
+    void qmlWriteProtocolIndex(int value);
+    int activeProtocol() const;
+    void qmlWriteActiveProtocol(int value);
     Q_INVOKABLE void acknowledge();
-    Q_INVOKABLE void update(quint8 newKind, quint8 newLevel);
+    Q_INVOKABLE void update(int newKind, int newLevel);
     Q_INVOKABLE void tickSecond();
     Q_INVOKABLE void cancelSos();
     Q_INVOKABLE void activateProtocol();
@@ -74,7 +74,7 @@ public:
     Q_ENUM(Action)
     explicit ClusterInputQml(QObject *parent = nullptr);
 
-    Q_INVOKABLE void inject(quint8 button, quint8 action);
+    Q_INVOKABLE void inject(int button, int action);
 
 signals:
     void buttonEvent(int button, int action);
@@ -86,13 +86,13 @@ class NavigationDataQml : public QObject
     QML_NAMED_ELEMENT(NavigationData)
     QML_SINGLETON
     Q_PROPERTY(bool active READ active WRITE qmlWriteActive NOTIFY activeChanged FINAL)
-    Q_PROPERTY(quint8 maneuver READ maneuver WRITE qmlWriteManeuver NOTIFY maneuverChanged FINAL)
-    Q_PROPERTY(quint8 roundaboutExit READ roundaboutExit WRITE qmlWriteRoundaboutExit NOTIFY roundaboutExitChanged FINAL)
-    Q_PROPERTY(quint32 distanceToManeuverM READ distanceToManeuverM WRITE qmlWriteDistanceToManeuverM NOTIFY distanceToManeuverMChanged FINAL)
-    Q_PROPERTY(quint32 distanceRemainingM READ distanceRemainingM WRITE qmlWriteDistanceRemainingM NOTIFY distanceRemainingMChanged FINAL)
-    Q_PROPERTY(quint16 etaMinutes READ etaMinutes WRITE qmlWriteEtaMinutes NOTIFY etaMinutesChanged FINAL)
-    Q_PROPERTY(quint8 laneMask READ laneMask WRITE qmlWriteLaneMask NOTIFY laneMaskChanged FINAL)
-    Q_PROPERTY(quint8 recommendedLaneMask READ recommendedLaneMask WRITE qmlWriteRecommendedLaneMask NOTIFY recommendedLaneMaskChanged FINAL)
+    Q_PROPERTY(int maneuver READ maneuver WRITE qmlWriteManeuver NOTIFY maneuverChanged FINAL)
+    Q_PROPERTY(int roundaboutExit READ roundaboutExit WRITE qmlWriteRoundaboutExit NOTIFY roundaboutExitChanged FINAL)
+    Q_PROPERTY(int distanceToManeuverM READ distanceToManeuverM WRITE qmlWriteDistanceToManeuverM NOTIFY distanceToManeuverMChanged FINAL)
+    Q_PROPERTY(int distanceRemainingM READ distanceRemainingM WRITE qmlWriteDistanceRemainingM NOTIFY distanceRemainingMChanged FINAL)
+    Q_PROPERTY(int etaMinutes READ etaMinutes WRITE qmlWriteEtaMinutes NOTIFY etaMinutesChanged FINAL)
+    Q_PROPERTY(int laneMask READ laneMask WRITE qmlWriteLaneMask NOTIFY laneMaskChanged FINAL)
+    Q_PROPERTY(int recommendedLaneMask READ recommendedLaneMask WRITE qmlWriteRecommendedLaneMask NOTIFY recommendedLaneMaskChanged FINAL)
     Q_PROPERTY(QString roadName READ roadName WRITE qmlWriteRoadName NOTIFY roadNameChanged FINAL)
 
 public:
@@ -102,20 +102,20 @@ public:
 
     bool active() const;
     void qmlWriteActive(bool value);
-    quint8 maneuver() const;
-    void qmlWriteManeuver(quint8 value);
-    quint8 roundaboutExit() const;
-    void qmlWriteRoundaboutExit(quint8 value);
-    quint32 distanceToManeuverM() const;
-    void qmlWriteDistanceToManeuverM(quint32 value);
-    quint32 distanceRemainingM() const;
-    void qmlWriteDistanceRemainingM(quint32 value);
-    quint16 etaMinutes() const;
-    void qmlWriteEtaMinutes(quint16 value);
-    quint8 laneMask() const;
-    void qmlWriteLaneMask(quint8 value);
-    quint8 recommendedLaneMask() const;
-    void qmlWriteRecommendedLaneMask(quint8 value);
+    int maneuver() const;
+    void qmlWriteManeuver(int value);
+    int roundaboutExit() const;
+    void qmlWriteRoundaboutExit(int value);
+    int distanceToManeuverM() const;
+    void qmlWriteDistanceToManeuverM(int value);
+    int distanceRemainingM() const;
+    void qmlWriteDistanceRemainingM(int value);
+    int etaMinutes() const;
+    void qmlWriteEtaMinutes(int value);
+    int laneMask() const;
+    void qmlWriteLaneMask(int value);
+    int recommendedLaneMask() const;
+    void qmlWriteRecommendedLaneMask(int value);
     QString roadName() const;
     void qmlWriteRoadName(const QString &value);
     Q_INVOKABLE void clear();
@@ -138,18 +138,18 @@ class PhoneDataQml : public QObject
     QML_NAMED_ELEMENT(PhoneData)
     QML_SINGLETON
     Q_PROPERTY(bool connected READ connected WRITE qmlWriteConnected NOTIFY connectedChanged FINAL)
-    Q_PROPERTY(quint8 batteryPercent READ batteryPercent WRITE qmlWriteBatteryPercent NOTIFY batteryPercentChanged FINAL)
-    Q_PROPERTY(quint8 signalBars READ signalBars WRITE qmlWriteSignalBars NOTIFY signalBarsChanged FINAL)
+    Q_PROPERTY(int batteryPercent READ batteryPercent WRITE qmlWriteBatteryPercent NOTIFY batteryPercentChanged FINAL)
+    Q_PROPERTY(int signalBars READ signalBars WRITE qmlWriteSignalBars NOTIFY signalBarsChanged FINAL)
     Q_PROPERTY(bool internet READ internet WRITE qmlWriteInternet NOTIFY internetChanged FINAL)
-    Q_PROPERTY(quint8 callStatus READ callStatus WRITE qmlWriteCallStatus NOTIFY callStatusChanged FINAL)
+    Q_PROPERTY(int callStatus READ callStatus WRITE qmlWriteCallStatus NOTIFY callStatusChanged FINAL)
     Q_PROPERTY(QString callerName READ callerName WRITE qmlWriteCallerName NOTIFY callerNameChanged FINAL)
     Q_PROPERTY(bool mediaPlaying READ mediaPlaying WRITE qmlWriteMediaPlaying NOTIFY mediaPlayingChanged FINAL)
-    Q_PROPERTY(quint8 volume READ volume WRITE qmlWriteVolume NOTIFY volumeChanged FINAL)
-    Q_PROPERTY(quint16 trackPositionS READ trackPositionS WRITE qmlWriteTrackPositionS NOTIFY trackPositionSChanged FINAL)
-    Q_PROPERTY(quint16 trackDurationS READ trackDurationS WRITE qmlWriteTrackDurationS NOTIFY trackDurationSChanged FINAL)
+    Q_PROPERTY(int volume READ volume WRITE qmlWriteVolume NOTIFY volumeChanged FINAL)
+    Q_PROPERTY(int trackPositionS READ trackPositionS WRITE qmlWriteTrackPositionS NOTIFY trackPositionSChanged FINAL)
+    Q_PROPERTY(int trackDurationS READ trackDurationS WRITE qmlWriteTrackDurationS NOTIFY trackDurationSChanged FINAL)
     Q_PROPERTY(QString trackTitle READ trackTitle WRITE qmlWriteTrackTitle NOTIFY trackTitleChanged FINAL)
     Q_PROPERTY(QString trackArtist READ trackArtist WRITE qmlWriteTrackArtist NOTIFY trackArtistChanged FINAL)
-    Q_PROPERTY(quint16 notificationSeq READ notificationSeq WRITE qmlWriteNotificationSeq NOTIFY notificationSeqChanged FINAL)
+    Q_PROPERTY(int notificationSeq READ notificationSeq WRITE qmlWriteNotificationSeq NOTIFY notificationSeqChanged FINAL)
     Q_PROPERTY(QString notificationSender READ notificationSender WRITE qmlWriteNotificationSender NOTIFY notificationSenderChanged FINAL)
     Q_PROPERTY(QString notificationText READ notificationText WRITE qmlWriteNotificationText NOTIFY notificationTextChanged FINAL)
 
@@ -160,30 +160,30 @@ public:
 
     bool connected() const;
     void qmlWriteConnected(bool value);
-    quint8 batteryPercent() const;
-    void qmlWriteBatteryPercent(quint8 value);
-    quint8 signalBars() const;
-    void qmlWriteSignalBars(quint8 value);
+    int batteryPercent() const;
+    void qmlWriteBatteryPercent(int value);
+    int signalBars() const;
+    void qmlWriteSignalBars(int value);
     bool internet() const;
     void qmlWriteInternet(bool value);
-    quint8 callStatus() const;
-    void qmlWriteCallStatus(quint8 value);
+    int callStatus() const;
+    void qmlWriteCallStatus(int value);
     QString callerName() const;
     void qmlWriteCallerName(const QString &value);
     bool mediaPlaying() const;
     void qmlWriteMediaPlaying(bool value);
-    quint8 volume() const;
-    void qmlWriteVolume(quint8 value);
-    quint16 trackPositionS() const;
-    void qmlWriteTrackPositionS(quint16 value);
-    quint16 trackDurationS() const;
-    void qmlWriteTrackDurationS(quint16 value);
+    int volume() const;
+    void qmlWriteVolume(int value);
+    int trackPositionS() const;
+    void qmlWriteTrackPositionS(int value);
+    int trackDurationS() const;
+    void qmlWriteTrackDurationS(int value);
     QString trackTitle() const;
     void qmlWriteTrackTitle(const QString &value);
     QString trackArtist() const;
     void qmlWriteTrackArtist(const QString &value);
-    quint16 notificationSeq() const;
-    void qmlWriteNotificationSeq(quint16 value);
+    int notificationSeq() const;
+    void qmlWriteNotificationSeq(int value);
     QString notificationSender() const;
     void qmlWriteNotificationSender(const QString &value);
     QString notificationText() const;
@@ -235,8 +235,8 @@ class PhoneListDataQml : public QObject
     Q_PROPERTY(QString reminder2Name READ reminder2Name WRITE qmlWriteReminder2Name NOTIFY reminder2NameChanged FINAL)
     Q_PROPERTY(QString reminder2Text READ reminder2Text WRITE qmlWriteReminder2Text NOTIFY reminder2TextChanged FINAL)
     Q_PROPERTY(QString reminder2Initial READ reminder2Initial WRITE qmlWriteReminder2Initial NOTIFY reminder2InitialChanged FINAL)
-    Q_PROPERTY(quint8 contactCount READ contactCount WRITE qmlWriteContactCount NOTIFY contactCountChanged FINAL)
-    Q_PROPERTY(quint8 reminderCount READ reminderCount WRITE qmlWriteReminderCount NOTIFY reminderCountChanged FINAL)
+    Q_PROPERTY(int contactCount READ contactCount WRITE qmlWriteContactCount NOTIFY contactCountChanged FINAL)
+    Q_PROPERTY(int reminderCount READ reminderCount WRITE qmlWriteReminderCount NOTIFY reminderCountChanged FINAL)
 
 public:
     explicit PhoneListDataQml(QObject *parent = nullptr);
@@ -277,10 +277,10 @@ public:
     void qmlWriteReminder2Text(const QString &value);
     QString reminder2Initial() const;
     void qmlWriteReminder2Initial(const QString &value);
-    quint8 contactCount() const;
-    void qmlWriteContactCount(quint8 value);
-    quint8 reminderCount() const;
-    void qmlWriteReminderCount(quint8 value);
+    int contactCount() const;
+    void qmlWriteContactCount(int value);
+    int reminderCount() const;
+    void qmlWriteReminderCount(int value);
     Q_INVOKABLE void clear();
 
 signals:
@@ -312,7 +312,7 @@ class SimulatorQml : public QObject
     QML_NAMED_ELEMENT(Simulator)
     QML_SINGLETON
     Q_PROPERTY(bool running READ running WRITE qmlWriteRunning NOTIFY runningChanged FINAL)
-    Q_PROPERTY(quint8 scenario READ scenario WRITE qmlWriteScenario NOTIFY scenarioChanged FINAL)
+    Q_PROPERTY(int scenario READ scenario WRITE qmlWriteScenario NOTIFY scenarioChanged FINAL)
     Q_PROPERTY(bool parked READ parked WRITE qmlWriteParked NOTIFY parkedChanged FINAL)
 
 public:
@@ -320,12 +320,12 @@ public:
 
     bool running() const;
     void qmlWriteRunning(bool value);
-    quint8 scenario() const;
-    void qmlWriteScenario(quint8 value);
+    int scenario() const;
+    void qmlWriteScenario(int value);
     bool parked() const;
     void qmlWriteParked(bool value);
     Q_INVOKABLE void start();
-    Q_INVOKABLE void step(quint32 elapsedMs);
+    Q_INVOKABLE void step(int elapsedMs);
     Q_INVOKABLE void nextScenario();
     Q_INVOKABLE void togglePark();
 
@@ -340,30 +340,30 @@ class SystemDataQml : public QObject
     Q_OBJECT
     QML_NAMED_ELEMENT(SystemData)
     QML_SINGLETON
-    Q_PROPERTY(quint8 hours READ hours WRITE qmlWriteHours NOTIFY hoursChanged FINAL)
-    Q_PROPERTY(quint8 minutes READ minutes WRITE qmlWriteMinutes NOTIFY minutesChanged FINAL)
-    Q_PROPERTY(quint32 uptimeMs READ uptimeMs WRITE qmlWriteUptimeMs NOTIFY uptimeMsChanged FINAL)
-    Q_PROPERTY(quint8 splashStep READ splashStep WRITE qmlWriteSplashStep NOTIFY splashStepChanged FINAL)
-    Q_PROPERTY(quint16 authElapsedMs READ authElapsedMs WRITE qmlWriteAuthElapsedMs NOTIFY authElapsedMsChanged FINAL)
-    Q_PROPERTY(quint16 preRideElapsedMs READ preRideElapsedMs WRITE qmlWritePreRideElapsedMs NOTIFY preRideElapsedMsChanged FINAL)
+    Q_PROPERTY(int hours READ hours WRITE qmlWriteHours NOTIFY hoursChanged FINAL)
+    Q_PROPERTY(int minutes READ minutes WRITE qmlWriteMinutes NOTIFY minutesChanged FINAL)
+    Q_PROPERTY(int uptimeMs READ uptimeMs WRITE qmlWriteUptimeMs NOTIFY uptimeMsChanged FINAL)
+    Q_PROPERTY(int splashStep READ splashStep WRITE qmlWriteSplashStep NOTIFY splashStepChanged FINAL)
+    Q_PROPERTY(int authElapsedMs READ authElapsedMs WRITE qmlWriteAuthElapsedMs NOTIFY authElapsedMsChanged FINAL)
+    Q_PROPERTY(int preRideElapsedMs READ preRideElapsedMs WRITE qmlWritePreRideElapsedMs NOTIFY preRideElapsedMsChanged FINAL)
     Q_PROPERTY(bool menuHintVisible READ menuHintVisible WRITE qmlWriteMenuHintVisible NOTIFY menuHintVisibleChanged FINAL)
     Q_PROPERTY(bool notificationToastVisible READ notificationToastVisible WRITE qmlWriteNotificationToastVisible NOTIFY notificationToastVisibleChanged FINAL)
     Q_PROPERTY(bool clockValid READ clockValid WRITE qmlWriteClockValid NOTIFY clockValidChanged FINAL)
     Q_PROPERTY(bool use24Hour READ use24Hour WRITE qmlWriteUse24Hour NOTIFY use24HourChanged FINAL)
     Q_PROPERTY(bool useMiles READ useMiles WRITE qmlWriteUseMiles NOTIFY useMilesChanged FINAL)
     Q_PROPERTY(bool nightMode READ nightMode WRITE qmlWriteNightMode NOTIFY nightModeChanged FINAL)
-    Q_PROPERTY(quint8 brightness READ brightness WRITE qmlWriteBrightness NOTIFY brightnessChanged FINAL)
+    Q_PROPERTY(int brightness READ brightness WRITE qmlWriteBrightness NOTIFY brightnessChanged FINAL)
     Q_PROPERTY(bool softwareDimming READ softwareDimming WRITE qmlWriteSoftwareDimming NOTIFY softwareDimmingChanged FINAL)
     Q_PROPERTY(bool locked READ locked WRITE qmlWriteLocked NOTIFY lockedChanged FINAL)
-    Q_PROPERTY(quint8 pinAttemptsLeft READ pinAttemptsLeft WRITE qmlWritePinAttemptsLeft NOTIFY pinAttemptsLeftChanged FINAL)
+    Q_PROPERTY(int pinAttemptsLeft READ pinAttemptsLeft WRITE qmlWritePinAttemptsLeft NOTIFY pinAttemptsLeftChanged FINAL)
     Q_PROPERTY(bool demoMode READ demoMode WRITE qmlWriteDemoMode NOTIFY demoModeChanged FINAL)
-    Q_PROPERTY(quint8 authState READ authState WRITE qmlWriteAuthState NOTIFY authStateChanged FINAL)
-    Q_PROPERTY(quint8 profileIndex READ profileIndex WRITE qmlWriteProfileIndex NOTIFY profileIndexChanged FINAL)
-    Q_PROPERTY(quint8 seatLevel READ seatLevel WRITE qmlWriteSeatLevel NOTIFY seatLevelChanged FINAL)
+    Q_PROPERTY(int authState READ authState WRITE qmlWriteAuthState NOTIFY authStateChanged FINAL)
+    Q_PROPERTY(int profileIndex READ profileIndex WRITE qmlWriteProfileIndex NOTIFY profileIndexChanged FINAL)
+    Q_PROPERTY(int seatLevel READ seatLevel WRITE qmlWriteSeatLevel NOTIFY seatLevelChanged FINAL)
     Q_PROPERTY(bool autoTurnOff READ autoTurnOff WRITE qmlWriteAutoTurnOff NOTIFY autoTurnOffChanged FINAL)
-    Q_PROPERTY(quint8 speedoStyle READ speedoStyle WRITE qmlWriteSpeedoStyle NOTIFY speedoStyleChanged FINAL)
+    Q_PROPERTY(int speedoStyle READ speedoStyle WRITE qmlWriteSpeedoStyle NOTIFY speedoStyleChanged FINAL)
     Q_PROPERTY(bool antiTheftArmed READ antiTheftArmed WRITE qmlWriteAntiTheftArmed NOTIFY antiTheftArmedChanged FINAL)
-    Q_PROPERTY(quint8 theftCaptures READ theftCaptures WRITE qmlWriteTheftCaptures NOTIFY theftCapturesChanged FINAL)
+    Q_PROPERTY(int theftCaptures READ theftCaptures WRITE qmlWriteTheftCaptures NOTIFY theftCapturesChanged FINAL)
     Q_PROPERTY(QString profile0Name READ profile0Name WRITE qmlWriteProfile0Name NOTIFY profile0NameChanged FINAL)
     Q_PROPERTY(QString profile1Name READ profile1Name WRITE qmlWriteProfile1Name NOTIFY profile1NameChanged FINAL)
     Q_PROPERTY(QString profile2Name READ profile2Name WRITE qmlWriteProfile2Name NOTIFY profile2NameChanged FINAL)
@@ -375,18 +375,18 @@ public:
     Q_ENUM(SpeedoStyle)
     explicit SystemDataQml(QObject *parent = nullptr);
 
-    quint8 hours() const;
-    void qmlWriteHours(quint8 value);
-    quint8 minutes() const;
-    void qmlWriteMinutes(quint8 value);
-    quint32 uptimeMs() const;
-    void qmlWriteUptimeMs(quint32 value);
-    quint8 splashStep() const;
-    void qmlWriteSplashStep(quint8 value);
-    quint16 authElapsedMs() const;
-    void qmlWriteAuthElapsedMs(quint16 value);
-    quint16 preRideElapsedMs() const;
-    void qmlWritePreRideElapsedMs(quint16 value);
+    int hours() const;
+    void qmlWriteHours(int value);
+    int minutes() const;
+    void qmlWriteMinutes(int value);
+    int uptimeMs() const;
+    void qmlWriteUptimeMs(int value);
+    int splashStep() const;
+    void qmlWriteSplashStep(int value);
+    int authElapsedMs() const;
+    void qmlWriteAuthElapsedMs(int value);
+    int preRideElapsedMs() const;
+    void qmlWritePreRideElapsedMs(int value);
     bool menuHintVisible() const;
     void qmlWriteMenuHintVisible(bool value);
     bool notificationToastVisible() const;
@@ -399,30 +399,30 @@ public:
     void qmlWriteUseMiles(bool value);
     bool nightMode() const;
     void qmlWriteNightMode(bool value);
-    quint8 brightness() const;
-    void qmlWriteBrightness(quint8 value);
+    int brightness() const;
+    void qmlWriteBrightness(int value);
     bool softwareDimming() const;
     void qmlWriteSoftwareDimming(bool value);
     bool locked() const;
     void qmlWriteLocked(bool value);
-    quint8 pinAttemptsLeft() const;
-    void qmlWritePinAttemptsLeft(quint8 value);
+    int pinAttemptsLeft() const;
+    void qmlWritePinAttemptsLeft(int value);
     bool demoMode() const;
     void qmlWriteDemoMode(bool value);
-    quint8 authState() const;
-    void qmlWriteAuthState(quint8 value);
-    quint8 profileIndex() const;
-    void qmlWriteProfileIndex(quint8 value);
-    quint8 seatLevel() const;
-    void qmlWriteSeatLevel(quint8 value);
+    int authState() const;
+    void qmlWriteAuthState(int value);
+    int profileIndex() const;
+    void qmlWriteProfileIndex(int value);
+    int seatLevel() const;
+    void qmlWriteSeatLevel(int value);
     bool autoTurnOff() const;
     void qmlWriteAutoTurnOff(bool value);
-    quint8 speedoStyle() const;
-    void qmlWriteSpeedoStyle(quint8 value);
+    int speedoStyle() const;
+    void qmlWriteSpeedoStyle(int value);
     bool antiTheftArmed() const;
     void qmlWriteAntiTheftArmed(bool value);
-    quint8 theftCaptures() const;
-    void qmlWriteTheftCaptures(quint8 value);
+    int theftCaptures() const;
+    void qmlWriteTheftCaptures(int value);
     QString profile0Name() const;
     void qmlWriteProfile0Name(const QString &value);
     QString profile1Name() const;
@@ -431,19 +431,19 @@ public:
     void qmlWriteProfile2Name(const QString &value);
     Q_INVOKABLE void tick();
     Q_INVOKABLE void poll();
-    Q_INVOKABLE void advanceRuntime(quint32 elapsedMs);
+    Q_INVOKABLE void advanceRuntime(int elapsedMs);
     Q_INVOKABLE void setPreRideReady(bool ready);
     Q_INVOKABLE void showMenuHint();
     Q_INVOKABLE void showNotificationToast();
-    Q_INVOKABLE bool submitPin(quint16 pin);
-    Q_INVOKABLE void setBrightnessLevel(quint8 level);
+    Q_INVOKABLE bool submitPin(int pin);
+    Q_INVOKABLE void setBrightnessLevel(int level);
     Q_INVOKABLE void toggleClockFormat();
     Q_INVOKABLE void toggleUnits();
-    Q_INVOKABLE void setClock(quint32 unixSeconds, qint16 utcOffsetMinutes);
-    Q_INVOKABLE void selectProfile(qint16 index);
+    Q_INVOKABLE void setClock(int unixSeconds, int utcOffsetMinutes);
+    Q_INVOKABLE void selectProfile(int index);
     Q_INVOKABLE void startScan();
     Q_INVOKABLE void completeScan();
-    Q_INVOKABLE void setSeatLevel(qint8 level);
+    Q_INVOKABLE void setSeatLevel(int level);
     Q_INVOKABLE void toggleSpeedoStyle();
     Q_INVOKABLE void clearTheftCaptures();
 
@@ -482,30 +482,30 @@ class TripDataQml : public QObject
     Q_OBJECT
     QML_NAMED_ELEMENT(TripData)
     QML_SINGLETON
-    Q_PROPERTY(quint16 rideMinutes READ rideMinutes WRITE qmlWriteRideMinutes NOTIFY rideMinutesChanged FINAL)
-    Q_PROPERTY(quint8 socUsedPercent READ socUsedPercent WRITE qmlWriteSocUsedPercent NOTIFY socUsedPercentChanged FINAL)
-    Q_PROPERTY(quint8 ecoShare READ ecoShare WRITE qmlWriteEcoShare NOTIFY ecoShareChanged FINAL)
-    Q_PROPERTY(quint8 normalShare READ normalShare WRITE qmlWriteNormalShare NOTIFY normalShareChanged FINAL)
-    Q_PROPERTY(quint8 sportShare READ sportShare WRITE qmlWriteSportShare NOTIFY sportShareChanged FINAL)
+    Q_PROPERTY(int rideMinutes READ rideMinutes WRITE qmlWriteRideMinutes NOTIFY rideMinutesChanged FINAL)
+    Q_PROPERTY(int socUsedPercent READ socUsedPercent WRITE qmlWriteSocUsedPercent NOTIFY socUsedPercentChanged FINAL)
+    Q_PROPERTY(int ecoShare READ ecoShare WRITE qmlWriteEcoShare NOTIFY ecoShareChanged FINAL)
+    Q_PROPERTY(int normalShare READ normalShare WRITE qmlWriteNormalShare NOTIFY normalShareChanged FINAL)
+    Q_PROPERTY(int sportShare READ sportShare WRITE qmlWriteSportShare NOTIFY sportShareChanged FINAL)
     Q_PROPERTY(bool recorded READ recorded WRITE qmlWriteRecorded NOTIFY recordedChanged FINAL)
 
 public:
     explicit TripDataQml(QObject *parent = nullptr);
 
-    quint16 rideMinutes() const;
-    void qmlWriteRideMinutes(quint16 value);
-    quint8 socUsedPercent() const;
-    void qmlWriteSocUsedPercent(quint8 value);
-    quint8 ecoShare() const;
-    void qmlWriteEcoShare(quint8 value);
-    quint8 normalShare() const;
-    void qmlWriteNormalShare(quint8 value);
-    quint8 sportShare() const;
-    void qmlWriteSportShare(quint8 value);
+    int rideMinutes() const;
+    void qmlWriteRideMinutes(int value);
+    int socUsedPercent() const;
+    void qmlWriteSocUsedPercent(int value);
+    int ecoShare() const;
+    void qmlWriteEcoShare(int value);
+    int normalShare() const;
+    void qmlWriteNormalShare(int value);
+    int sportShare() const;
+    void qmlWriteSportShare(int value);
     bool recorded() const;
     void qmlWriteRecorded(bool value);
     Q_INVOKABLE void reset();
-    Q_INVOKABLE void update(quint32 nowMs);
+    Q_INVOKABLE void update(int nowMs);
 
 signals:
     void rideMinutesChanged();
@@ -521,22 +521,22 @@ class VehicleDataQml : public QObject
     Q_OBJECT
     QML_NAMED_ELEMENT(VehicleData)
     QML_SINGLETON
-    Q_PROPERTY(quint16 speedKmh READ speedKmh WRITE qmlWriteSpeedKmh NOTIFY speedKmhChanged FINAL)
-    Q_PROPERTY(quint16 motorRpm READ motorRpm WRITE qmlWriteMotorRpm NOTIFY motorRpmChanged FINAL)
-    Q_PROPERTY(qint8 powerPercent READ powerPercent WRITE qmlWritePowerPercent NOTIFY powerPercentChanged FINAL)
-    Q_PROPERTY(quint8 rideMode READ rideMode WRITE qmlWriteRideMode NOTIFY rideModeChanged FINAL)
-    Q_PROPERTY(quint8 driveState READ driveState WRITE qmlWriteDriveState NOTIFY driveStateChanged FINAL)
+    Q_PROPERTY(int speedKmh READ speedKmh WRITE qmlWriteSpeedKmh NOTIFY speedKmhChanged FINAL)
+    Q_PROPERTY(int motorRpm READ motorRpm WRITE qmlWriteMotorRpm NOTIFY motorRpmChanged FINAL)
+    Q_PROPERTY(int powerPercent READ powerPercent WRITE qmlWritePowerPercent NOTIFY powerPercentChanged FINAL)
+    Q_PROPERTY(int rideMode READ rideMode WRITE qmlWriteRideMode NOTIFY rideModeChanged FINAL)
+    Q_PROPERTY(int driveState READ driveState WRITE qmlWriteDriveState NOTIFY driveStateChanged FINAL)
     Q_PROPERTY(bool readyToRide READ readyToRide WRITE qmlWriteReadyToRide NOTIFY readyToRideChanged FINAL)
     Q_PROPERTY(bool sideStandDown READ sideStandDown WRITE qmlWriteSideStandDown NOTIFY sideStandDownChanged FINAL)
-    Q_PROPERTY(quint8 batteryPercent READ batteryPercent WRITE qmlWriteBatteryPercent NOTIFY batteryPercentChanged FINAL)
-    Q_PROPERTY(quint16 packVoltageX10 READ packVoltageX10 WRITE qmlWritePackVoltageX10 NOTIFY packVoltageX10Changed FINAL)
-    Q_PROPERTY(qint16 packCurrentAx10 READ packCurrentAx10 WRITE qmlWritePackCurrentAx10 NOTIFY packCurrentAx10Changed FINAL)
-    Q_PROPERTY(qint16 packTempC READ packTempC WRITE qmlWritePackTempC NOTIFY packTempCChanged FINAL)
-    Q_PROPERTY(qint16 motorTempC READ motorTempC WRITE qmlWriteMotorTempC NOTIFY motorTempCChanged FINAL)
-    Q_PROPERTY(qint16 controllerTempC READ controllerTempC WRITE qmlWriteControllerTempC NOTIFY controllerTempCChanged FINAL)
-    Q_PROPERTY(qint16 ambientTempC READ ambientTempC WRITE qmlWriteAmbientTempC NOTIFY ambientTempCChanged FINAL)
-    Q_PROPERTY(quint8 chargeState READ chargeState WRITE qmlWriteChargeState NOTIFY chargeStateChanged FINAL)
-    Q_PROPERTY(quint16 rangeKm READ rangeKm WRITE qmlWriteRangeKm NOTIFY rangeKmChanged FINAL)
+    Q_PROPERTY(int batteryPercent READ batteryPercent WRITE qmlWriteBatteryPercent NOTIFY batteryPercentChanged FINAL)
+    Q_PROPERTY(int packVoltageX10 READ packVoltageX10 WRITE qmlWritePackVoltageX10 NOTIFY packVoltageX10Changed FINAL)
+    Q_PROPERTY(int packCurrentAx10 READ packCurrentAx10 WRITE qmlWritePackCurrentAx10 NOTIFY packCurrentAx10Changed FINAL)
+    Q_PROPERTY(int packTempC READ packTempC WRITE qmlWritePackTempC NOTIFY packTempCChanged FINAL)
+    Q_PROPERTY(int motorTempC READ motorTempC WRITE qmlWriteMotorTempC NOTIFY motorTempCChanged FINAL)
+    Q_PROPERTY(int controllerTempC READ controllerTempC WRITE qmlWriteControllerTempC NOTIFY controllerTempCChanged FINAL)
+    Q_PROPERTY(int ambientTempC READ ambientTempC WRITE qmlWriteAmbientTempC NOTIFY ambientTempCChanged FINAL)
+    Q_PROPERTY(int chargeState READ chargeState WRITE qmlWriteChargeState NOTIFY chargeStateChanged FINAL)
+    Q_PROPERTY(int rangeKm READ rangeKm WRITE qmlWriteRangeKm NOTIFY rangeKmChanged FINAL)
     Q_PROPERTY(bool indicatorLeft READ indicatorLeft WRITE qmlWriteIndicatorLeft NOTIFY indicatorLeftChanged FINAL)
     Q_PROPERTY(bool indicatorRight READ indicatorRight WRITE qmlWriteIndicatorRight NOTIFY indicatorRightChanged FINAL)
     Q_PROPERTY(bool highBeam READ highBeam WRITE qmlWriteHighBeam NOTIFY highBeamChanged FINAL)
@@ -544,11 +544,11 @@ class VehicleDataQml : public QObject
     Q_PROPERTY(bool hazard READ hazard WRITE qmlWriteHazard NOTIFY hazardChanged FINAL)
     Q_PROPERTY(bool absFault READ absFault WRITE qmlWriteAbsFault NOTIFY absFaultChanged FINAL)
     Q_PROPERTY(bool absActive READ absActive WRITE qmlWriteAbsActive NOTIFY absActiveChanged FINAL)
-    Q_PROPERTY(quint16 tyreFrontPsiX10 READ tyreFrontPsiX10 WRITE qmlWriteTyreFrontPsiX10 NOTIFY tyreFrontPsiX10Changed FINAL)
-    Q_PROPERTY(quint16 tyreRearPsiX10 READ tyreRearPsiX10 WRITE qmlWriteTyreRearPsiX10 NOTIFY tyreRearPsiX10Changed FINAL)
-    Q_PROPERTY(quint32 odometerKm READ odometerKm WRITE qmlWriteOdometerKm NOTIFY odometerKmChanged FINAL)
-    Q_PROPERTY(quint32 tripKmX10 READ tripKmX10 WRITE qmlWriteTripKmX10 NOTIFY tripKmX10Changed FINAL)
-    Q_PROPERTY(quint16 faultCode READ faultCode WRITE qmlWriteFaultCode NOTIFY faultCodeChanged FINAL)
+    Q_PROPERTY(int tyreFrontPsiX10 READ tyreFrontPsiX10 WRITE qmlWriteTyreFrontPsiX10 NOTIFY tyreFrontPsiX10Changed FINAL)
+    Q_PROPERTY(int tyreRearPsiX10 READ tyreRearPsiX10 WRITE qmlWriteTyreRearPsiX10 NOTIFY tyreRearPsiX10Changed FINAL)
+    Q_PROPERTY(int odometerKm READ odometerKm WRITE qmlWriteOdometerKm NOTIFY odometerKmChanged FINAL)
+    Q_PROPERTY(int tripKmX10 READ tripKmX10 WRITE qmlWriteTripKmX10 NOTIFY tripKmX10Changed FINAL)
+    Q_PROPERTY(int faultCode READ faultCode WRITE qmlWriteFaultCode NOTIFY faultCodeChanged FINAL)
     Q_PROPERTY(bool crashDetected READ crashDetected WRITE qmlWriteCrashDetected NOTIFY crashDetectedChanged FINAL)
     Q_PROPERTY(bool driveStale READ driveStale WRITE qmlWriteDriveStale NOTIFY driveStaleChanged FINAL)
     Q_PROPERTY(bool batteryStale READ batteryStale WRITE qmlWriteBatteryStale NOTIFY batteryStaleChanged FINAL)
@@ -563,38 +563,38 @@ public:
     Q_ENUM(ChargeState)
     explicit VehicleDataQml(QObject *parent = nullptr);
 
-    quint16 speedKmh() const;
-    void qmlWriteSpeedKmh(quint16 value);
-    quint16 motorRpm() const;
-    void qmlWriteMotorRpm(quint16 value);
-    qint8 powerPercent() const;
-    void qmlWritePowerPercent(qint8 value);
-    quint8 rideMode() const;
-    void qmlWriteRideMode(quint8 value);
-    quint8 driveState() const;
-    void qmlWriteDriveState(quint8 value);
+    int speedKmh() const;
+    void qmlWriteSpeedKmh(int value);
+    int motorRpm() const;
+    void qmlWriteMotorRpm(int value);
+    int powerPercent() const;
+    void qmlWritePowerPercent(int value);
+    int rideMode() const;
+    void qmlWriteRideMode(int value);
+    int driveState() const;
+    void qmlWriteDriveState(int value);
     bool readyToRide() const;
     void qmlWriteReadyToRide(bool value);
     bool sideStandDown() const;
     void qmlWriteSideStandDown(bool value);
-    quint8 batteryPercent() const;
-    void qmlWriteBatteryPercent(quint8 value);
-    quint16 packVoltageX10() const;
-    void qmlWritePackVoltageX10(quint16 value);
-    qint16 packCurrentAx10() const;
-    void qmlWritePackCurrentAx10(qint16 value);
-    qint16 packTempC() const;
-    void qmlWritePackTempC(qint16 value);
-    qint16 motorTempC() const;
-    void qmlWriteMotorTempC(qint16 value);
-    qint16 controllerTempC() const;
-    void qmlWriteControllerTempC(qint16 value);
-    qint16 ambientTempC() const;
-    void qmlWriteAmbientTempC(qint16 value);
-    quint8 chargeState() const;
-    void qmlWriteChargeState(quint8 value);
-    quint16 rangeKm() const;
-    void qmlWriteRangeKm(quint16 value);
+    int batteryPercent() const;
+    void qmlWriteBatteryPercent(int value);
+    int packVoltageX10() const;
+    void qmlWritePackVoltageX10(int value);
+    int packCurrentAx10() const;
+    void qmlWritePackCurrentAx10(int value);
+    int packTempC() const;
+    void qmlWritePackTempC(int value);
+    int motorTempC() const;
+    void qmlWriteMotorTempC(int value);
+    int controllerTempC() const;
+    void qmlWriteControllerTempC(int value);
+    int ambientTempC() const;
+    void qmlWriteAmbientTempC(int value);
+    int chargeState() const;
+    void qmlWriteChargeState(int value);
+    int rangeKm() const;
+    void qmlWriteRangeKm(int value);
     bool indicatorLeft() const;
     void qmlWriteIndicatorLeft(bool value);
     bool indicatorRight() const;
@@ -609,16 +609,16 @@ public:
     void qmlWriteAbsFault(bool value);
     bool absActive() const;
     void qmlWriteAbsActive(bool value);
-    quint16 tyreFrontPsiX10() const;
-    void qmlWriteTyreFrontPsiX10(quint16 value);
-    quint16 tyreRearPsiX10() const;
-    void qmlWriteTyreRearPsiX10(quint16 value);
-    quint32 odometerKm() const;
-    void qmlWriteOdometerKm(quint32 value);
-    quint32 tripKmX10() const;
-    void qmlWriteTripKmX10(quint32 value);
-    quint16 faultCode() const;
-    void qmlWriteFaultCode(quint16 value);
+    int tyreFrontPsiX10() const;
+    void qmlWriteTyreFrontPsiX10(int value);
+    int tyreRearPsiX10() const;
+    void qmlWriteTyreRearPsiX10(int value);
+    int odometerKm() const;
+    void qmlWriteOdometerKm(int value);
+    int tripKmX10() const;
+    void qmlWriteTripKmX10(int value);
+    int faultCode() const;
+    void qmlWriteFaultCode(int value);
     bool crashDetected() const;
     void qmlWriteCrashDetected(bool value);
     bool driveStale() const;
@@ -627,7 +627,7 @@ public:
     void qmlWriteBatteryStale(bool value);
     bool lampsStale() const;
     void qmlWriteLampsStale(bool value);
-    Q_INVOKABLE void applySignal(quint8 signalId, qint32 value);
+    Q_INVOKABLE void applySignal(int signalId, int value);
 
 signals:
     void speedKmhChanged();

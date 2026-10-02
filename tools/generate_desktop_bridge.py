@@ -15,10 +15,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DIR = os.path.join(ROOT, "qml", "backend")
 OUT_DIR = os.path.join(ROOT, "desktop", "bridge")
 
+#  Every integer crosses into QML as int. QML has one integer type, so a
+#  narrow Qt type buys nothing here and a 16-bit one does not survive the
+#  trip: speed, range and the temperatures came out as huge nonsense while
+#  the 8-bit and 32-bit fields beside them were right. The backend keeps its
+#  own narrow types; only the QML boundary widens.
 TYPE_MAP = {
-    "void": "void", "int": "int", "bool": "bool", "float": "double", "double": "double",
-    "int8_t": "qint8", "uint8_t": "quint8", "int16_t": "qint16", "uint16_t": "quint16",
-    "int32_t": "qint32", "uint32_t": "quint32", "std::string": "QString",
+    "void": "void", "bool": "bool", "float": "double", "double": "double",
+    "int": "int", "int8_t": "int", "uint8_t": "int", "int16_t": "int",
+    "uint16_t": "int", "int32_t": "int", "uint32_t": "int",
+    "std::string": "QString",
 }
 
 STRUCT_RE = re.compile(r"struct\s+(\w+)\s*:\s*public\s+Qul::Singleton<\s*\1\s*>\s*\{(.*?)\n\};", re.S)
