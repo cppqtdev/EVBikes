@@ -69,6 +69,11 @@ Item {
                     font.family: Theme.fontFamily
                     font.pixelSize: 16
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: SystemData.selectProfile(index)
+                }
             }
         }
     }
@@ -135,5 +140,14 @@ Item {
     BootChrome {
         printColor: auth.authState === SystemData.AuthDenied ? Theme.red
                   : (auth.authState === SystemData.AuthMatched ? Theme.teal : "#5FD6B4")
+    }
+
+    MouseArea {
+        x: 555
+        y: 260
+        width: 170
+        height: 125
+        enabled: auth.authState !== SystemData.AuthScanning
+        onClicked: SystemData.startScan()
     }
 }

@@ -1,13 +1,7 @@
 import QtQuick
 import ClusterCore
 
-// A live number that neither jumps nor flickers.
-//
-// Two things cause the flicker. A plain Text bound to a value re-lays out on
-// every change, and proportional digits are different widths, so the row
-// shifts sideways as the number counts. And the raw value steps in whole
-// units, so the reading snaps instead of moving. Here each digit sits in its
-// own fixed cell, and the displayed value is animated towards the real one.
+// A live number with fixed-width digit cells to prevent sideways movement.
 Item {
     id: readout
 
@@ -30,21 +24,22 @@ Item {
     property bool fit: false
     property real widthFactor: 0.62
 
-    //  Keep this readout directly bound to its data. Animating every cell on
-    //  each CAN update starves the QUL event loop when the live dashboard loads.
+    // Keep this readout directly bound to its data.
     readonly property int shownValue: value
     readonly property int cellWidth: Math.round(digitSize * widthFactor)
-    // Digit count by arithmetic: String.length is not part of the JavaScript
-    // subset Qt for MCUs provides.
-    readonly property int used: {
-        var rest = Math.abs(shownValue)
-        var count = 1
-        while (rest >= 10) {
-            rest = Math.floor(rest / 10)
-            count = count + 1
-        }
-        return count
-    }
+    // Fixed comparisons avoid a QUL code-generation bug in the former loop:
+    // its Math.floor result was assigned after an unconditional back-edge,
+    // leaving the loop condition unchanged for every value >= 10.
+    readonly property real magnitude: Math.abs(shownValue)
+    readonly property int used: magnitude < 10 ? 1
+                             : magnitude < 100 ? 2
+                             : magnitude < 1000 ? 3
+                             : magnitude < 10000 ? 4
+                             : magnitude < 100000 ? 5
+                             : magnitude < 1000000 ? 6
+                             : magnitude < 10000000 ? 7
+                             : magnitude < 100000000 ? 8
+                             : magnitude < 1000000000 ? 9 : 10
     readonly property int cells: digits
     //  How many of those cells carry something. The rest are the leading ones
     //  and stay empty, which is also what makes the row hug the number.

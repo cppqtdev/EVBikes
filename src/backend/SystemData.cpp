@@ -54,18 +54,8 @@ void SystemData::setClock(uint32_t unixSeconds, int16_t utcOffsetMinutes)
     tick();
 }
 
-//  TEMPORARY stage trace inside the tick; see Simulator.cpp.
-namespace {
-uint32_t g_runtimeCalls = 0;
-}
-#define EVB_STAGE(stage) do { if (g_runtimeCalls <= 40) { \
-    std::printf("[run %u]   " stage "\n", static_cast<unsigned>(g_runtimeCalls)); \
-    std::fflush(stdout); } } while (0)
-
 void SystemData::advanceRuntime(uint32_t elapsedMs)
 {
-    ++g_runtimeCalls;
-    EVB_STAGE("uptime");
     // The runtime tick is 50 ms, but publishing this general-purpose property
     // that often wakes every UI animation/number binding on each CAN cycle.
     // Publish it at 200 ms; screen-specific elapsed properties below retain
@@ -82,7 +72,6 @@ void SystemData::advanceRuntime(uint32_t elapsedMs)
     //  something a loop can lean on, and as a loop condition it never ended:
     //  the desktop shim happened to answer straight away, the real one does
     //  not, and the first tick past 220 ms froze the application.
-    EVB_STAGE("splash");
     if (m_splashStep < kSplashSteps) {
         m_splashElapsedMs += elapsedMs;
         const uint32_t due = m_splashElapsedMs / 220;
@@ -94,7 +83,6 @@ void SystemData::advanceRuntime(uint32_t elapsedMs)
         }
     }
 
-    EVB_STAGE("auth");
     if (authState.value() == AuthScanning || authState.value() == AuthMatched) {
         const uint32_t elapsed = static_cast<uint32_t>(m_authElapsedMs) + elapsedMs;
         m_authElapsedMs = static_cast<uint16_t>(elapsed > 65535 ? 65535 : elapsed);
@@ -103,14 +91,12 @@ void SystemData::advanceRuntime(uint32_t elapsedMs)
             completeScan();
     }
 
-    EVB_STAGE("preride");
     if (m_preRideReady) {
         const uint32_t elapsed = static_cast<uint32_t>(m_preRideElapsedMs) + elapsedMs;
         m_preRideElapsedMs = static_cast<uint16_t>(elapsed > 65535 ? 65535 : elapsed);
         preRideElapsedMs.setValue(m_preRideElapsedMs);
     }
 
-    EVB_STAGE("hints");
     if (m_menuHintRemainingMs > 0) {
         m_menuHintRemainingMs = elapsedMs >= m_menuHintRemainingMs
             ? 0 : static_cast<uint16_t>(m_menuHintRemainingMs - elapsedMs);
@@ -123,7 +109,6 @@ void SystemData::advanceRuntime(uint32_t elapsedMs)
         if (m_toastRemainingMs == 0)
             notificationToastVisible.setValue(false);
     }
-    EVB_STAGE("end");
 }
 
 void SystemData::poll()

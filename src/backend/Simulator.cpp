@@ -182,20 +182,8 @@ Simulator::Simulator()
     parked.setValue(false);
 }
 
-//  TEMPORARY tick trace. Each tick prints the stage it has reached, so the
-//  last line before the freeze names the call that did not return. Quiet
-//  after the first 40 ticks so a healthy run does not fill the console.
-namespace {
-uint32_t g_traceTick = 0;
-}
-#define EVB_TICK(stage) do { if (g_traceTick <= 40) { \
-    std::printf("[tick %u] " stage "\n", static_cast<unsigned>(g_traceTick)); \
-    std::fflush(stdout); } } while (0)
-
 void Simulator::start()
 {
-    std::printf("[sim] Simulator::start\n");
-    std::fflush(stdout);
     if (m_started)
         return;
     m_started = true;
@@ -203,8 +191,6 @@ void Simulator::start()
     m_timer.setSingleShot(false);
     m_timer.onTimeout([this]() { onRuntimeTick(); });
     m_timer.start(50);
-    std::printf("[sim] timer started\n");
-    std::fflush(stdout);
 }
 
 void Simulator::stop()
@@ -226,15 +212,10 @@ void Simulator::onRuntimeTick()
     if (elapsedMs == 0)
         return;
 
-    ++g_traceTick;
-    EVB_TICK("enter");
-
     if (running.value())
         step(elapsedMs);
-    EVB_TICK("after step");
 
     SystemData::instance().advanceRuntime(elapsedMs);
-    EVB_TICK("after advanceRuntime");
 
     m_pollElapsedMs += elapsedMs;
     if (m_pollElapsedMs >= 100) {
@@ -246,14 +227,25 @@ void Simulator::onRuntimeTick()
         //  four billion and every node is declared dead at once.
         Backend::periodic(evb::platform::millis());
     }
-    EVB_TICK("after periodic");
-
     m_clockElapsedMs += elapsedMs;
     if (m_clockElapsedMs >= 1000) {
         m_clockElapsedMs %= 1000;
         SystemData::instance().tick();
     }
-    EVB_TICK("done");
+
+    static uint32_t lastDiagnosticMs = 0;
+    const uint32_t diagnosticNowMs = evb::platform::millis();
+    if (evb::platform::isSimulator() && diagnosticNowMs - lastDiagnosticMs >= 1000) {
+        lastDiagnosticMs = diagnosticNowMs;
+        std::printf("[sim] t=%lu ms speed=%u.%u km/h target=%u.%u scenario=%u parked=%u standDown=%u\n",
+                    static_cast<unsigned long>(g.timeMs),
+                    static_cast<unsigned>(g.speedX10 / 10), static_cast<unsigned>(g.speedX10 % 10),
+                    static_cast<unsigned>(g.targetSpeedX10 / 10), static_cast<unsigned>(g.targetSpeedX10 % 10),
+                    static_cast<unsigned>(scenario.value()), parked.value() ? 1u : 0u,
+                    (g.speedX10 == 0 && !parked.value() && (g.timeMs < kBootStandDownMs
+                        || ((g.timeMs / 1000) % 40) < 3)) ? 1u : 0u);
+        std::fflush(stdout);
+    }
 }
 
 void Simulator::togglePark()

@@ -13,6 +13,13 @@ QtObject {
     property int stageRide: 3
     property int stage: stageSplash
 
+    onStageChanged: {
+        var name = stage === stageSplash ? "splash"
+                 : (stage === stageAuth ? "auth"
+                 : (stage === stagePreRide ? "pre-ride" : "ride"))
+        console.log("[route] stage=" + name)
+    }
+
     // Centre view while riding
     property int viewBike: 0
     property int viewMap: 1

@@ -71,6 +71,7 @@ Item {
     Loader {
         active: shell.riding
         sourceComponent: rideContent
+        onLoaded: console.log("[ui] ride content loaded")
     }
 
     Component {
@@ -80,15 +81,14 @@ Item {
             width: Theme.screenWidth
             height: Theme.screenHeight
 
-            PowerBar {
-                visible: shell.showBars
-                value: VehicleData.driveStale ? 0 : Math.abs(VehicleData.powerPercent)
+            Loader {
+                active: shell.showBars
+                sourceComponent: powerBar
             }
 
-            RpmBar {
-                visible: shell.showBars
-                value: VehicleData.driveStale ? 0 : VehicleData.motorRpm / 100
-                redZoneTop: true
+            Loader {
+                active: shell.showBars
+                sourceComponent: rpmBar
             }
 
             Item {
@@ -135,10 +135,31 @@ Item {
                 Component { id: miscPage; MiscPage {} }
                 Component { id: classicRide; RideView {} }
                 Component { id: hexRide; HexSpeedoView {} }
+                Component {
+                    id: powerBar
+                    PowerBar {
+                        value: VehicleData.driveStale ? 0 : Math.abs(VehicleData.powerPercent)
+                    }
+                }
+                Component {
+                    id: rpmBar
+                    RpmBar {
+                        value: VehicleData.driveStale ? 0 : VehicleData.motorRpm / 100
+                        redZoneTop: true
+                    }
+                }
+                Component { id: menuCarousel; MenuCarousel { y: 303 } }
+                Component { id: tyreAlertOverlay; TyreAlertOverlay {} }
+                Component { id: genericAlertOverlay; GenericAlertOverlay {} }
+                Component { id: callScreen; CallScreen {} }
+                Component { id: notificationToast; NotificationToast { x: 430; y: 250 } }
+                Component { id: menuLockHint; MenuLockHint { x: 470; y: 262 } }
+                Component { id: crashOverlay; CrashOverlay {} }
+                Component { id: overheatOverlay; OverheatOverlay {} }
 
-                MenuCarousel {
-                    y: 303
-                    visible: Router.menuOpen
+                Loader {
+                    active: Router.menuOpen
+                    sourceComponent: menuCarousel
                 }
 
                 BatteryTempBars {
@@ -152,33 +173,40 @@ Item {
                     focusIndex: Router.menuOpen ? -1 : Router.dockIndex
                 }
 
-                TyreAlertOverlay {
-                    visible: shell.tyreAlert
+                Loader {
+                    active: shell.tyreAlert
+                    sourceComponent: tyreAlertOverlay
                 }
 
-                GenericAlertOverlay {
-                    visible: shell.otherAlert
+                Loader {
+                    active: shell.otherAlert
+                    sourceComponent: genericAlertOverlay
                 }
 
-                CallScreen {}
-
-                NotificationToast {
-                    x: 430
-                    y: 250
+                Loader {
+                    active: PhoneData.callStatus !== PhoneData.Idle
+                    sourceComponent: callScreen
                 }
 
-                MenuLockHint {
-                    x: 470
-                    y: 262
+                Loader {
+                    active: SystemData.notificationToastVisible
+                    sourceComponent: notificationToast
+                }
+
+                Loader {
+                    active: SystemData.menuHintVisible
+                    sourceComponent: menuLockHint
                 }
             }
 
-            CrashOverlay {
-                visible: shell.crashAlert
+            Loader {
+                active: shell.crashAlert
+                sourceComponent: crashOverlay
             }
 
-            OverheatOverlay {
-                visible: shell.heatAlert
+            Loader {
+                active: shell.heatAlert
+                sourceComponent: overheatOverlay
             }
 
             StatusCorners {

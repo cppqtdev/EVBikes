@@ -180,4 +180,10 @@ Item {
         font.family: Theme.fontFamily
         font.pixelSize: 13
     }
+
+    MouseArea {
+        anchors.fill: parent
+        enabled: check.ready
+        onClicked: Router.finishPreRide()
+    }
 }

@@ -105,29 +105,12 @@ public:
 PhoneHandler g_phoneHandler;
 evb::link::Parser g_phoneParser(g_phoneHandler);
 
-//  TEMPORARY. On the real runtime these arrive from the event loop after the
-//  tick has returned, which is outside the tick trace and is where the
-//  desktop shim differs most: it delivers them inside step() instead.
-uint32_t g_traceEvents = 0;
-
 class CanQueue : public Qul::EventQueue<evb::CanFrame, Qul::EventQueueOverrunPolicy_Discard, 16>
 {
 public:
     void onEvent(const evb::CanFrame &frame) override
     {
-        ++g_traceEvents;
-        const bool trace = g_traceEvents <= 60;
-        if (trace) {
-            std::printf("[can %u] decode id=0x%X\n",
-                        static_cast<unsigned>(g_traceEvents),
-                        static_cast<unsigned>(frame.id));
-            std::fflush(stdout);
-        }
         g_decoder.decode(frame);
-        if (trace) {
-            std::printf("[can %u] decoded\n", static_cast<unsigned>(g_traceEvents));
-            std::fflush(stdout);
-        }
     }
 };
 
@@ -221,13 +204,6 @@ void stopRuntime()
 
 void postCanFrame(const evb::CanFrame &frame)
 {
-    static uint32_t posted = 0;
-    ++posted;
-    if (posted <= 60) {
-        std::printf("[can] post %u id=0x%X\n", static_cast<unsigned>(posted),
-                    static_cast<unsigned>(frame.id));
-        std::fflush(stdout);
-    }
     canQueue().postEvent(frame);
 }
 
@@ -279,6 +255,25 @@ void periodic(uint32_t nowMs)
         NavigationData::instance().clear();
         PhoneListData::instance().clear();
         g_phoneParser.reset();
+    }
+
+    static uint32_t lastDiagnosticMs = 0;
+    if (evb::platform::isSimulator() && nowMs - lastDiagnosticMs >= 1000) {
+        lastDiagnosticMs = nowMs;
+        const NavigationData &nav = NavigationData::instance();
+        std::printf("[data] speed=%u km/h rpm=%u soc=%u%% driveStale=%u batteryStale=%u lampsStale=%u phone=%u nav=%u maneuver=%u next=%lu m road=\"%s\"\n",
+                    static_cast<unsigned>(vehicle.speedKmh.value()),
+                    static_cast<unsigned>(vehicle.motorRpm.value()),
+                    static_cast<unsigned>(vehicle.batteryPercent.value()),
+                    vehicle.driveStale.value() ? 1u : 0u,
+                    vehicle.batteryStale.value() ? 1u : 0u,
+                    vehicle.lampsStale.value() ? 1u : 0u,
+                    phone.connected.value() ? 1u : 0u,
+                    nav.active.value() ? 1u : 0u,
+                    static_cast<unsigned>(nav.maneuver.value()),
+                    static_cast<unsigned long>(nav.distanceToManeuverM.value()),
+                    nav.roadName.value().c_str());
+        std::fflush(stdout);
     }
 }
 
