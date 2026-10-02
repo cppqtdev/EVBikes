@@ -28,9 +28,13 @@ PageBase {
         visible: page.tab === 0
 
         Repeater {
-            model: PhoneListData.contactCount
+            //  Three fixed slots, shown or not. The count arrives from the
+            //  phone while the app runs, and a Repeater here is given its
+            //  delegates once, from a compile-time estimate.
+            model: 3
 
             MessageRow {
+                visible: index < PhoneListData.contactCount
                 initial: Format.contactInitial(index)
                 name: Format.contactName(index)
                 body: VehicleData.speedKmh > 0 ? qsTr("Stop to read") : Format.contactBody(index)
@@ -75,9 +79,10 @@ PageBase {
         visible: page.tab === 2
 
         Repeater {
-            model: PhoneListData.reminderCount
+            model: 3
 
             MessageRow {
+                visible: index < PhoneListData.reminderCount
                 initial: Format.reminderInitial(index)
                 name: Format.reminderName(index)
                 body: Format.reminderBody(index)

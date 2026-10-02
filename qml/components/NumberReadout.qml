@@ -12,7 +12,10 @@ Item {
     id: readout
 
     property int value: 0
-    property int digits: 2
+    //  digits is how many cells exist, not how many are drawn. Qt for MCUs
+    //  pre-allocates a Repeater's delegates from a compile-time estimate, so
+    //  the model must not change while it runs; fit moves the width instead.
+    property int digits: 6
     // digitSize has to repeat the font's pixelSize: a font can be built but its
     // subproperties cannot be read back, and the cells are sized from it.
     property int digitSize: 24
@@ -43,11 +46,14 @@ Item {
         }
         return count
     }
-    readonly property int cells: stale ? (fit ? 2 : digits) : (fit ? used : digits)
-    readonly property int blanks: stale ? 0 : Math.max(0, cells - used)
+    readonly property int cells: digits
+    //  How many of those cells carry something. The rest are the leading ones
+    //  and stay empty, which is also what makes the row hug the number.
+    readonly property int drawn: stale ? 2 : (fit ? used : digits)
+    readonly property int blanks: Math.max(0, cells - drawn)
     readonly property color ink: stale ? Theme.textMuted : color
 
-    width: cells * cellWidth
+    width: drawn * cellWidth
     height: Math.round(digitSize * 1.25)
 
     Behavior on shown {
@@ -55,9 +61,9 @@ Item {
     }
 
     Item {
-        // Leading cells are blank, so centring means pulling the drawn digits
-        // back over half of them.
-        x: readout.centered ? -readout.blanks * readout.cellWidth / 2 : 0
+        //  The width already counts only the drawn cells, so there is nothing
+        //  left to pull back; centred readouts sit where their width puts them.
+        x: 0
         width: readout.width
         height: readout.height
 
@@ -65,13 +71,14 @@ Item {
             model: readout.cells
 
             Text {
-                x: index * readout.cellWidth
+                x: (index - readout.blanks) * readout.cellWidth
                 width: readout.cellWidth
                 height: readout.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: readout.stale ? "-"
-                      : (index < readout.blanks ? "" : Format.digitAt(readout.shownValue, readout.cells - 1 - index))
+                text: index < readout.blanks ? ""
+                      : (readout.stale ? "-"
+                         : Format.digitAt(readout.shownValue, readout.cells - 1 - index))
                 color: readout.ink
                 font: readout.digitFont
             }
