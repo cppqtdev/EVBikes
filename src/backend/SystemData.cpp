@@ -95,9 +95,16 @@ void SystemData::poll()
 
 void SystemData::setPreRideReady(bool ready)
 {
+    if (m_preRideReady == ready)
+        return;
     m_preRideReady = ready;
-    m_preRideElapsedMs = 0;
-    preRideElapsedMs.setValue(0);
+    //  Only the start of a wait clears the clock. Clearing it on the way out
+    //  wrote back into the very property the screen's handler was reacting
+    //  to, which is the binding loop Qt reported on preRideDelayDone.
+    if (ready) {
+        m_preRideElapsedMs = 0;
+        preRideElapsedMs.setValue(0);
+    }
 }
 
 void SystemData::showMenuHint()

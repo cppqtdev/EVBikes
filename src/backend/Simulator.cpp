@@ -2,11 +2,8 @@
 
 #include "Backend.h"
 #include "SystemData.h"
-#include "VehicleData.h"
 #include "../core/can/CanIds.h"
 #include "../platform/PlatformIo.h"
-
-#include <cstdio>
 
 #include <cstring>
 
@@ -222,20 +219,6 @@ void Simulator::onRuntimeTick()
     if (m_clockElapsedMs >= 1000) {
         m_clockElapsedMs %= 1000;
         SystemData::instance().tick();
-        //  TEMPORARY trace: is the clock still ticking, and is the auth timer
-        //  still counting, while the screen sits on Match? Remove once answered.
-        const VehicleData &v = VehicleData::instance();
-        std::printf("[tick] speed=%d range=%d odo=%d ambient=%d packTemp=%d "
-                    "battery=%d hours=%d minutes=%d\n",
-                    static_cast<int>(v.speedKmh.value()),
-                    static_cast<int>(v.rangeKm.value()),
-                    static_cast<int>(v.odometerKm.value()),
-                    static_cast<int>(v.ambientTempC.value()),
-                    static_cast<int>(v.packTempC.value()),
-                    static_cast<int>(v.batteryPercent.value()),
-                    static_cast<int>(SystemData::instance().hours.value()),
-                    static_cast<int>(SystemData::instance().minutes.value()));
-        std::fflush(stdout);
     }
 }
 
