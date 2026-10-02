@@ -212,7 +212,12 @@ void Simulator::onRuntimeTick()
     m_pollElapsedMs += elapsedMs;
     if (m_pollElapsedMs >= 100) {
         m_pollElapsedMs %= 100;
-        Backend::periodic(nowMs);
+        //  Read the clock again rather than reusing nowMs from the top of the
+        //  tick: step() has run since, and it stamps each frame with the time
+        //  it was made. The timeout check subtracts without sign, so a stamp
+        //  one millisecond ahead of the time it is compared against wraps to
+        //  four billion and every node is declared dead at once.
+        Backend::periodic(evb::platform::millis());
     }
 
     m_clockElapsedMs += elapsedMs;
