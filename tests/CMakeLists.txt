@@ -22,6 +22,7 @@ add_executable(backend_smoke
     ../src/core/nav/PhoneLinkProtocol.cpp
     ../src/core/alerts/AlertEvaluator.cpp
     ../src/backend/Backend.cpp
+    ../src/backend/ConnectivityData.cpp
     ../src/backend/VehicleData.cpp
     ../src/backend/NavigationData.cpp
     ../src/backend/PhoneData.cpp

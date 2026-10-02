@@ -1,8 +1,10 @@
 #include "Simulator.h"
 
 #include "Backend.h"
+#include "ConnectivityData.h"
 #include "SystemData.h"
 #include "../core/can/CanIds.h"
+#include "../core/simulation/DistanceIntegrator.h"
 #include "../platform/PlatformIo.h"
 
 #include <cstdio>
@@ -11,7 +13,7 @@
 
 namespace {
 
-enum Scenario : uint8_t { CityEco = 0, SportRun, LowTyre, Overheat, Crash, ScenarioCount };
+enum Scenario : uint8_t { CityEco = 0, SportRun, LowTyre, Overheat, Crash, LampTest, PetrolDemo, ScenarioCount };
 
 constexpr uint32_t kMaxTickMs = 100;
 constexpr uint32_t kBootStandDownMs = 11000;
@@ -28,8 +30,13 @@ struct SimState
     uint16_t rearPsiX10 = 320;
     uint32_t odoX10 = 123560;
     uint32_t tripX10 = 90;
-    uint16_t navDistance = 850;
+    uint16_t navDistance = 180;
+    uint16_t tripRemainderM = 0;
+    uint16_t accelerationRemainder = 0;
+    uint32_t energyMwh = 3280000;
+    evb::DistanceIntegrator distance;
     uint8_t navStep = 0;
+    uint8_t rideMode = 0;
     uint16_t phoneTimerMs = 0;
     uint16_t blinkMs = 0;
     bool blinkOn = false;
@@ -63,11 +70,11 @@ struct NavStep
 };
 
 constexpr NavStep kRoute[] = {
-    {evb::link::Maneuver::Right, 850, "MG Road"},
-    {evb::link::Maneuver::Straight, 1200, "Outer Ring Road"},
-    {evb::link::Maneuver::RoundaboutEnter, 600, "Silk Board Junction"},
-    {evb::link::Maneuver::SlightLeft, 400, "Hosur Road"},
-    {evb::link::Maneuver::Left, 300, "Electronic City Phase 1"},
+    {evb::link::Maneuver::Right, 180, "MG Road"},
+    {evb::link::Maneuver::Straight, 300, "Outer Ring Road"},
+    {evb::link::Maneuver::RoundaboutEnter, 180, "Silk Board Junction"},
+    {evb::link::Maneuver::SlightLeft, 140, "Hosur Road"},
+    {evb::link::Maneuver::Left, 160, "Electronic City Phase 1"},
     {evb::link::Maneuver::Destination, 150, "Office"},
 };
 constexpr uint8_t kRouteLen = sizeof(kRoute) / sizeof(kRoute[0]);
@@ -123,6 +130,10 @@ void sendPhoneTraffic()
 void sendListsOnce()
 {
     static bool sent = false;
+    if (ConnectivityData::instance().bluetoothState.value() != ConnectivityData::Connected) {
+        sent = false;
+        return;
+    }
     if (sent)
         return;
     sent = true;
@@ -159,6 +170,10 @@ void sendListsOnce()
 void sendTimeSyncOnce()
 {
     static bool sent = false;
+    if (ConnectivityData::instance().bluetoothState.value() != ConnectivityData::Connected) {
+        sent = false;
+        return;
+    }
     if (sent)
         return;
     sent = true;
@@ -216,6 +231,7 @@ void Simulator::onRuntimeTick()
         step(elapsedMs);
 
     SystemData::instance().advanceRuntime(elapsedMs);
+    ConnectivityData::instance().advance(elapsedMs);
 
     m_pollElapsedMs += elapsedMs;
     if (m_pollElapsedMs >= 100) {
@@ -242,8 +258,7 @@ void Simulator::onRuntimeTick()
                     static_cast<unsigned>(g.speedX10 / 10), static_cast<unsigned>(g.speedX10 % 10),
                     static_cast<unsigned>(g.targetSpeedX10 / 10), static_cast<unsigned>(g.targetSpeedX10 % 10),
                     static_cast<unsigned>(scenario.value()), parked.value() ? 1u : 0u,
-                    (g.speedX10 == 0 && !parked.value() && (g.timeMs < kBootStandDownMs
-                        || ((g.timeMs / 1000) % 40) < 3)) ? 1u : 0u);
+                    (g.speedX10 == 0 && !parked.value() && g.timeMs < kBootStandDownMs) ? 1u : 0u);
         std::fflush(stdout);
     }
 }
@@ -253,10 +268,17 @@ void Simulator::togglePark()
     parked.setValue(!parked.value());
 }
 
+void Simulator::cycleRideMode()
+{
+    if (running.value())
+        g.rideMode = static_cast<uint8_t>((g.rideMode + 1u) % 3u);
+}
+
 void Simulator::nextScenario()
 {
     const uint8_t next = static_cast<uint8_t>((scenario.value() + 1) % ScenarioCount);
     scenario.setValue(next);
+    g.rideMode = next == SportRun ? 2u : 0u;
     g.rearPsiX10 = 320;
     g.packTemp = 34;
     g.motorTemp = 48;
@@ -264,33 +286,50 @@ void Simulator::nextScenario()
 
 void Simulator::step(uint32_t elapsedMs)
 {
-    if (!running.value())
+    if (!running.value() || elapsedMs == 0)
         return;
+    if (elapsedMs > kMaxTickMs)
+        elapsedMs = kMaxTickMs;
 
     const uint8_t sc = scenario.value();
     g.timeMs += elapsedMs;
     sendTimeSyncOnce();
     sendListsOnce();
 
-    const uint8_t phase = static_cast<uint8_t>((g.timeMs / 1000) % 40);
-    if (sc == SportRun && !parked.value())
-        g.targetSpeedX10 = phase < 25 ? 980 : 300;
-    else if (sc == Crash || parked.value())
+    // Repeatable stop/start city ride, with a separate faster sport scenario.
+    const uint8_t phase = static_cast<uint8_t>((g.timeMs / 1000) % 90);
+    if (sc == Crash || parked.value() || g.timeMs < kBootParkedMs)
         g.targetSpeedX10 = 0;
-    else if (g.timeMs < kBootParkedMs)
+    else if (phase < 30)
+        g.targetSpeedX10 = sc == SportRun ? 1120 : 520;
+    else if (phase < 40)
+        g.targetSpeedX10 = 180;
+    else if (phase < 55)
+        g.targetSpeedX10 = sc == SportRun ? 1250 : 680;
+    else if (phase < 68)
         g.targetSpeedX10 = 0;
     else
-        g.targetSpeedX10 = phase < 5 ? 0 : (phase < 30 ? 520 : 250);
-    approach(g.speedX10, g.targetSpeedX10, sc == SportRun ? 12 : 6);
+        g.targetSpeedX10 = sc == SportRun ? 960 : 420;
+    const uint16_t rate = g.targetSpeedX10 < g.speedX10 ? 180 : (sc == SportRun ? 180 : 100);
+    const uint32_t speedDelta = rate * elapsedMs + g.accelerationRemainder;
+    const uint16_t speedStep = static_cast<uint16_t>(speedDelta / 1000u);
+    g.accelerationRemainder = static_cast<uint16_t>(speedDelta % 1000u);
+    approach(g.speedX10, g.targetSpeedX10, speedStep);
 
     const int32_t accel = static_cast<int32_t>(g.targetSpeedX10) - static_cast<int32_t>(g.speedX10);
     const int16_t currentX10 = static_cast<int16_t>(g.speedX10 == 0 ? 0 : (accel > 0 ? 900 + accel * 8 : (accel < 0 ? -300 : 350)));
     const uint16_t rpm = static_cast<uint16_t>(g.speedX10 * 9u);
 
-    g.odoX10 += static_cast<uint32_t>(g.speedX10 * elapsedMs / 360000);
-    g.tripX10 += static_cast<uint32_t>(g.speedX10 * elapsedMs / 360000);
-    if (g.timeMs % 3000 < elapsedMs && g.socX10 > 60)
-        g.socX10 -= 1;
+    const uint32_t travelledM = g.distance.advance(g.speedX10, elapsedMs);
+    const uint32_t tripMetres = g.tripRemainderM + travelledM;
+    g.odoX10 += tripMetres / 100u;
+    g.tripX10 += tripMetres / 100u;
+    g.tripRemainderM = static_cast<uint16_t>(tripMetres % 100u);
+    // Demo pack: 4 kWh, nominal city consumption 34 Wh/km. Range and SOC
+    // originate in simulated BMS frames, never from a UI animation.
+    const uint32_t usedMwh = travelledM * (sc == SportRun ? 48u : 34u);
+    g.energyMwh = usedMwh < g.energyMwh ? g.energyMwh - usedMwh : 0;
+    g.socX10 = static_cast<uint16_t>(g.energyMwh / 4000u);
 
     if (sc == LowTyre) approach(g.rearPsiX10, 265, 1);
     if (sc == Overheat) { approach(g.packTemp, 62, 1); approach(g.motorTemp, 118, 1); }
@@ -300,16 +339,18 @@ void Simulator::step(uint32_t elapsedMs)
         g.blinkMs = 0;
         g.blinkOn = !g.blinkOn;
     }
-    const bool turnSoon = g.navDistance < 120 && kRoute[g.navStep].maneuver != evb::link::Maneuver::Straight;
+    const bool leftTurn = kRoute[g.navStep].maneuver == evb::link::Maneuver::Left
+        || kRoute[g.navStep].maneuver == evb::link::Maneuver::SlightLeft;
+    const bool turnSoon = g.navDistance < 120;
     const bool rightTurn = kRoute[g.navStep].maneuver == evb::link::Maneuver::Right
         || kRoute[g.navStep].maneuver == evb::link::Maneuver::SlightRight;
 
     evb::CanFrame vcu = makeFrame(evb::canid::VcuStatus, 4);
     evb::canSetBitsLE(vcu.data, 0, 16, static_cast<uint32_t>(g.speedX10));
-    evb::canSetBitsLE(vcu.data, 16, 3, sc == SportRun ? 2u : 0u);
-    evb::canSetBitsLE(vcu.data, 19, 2, g.timeMs < kBootParkedMs ? 0u : 3u);
+    evb::canSetBitsLE(vcu.data, 16, 3, g.rideMode);
+    evb::canSetBitsLE(vcu.data, 19, 2, (parked.value() || g.timeMs < kBootParkedMs) ? 0u : 3u);
     evb::canSetBitsLE(vcu.data, 21, 1, 1u);
-    const bool standDown = g.speedX10 == 0 && !parked.value() && (g.timeMs < kBootStandDownMs || phase < 3);
+    const bool standDown = g.speedX10 == 0 && !parked.value() && g.timeMs < kBootStandDownMs;
     evb::canSetBitsLE(vcu.data, 22, 1, standDown ? 1u : 0u);
     evb::canSetBitsLE(vcu.data, 23, 1, sc == Crash ? 1u : 0u);
     evb::canSetBitsLE(vcu.data, 24, 8, 27u + 40u);
@@ -322,6 +363,18 @@ void Simulator::step(uint32_t elapsedMs)
     evb::canSetBitsLE(motor.data, 40, 8, static_cast<uint32_t>(g.motorTemp - 8 + 40));
     Backend::postCanFrame(motor);
 
+    evb::CanFrame powertrain = makeFrame(evb::canid::PowertrainStatus, 4);
+    powertrain.data[0] = sc == PetrolDemo ? 1u : 0u;
+    powertrain.data[1] = sc == PetrolDemo && phase % 30 > 20 ? 8u : 65u;
+    uint16_t warnings = 0;
+    if (sc == PetrolDemo)
+        warnings = static_cast<uint16_t>(1u << ((phase / 4u) % 6u));
+    else if (sc == LampTest)
+        warnings = static_cast<uint16_t>(1u << (5u + ((phase / 4u) % 11u)));
+    if (sc == Overheat) warnings |= (1u << 7) | (1u << 8);
+    evb::canSetBitsLE(powertrain.data, 16, 16, warnings);
+    Backend::postCanFrame(powertrain);
+
     evb::CanFrame bms = makeFrame(evb::canid::BmsStatus, 8);
     evb::canSetBitsLE(bms.data, 0, 10, static_cast<uint32_t>(g.socX10));
     evb::canSetBitsLE(bms.data, 16, 16, 712u);
@@ -330,17 +383,20 @@ void Simulator::step(uint32_t elapsedMs)
     Backend::postCanFrame(bms);
 
     evb::CanFrame range = makeFrame(evb::canid::BmsRange, 2);
-    evb::canSetBitsLE(range.data, 0, 16, static_cast<uint32_t>(g.socX10 * 12 / 100));
+    evb::canSetBitsLE(range.data, 0, 16, static_cast<uint32_t>(g.energyMwh / (sc == SportRun ? 48000u : 34000u)));
     Backend::postCanFrame(range);
 
     evb::CanFrame lamps = makeFrame(evb::canid::BodyLamps, 1);
-    evb::canSetBitsLE(lamps.data, 0, 1, (turnSoon && !rightTurn && g.blinkOn) ? 1u : 0u);
-    evb::canSetBitsLE(lamps.data, 1, 1, (turnSoon && rightTurn && g.blinkOn) ? 1u : 0u);
+    evb::canSetBitsLE(lamps.data, 0, 1, ((turnSoon && leftTurn) || (sc == LampTest && phase % 12 < 4)) && g.blinkOn ? 1u : 0u);
+    evb::canSetBitsLE(lamps.data, 1, 1, ((turnSoon && rightTurn) || (sc == LampTest && phase % 12 >= 4 && phase % 12 < 8)) && g.blinkOn ? 1u : 0u);
     evb::canSetBitsLE(lamps.data, 2, 1, sc == SportRun ? 1u : 0u);
     evb::canSetBitsLE(lamps.data, 3, 1, 1u);
+    evb::canSetBitsLE(lamps.data, 4, 1, sc == LampTest && phase % 12 >= 8 && g.blinkOn ? 1u : 0u);
     Backend::postCanFrame(lamps);
 
     evb::CanFrame abs = makeFrame(evb::canid::AbsStatus, 1);
+    evb::canSetBitsLE(abs.data, 0, 1, sc == LampTest && phase % 20 < 4 ? 1u : 0u);
+    evb::canSetBitsLE(abs.data, 1, 1, accel < -200 && g.speedX10 > 100 ? 1u : 0u);
     Backend::postCanFrame(abs);
 
     evb::CanFrame tpms = makeFrame(evb::canid::Tpms, 4);
@@ -353,12 +409,15 @@ void Simulator::step(uint32_t elapsedMs)
     evb::canSetBitsLE(odo.data, 32, 32, g.tripX10);
     Backend::postCanFrame(odo);
 
-    const uint32_t distanceStep = static_cast<uint32_t>(g.speedX10) * elapsedMs / 36000;
-    g.navDistance = distanceStep >= g.navDistance ? 0 : static_cast<uint16_t>(g.navDistance - distanceStep);
-    if (g.navDistance <= 0) {
-        g.navStep = (g.navStep + 1) % kRouteLen;
+    uint32_t remainingM = travelledM;
+    // Bounded route walk retains overshoot and never wraps past the array.
+    for (uint8_t n = 0; n < kRouteLen && remainingM >= g.navDistance; ++n) {
+        remainingM -= g.navDistance;
+        g.navStep = static_cast<uint8_t>((g.navStep + 1u) % kRouteLen);
         g.navDistance = kRoute[g.navStep].distance;
     }
+    g.navDistance = remainingM < g.navDistance
+        ? static_cast<uint16_t>(g.navDistance - remainingM) : 1u;
 
     g.phoneTimerMs += elapsedMs;
     if (g.phoneTimerMs >= 1000) {

@@ -3,6 +3,7 @@
 
 #include "AlertData.h"
 #include "ClusterInput.h"
+#include "ConnectivityData.h"
 #include "NavigationData.h"
 #include "PhoneData.h"
 #include "PhoneListData.h"
@@ -140,6 +141,71 @@ ClusterInputQml::ClusterInputQml(QObject *parent)
 void ClusterInputQml::inject(int button, int action)
 {
     ClusterInput::instance().inject(button, action);
+}
+
+ConnectivityDataQml::ConnectivityDataQml(QObject *parent)
+    : QObject(parent)
+{
+    ConnectivityData &d = ConnectivityData::instance();
+    d.simulated.setOnChanged([this] { emit simulatedChanged(); });
+    d.bluetoothAvailable.setOnChanged([this] { emit bluetoothAvailableChanged(); });
+    d.wifiAvailable.setOnChanged([this] { emit wifiAvailableChanged(); });
+    d.bluetoothState.setOnChanged([this] { emit bluetoothStateChanged(); });
+}
+
+bool ConnectivityDataQml::simulated() const
+{
+    return ConnectivityData::instance().simulated.value();
+}
+
+void ConnectivityDataQml::qmlWriteSimulated(bool value)
+{
+    ConnectivityData::instance().simulated.setValue(value);
+}
+
+bool ConnectivityDataQml::bluetoothAvailable() const
+{
+    return ConnectivityData::instance().bluetoothAvailable.value();
+}
+
+void ConnectivityDataQml::qmlWriteBluetoothAvailable(bool value)
+{
+    ConnectivityData::instance().bluetoothAvailable.setValue(value);
+}
+
+bool ConnectivityDataQml::wifiAvailable() const
+{
+    return ConnectivityData::instance().wifiAvailable.value();
+}
+
+void ConnectivityDataQml::qmlWriteWifiAvailable(bool value)
+{
+    ConnectivityData::instance().wifiAvailable.setValue(value);
+}
+
+int ConnectivityDataQml::bluetoothState() const
+{
+    return ConnectivityData::instance().bluetoothState.value();
+}
+
+void ConnectivityDataQml::qmlWriteBluetoothState(int value)
+{
+    ConnectivityData::instance().bluetoothState.setValue(value);
+}
+
+void ConnectivityDataQml::pair()
+{
+    ConnectivityData::instance().pair();
+}
+
+void ConnectivityDataQml::disconnect()
+{
+    ConnectivityData::instance().disconnect();
+}
+
+void ConnectivityDataQml::advance(int elapsedMs)
+{
+    ConnectivityData::instance().advance(elapsedMs);
 }
 
 NavigationDataQml::NavigationDataQml(QObject *parent)
@@ -723,6 +789,11 @@ void SimulatorQml::start()
     Simulator::instance().start();
 }
 
+void SimulatorQml::stop()
+{
+    Simulator::instance().stop();
+}
+
 void SimulatorQml::step(int elapsedMs)
 {
     Simulator::instance().step(elapsedMs);
@@ -736,6 +807,11 @@ void SimulatorQml::nextScenario()
 void SimulatorQml::togglePark()
 {
     Simulator::instance().togglePark();
+}
+
+void SimulatorQml::cycleRideMode()
+{
+    Simulator::instance().cycleRideMode();
 }
 
 SystemDataQml::SystemDataQml(QObject *parent)
@@ -1212,6 +1288,9 @@ VehicleDataQml::VehicleDataQml(QObject *parent)
     : QObject(parent)
 {
     VehicleData &d = VehicleData::instance();
+    d.powertrain.setOnChanged([this] { emit powertrainChanged(); });
+    d.fuelPercent.setOnChanged([this] { emit fuelPercentChanged(); });
+    d.telltaleFlags.setOnChanged([this] { emit telltaleFlagsChanged(); });
     d.speedKmh.setOnChanged([this] { emit speedKmhChanged(); });
     d.motorRpm.setOnChanged([this] { emit motorRpmChanged(); });
     d.powerPercent.setOnChanged([this] { emit powerPercentChanged(); });
@@ -1244,6 +1323,37 @@ VehicleDataQml::VehicleDataQml(QObject *parent)
     d.driveStale.setOnChanged([this] { emit driveStaleChanged(); });
     d.batteryStale.setOnChanged([this] { emit batteryStaleChanged(); });
     d.lampsStale.setOnChanged([this] { emit lampsStaleChanged(); });
+    d.powertrainStale.setOnChanged([this] { emit powertrainStaleChanged(); });
+}
+
+int VehicleDataQml::powertrain() const
+{
+    return VehicleData::instance().powertrain.value();
+}
+
+void VehicleDataQml::qmlWritePowertrain(int value)
+{
+    VehicleData::instance().powertrain.setValue(value);
+}
+
+int VehicleDataQml::fuelPercent() const
+{
+    return VehicleData::instance().fuelPercent.value();
+}
+
+void VehicleDataQml::qmlWriteFuelPercent(int value)
+{
+    VehicleData::instance().fuelPercent.setValue(value);
+}
+
+int VehicleDataQml::telltaleFlags() const
+{
+    return VehicleData::instance().telltaleFlags.value();
+}
+
+void VehicleDataQml::qmlWriteTelltaleFlags(int value)
+{
+    VehicleData::instance().telltaleFlags.setValue(value);
 }
 
 int VehicleDataQml::speedKmh() const
@@ -1564,6 +1674,16 @@ bool VehicleDataQml::lampsStale() const
 void VehicleDataQml::qmlWriteLampsStale(bool value)
 {
     VehicleData::instance().lampsStale.setValue(value);
+}
+
+bool VehicleDataQml::powertrainStale() const
+{
+    return VehicleData::instance().powertrainStale.value();
+}
+
+void VehicleDataQml::qmlWritePowertrainStale(bool value)
+{
+    VehicleData::instance().powertrainStale.setValue(value);
 }
 
 void VehicleDataQml::applySignal(int signalId, int value)

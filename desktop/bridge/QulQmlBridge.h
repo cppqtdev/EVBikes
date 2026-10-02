@@ -80,6 +80,40 @@ signals:
     void buttonEvent(int button, int action);
 };
 
+class ConnectivityDataQml : public QObject
+{
+    Q_OBJECT
+    QML_NAMED_ELEMENT(ConnectivityData)
+    QML_SINGLETON
+    Q_PROPERTY(bool simulated READ simulated WRITE qmlWriteSimulated NOTIFY simulatedChanged FINAL)
+    Q_PROPERTY(bool bluetoothAvailable READ bluetoothAvailable WRITE qmlWriteBluetoothAvailable NOTIFY bluetoothAvailableChanged FINAL)
+    Q_PROPERTY(bool wifiAvailable READ wifiAvailable WRITE qmlWriteWifiAvailable NOTIFY wifiAvailableChanged FINAL)
+    Q_PROPERTY(int bluetoothState READ bluetoothState WRITE qmlWriteBluetoothState NOTIFY bluetoothStateChanged FINAL)
+
+public:
+    enum State { Unavailable = 0, Disconnected, Pairing, Connected };
+    Q_ENUM(State)
+    explicit ConnectivityDataQml(QObject *parent = nullptr);
+
+    bool simulated() const;
+    void qmlWriteSimulated(bool value);
+    bool bluetoothAvailable() const;
+    void qmlWriteBluetoothAvailable(bool value);
+    bool wifiAvailable() const;
+    void qmlWriteWifiAvailable(bool value);
+    int bluetoothState() const;
+    void qmlWriteBluetoothState(int value);
+    Q_INVOKABLE void pair();
+    Q_INVOKABLE void disconnect();
+    Q_INVOKABLE void advance(int elapsedMs);
+
+signals:
+    void simulatedChanged();
+    void bluetoothAvailableChanged();
+    void wifiAvailableChanged();
+    void bluetoothStateChanged();
+};
+
 class NavigationDataQml : public QObject
 {
     Q_OBJECT
@@ -325,9 +359,11 @@ public:
     bool parked() const;
     void qmlWriteParked(bool value);
     Q_INVOKABLE void start();
+    Q_INVOKABLE void stop();
     Q_INVOKABLE void step(int elapsedMs);
     Q_INVOKABLE void nextScenario();
     Q_INVOKABLE void togglePark();
+    Q_INVOKABLE void cycleRideMode();
 
 signals:
     void runningChanged();
@@ -521,6 +557,9 @@ class VehicleDataQml : public QObject
     Q_OBJECT
     QML_NAMED_ELEMENT(VehicleData)
     QML_SINGLETON
+    Q_PROPERTY(int powertrain READ powertrain WRITE qmlWritePowertrain NOTIFY powertrainChanged FINAL)
+    Q_PROPERTY(int fuelPercent READ fuelPercent WRITE qmlWriteFuelPercent NOTIFY fuelPercentChanged FINAL)
+    Q_PROPERTY(int telltaleFlags READ telltaleFlags WRITE qmlWriteTelltaleFlags NOTIFY telltaleFlagsChanged FINAL)
     Q_PROPERTY(int speedKmh READ speedKmh WRITE qmlWriteSpeedKmh NOTIFY speedKmhChanged FINAL)
     Q_PROPERTY(int motorRpm READ motorRpm WRITE qmlWriteMotorRpm NOTIFY motorRpmChanged FINAL)
     Q_PROPERTY(int powerPercent READ powerPercent WRITE qmlWritePowerPercent NOTIFY powerPercentChanged FINAL)
@@ -553,6 +592,7 @@ class VehicleDataQml : public QObject
     Q_PROPERTY(bool driveStale READ driveStale WRITE qmlWriteDriveStale NOTIFY driveStaleChanged FINAL)
     Q_PROPERTY(bool batteryStale READ batteryStale WRITE qmlWriteBatteryStale NOTIFY batteryStaleChanged FINAL)
     Q_PROPERTY(bool lampsStale READ lampsStale WRITE qmlWriteLampsStale NOTIFY lampsStaleChanged FINAL)
+    Q_PROPERTY(bool powertrainStale READ powertrainStale WRITE qmlWritePowertrainStale NOTIFY powertrainStaleChanged FINAL)
 
 public:
     enum RideMode { Eco = 0, Normal = 1, Sport = 2 };
@@ -561,8 +601,16 @@ public:
     Q_ENUM(DriveState)
     enum ChargeState { NotCharging = 0, Charging = 1, ChargeComplete = 2, ChargeFault = 3 };
     Q_ENUM(ChargeState)
+    enum Powertrain { Electric = 0, Petrol = 1 };
+    Q_ENUM(Powertrain)
     explicit VehicleDataQml(QObject *parent = nullptr);
 
+    int powertrain() const;
+    void qmlWritePowertrain(int value);
+    int fuelPercent() const;
+    void qmlWriteFuelPercent(int value);
+    int telltaleFlags() const;
+    void qmlWriteTelltaleFlags(int value);
     int speedKmh() const;
     void qmlWriteSpeedKmh(int value);
     int motorRpm() const;
@@ -627,9 +675,14 @@ public:
     void qmlWriteBatteryStale(bool value);
     bool lampsStale() const;
     void qmlWriteLampsStale(bool value);
+    bool powertrainStale() const;
+    void qmlWritePowertrainStale(bool value);
     Q_INVOKABLE void applySignal(int signalId, int value);
 
 signals:
+    void powertrainChanged();
+    void fuelPercentChanged();
+    void telltaleFlagsChanged();
     void speedKmhChanged();
     void motorRpmChanged();
     void powerPercentChanged();
@@ -662,4 +715,5 @@ signals:
     void driveStaleChanged();
     void batteryStaleChanged();
     void lampsStaleChanged();
+    void powertrainStaleChanged();
 };

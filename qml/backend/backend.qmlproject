@@ -8,6 +8,7 @@ Project {
     InterfaceFiles {
         files: [
             "VehicleData.h",
+            "ConnectivityData.h",
             "NavigationData.h",
             "PhoneData.h",
             "PhoneListData.h",

@@ -7,6 +7,7 @@
 #include "../platform/PlatformIo.h"
 
 #include "AlertData.h"
+#include "ConnectivityData.h"
 #include "NavigationData.h"
 #include "PhoneData.h"
 #include "PhoneListData.h"
@@ -119,6 +120,9 @@ class PhoneQueue : public Qul::EventQueue<PhoneChunk, Qul::EventQueueOverrunPoli
 public:
     void onEvent(const PhoneChunk &chunk) override
     {
+        if (evb::platform::isSimulator()
+            && ConnectivityData::instance().bluetoothState.value() != ConnectivityData::Connected)
+            return;
         g_lastPhoneRxMs = evb::platform::millis();
         PhoneData::instance().connected.setValue(true);
         g_phoneParser.feed(chunk.data, chunk.len);
@@ -244,6 +248,7 @@ void periodic(uint32_t nowMs)
     setIfChanged(vehicle.driveStale, g_decoder.driveStale());
     setIfChanged(vehicle.batteryStale, g_decoder.batteryStale());
     setIfChanged(vehicle.lampsStale, g_decoder.lampsStale());
+    setIfChanged(vehicle.powertrainStale, g_decoder.powertrainStale());
 
     TripData::instance().update(nowMs);
     evaluateAlerts();

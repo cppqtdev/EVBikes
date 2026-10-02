@@ -1,0 +1,78 @@
+import QmlProject 1.3
+
+Project {
+    projectRootPath: "../.."
+
+    MCU.Module {
+        uri: "ClusterCore"
+    }
+
+    ModuleFiles {
+        files: [
+            "qml/backend/backend.qmlproject"
+        ]
+    }
+
+    ImageFiles {
+        files: [
+            "assets/cluster/hexroute_destination.png",
+            "assets/cluster/hexroute_left.png",
+            "assets/cluster/hexroute_right.png",
+            "assets/cluster/hexroute_roundabout.png",
+            "assets/cluster/hexroute_sharp_left.png",
+            "assets/cluster/hexroute_sharp_right.png",
+            "assets/cluster/hexroute_slight_left.png",
+            "assets/cluster/hexroute_slight_right.png",
+            "assets/cluster/hexroute_straight.png",
+            "assets/cluster/hexroute_uturn_left.png",
+            "assets/cluster/hexroute_uturn_right.png",
+            "assets/cluster/route_destination.png",
+            "assets/cluster/route_left.png",
+            "assets/cluster/route_right.png",
+            "assets/cluster/route_roundabout.png",
+            "assets/cluster/route_sharp_left.png",
+            "assets/cluster/route_sharp_right.png",
+            "assets/cluster/route_slight_left.png",
+            "assets/cluster/route_slight_right.png",
+            "assets/cluster/route_straight.png",
+            "assets/cluster/route_uturn_left.png",
+            "assets/cluster/route_uturn_right.png",
+            "assets/icons/28/nav.png",
+            "assets/icons/72/abs.png",
+            "assets/icons/72/battery_fault.png",
+            "assets/icons/72/side_stand.png",
+            "assets/icons/72/sos.png",
+            "assets/icons/72/temp.png",
+            "assets/icons/72/tyre.png",
+            "assets/icons/72/warning.png",
+            "assets/turns/28/destination.png",
+            "assets/turns/28/fork_left.png",
+            "assets/turns/28/fork_right.png",
+            "assets/turns/28/left.png",
+            "assets/turns/28/merge_left.png",
+            "assets/turns/28/merge_right.png",
+            "assets/turns/28/right.png",
+            "assets/turns/28/roundabout.png",
+            "assets/turns/28/roundabout_exit.png",
+            "assets/turns/28/sharp_left.png",
+            "assets/turns/28/sharp_right.png",
+            "assets/turns/28/slight_left.png",
+            "assets/turns/28/slight_right.png",
+            "assets/turns/28/straight.png",
+            "assets/turns/28/uturn_left.png",
+            "assets/turns/28/uturn_right.png"
+        ]
+        MCU.resourceImagePixelFormat: "Alpha8"
+        MCU.resourceCompression: false
+        MCU.resourceCachePolicy: "NoCaching"
+        MCU.resourceStorageSection: "QulResourceDataInExternalFlash"
+    }
+
+    QmlFiles {
+        files: [
+            "qml/core/Theme.qml",
+            "qml/core/Router.qml",
+            "qml/core/Format.qml"
+        ]
+    }
+}

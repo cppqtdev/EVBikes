@@ -1,5 +1,6 @@
 #include "AlertData.h"
 #include "ClusterInput.h"
+#include "ConnectivityData.h"
 #include "NavigationData.h"
 #include "PhoneData.h"
 #include "PhoneListData.h"
@@ -185,6 +186,42 @@ int main()
     run(sim, 500);
     CHECK(!v.driveStale.value());
     CHECK(!v.batteryStale.value());
+
+    // Distance survives sub-metre ticks; CAN values evolve across city cycles.
+    sim.scenario.setValue(0);
+    const uint32_t initialTrip = v.tripKmX10.value();
+    const uint32_t initialOdo = v.odometerKm.value();
+    const uint16_t initialRange = v.rangeKm.value();
+    run(sim, 600000);
+    CHECK(v.tripKmX10.value() > initialTrip + 10);
+    CHECK(v.odometerKm.value() > initialOdo);
+    CHECK(v.rangeKm.value() < initialRange);
+    CHECK(!v.powertrainStale.value());
+
+    sim.parked.setValue(true);
+    run(sim, 10000);
+    CHECK(v.speedKmh.value() == 0);
+    CHECK(v.driveState.value() == VehicleData::Park);
+    auto &connections = ConnectivityData::instance();
+    connections.disconnect();
+    run(sim, 1500);
+    CHECK(!PhoneData::instance().connected.value());
+    CHECK(!NavigationData::instance().active.value());
+    CHECK(PhoneListData::instance().contactCount.value() == 0);
+    connections.pair();
+    CHECK(connections.bluetoothState.value() == ConnectivityData::Pairing);
+    connections.advance(1999);
+    CHECK(connections.bluetoothState.value() == ConnectivityData::Pairing);
+    connections.advance(1);
+    run(sim, 1500);
+    CHECK(PhoneData::instance().connected.value());
+    CHECK(PhoneListData::instance().contactCount.value() == 3);
+    CHECK(NavigationData::instance().active.value());
+    sim.scenario.setValue(6);
+    run(sim, 1000);
+    CHECK(v.powertrain.value() == VehicleData::Petrol);
+    CHECK(v.telltaleFlags.value() != 0);
+    CHECK(v.fuelPercent.value() <= 100);
 
     std::printf(g_failures ? "%d FAILURE(S)\n" : "BACKEND SMOKE PASSED\n", g_failures);
     return g_failures ? 1 : 0;

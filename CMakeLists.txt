@@ -35,6 +35,7 @@ set(EVB_CORE_SOURCES
 
 set(EVB_BACKEND_SOURCES
     src/backend/Backend.cpp
+    src/backend/ConnectivityData.cpp
     src/backend/VehicleData.cpp
     src/backend/NavigationData.cpp
     src/backend/PhoneData.cpp
@@ -60,12 +61,18 @@ else()
     set(EVB_MAIN src/main.cpp)
 endif()
 
+set(EVB_QML_PROJECT EVBikes.qmlproject)
+if(EVB_PLATFORM_LOWER MATCHES "^tviic2d")
+    # Qt's TRAVEO port builds at 32 bpp. Layer depths are configured separately.
+    set(EVB_QML_PROJECT profiles/traveo/EVBikes.qmlproject)
+endif()
+
 qul_add_target(EVBikes
     ${EVB_MAIN}
     ${EVB_CORE_SOURCES}
     ${EVB_BACKEND_SOURCES}
     ${EVB_PLATFORM_SOURCES}
-    QML_PROJECT EVBikes.qmlproject
+    QML_PROJECT ${EVB_QML_PROJECT}
 )
 
 target_include_directories(EVBikes PRIVATE

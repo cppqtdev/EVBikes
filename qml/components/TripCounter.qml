@@ -2,11 +2,11 @@ import QtQuick
 import ClusterCore
 import ClusterBackend
 
-// Four-digit trip counter with a faint reflection.
+// Fixed digit cells show tenths of a kilometre (or mile).
 Item {
     id: trip
 
-    property int value: Format.distanceValueKm(Math.floor(VehicleData.tripKmX10 / 10))
+    property int value: Format.distanceValueKm(VehicleData.tripKmX10)
 
     width: 180
     height: 90
@@ -23,11 +23,17 @@ Item {
         font.italic: true
     }
 
+    Text {
+        x: 124; y: 29; width: 10; height: 25
+        text: "."
+        color: Theme.textPrimary
+        font.pixelSize: 18
+    }
     Repeater {
-        model: 4
+        model: 5
 
         Item {
-            x: index * 38.5
+            x: index * 32 + (index === 4 ? 8 : 0)
             y: 28
             width: 28
             height: 52
@@ -50,7 +56,7 @@ Item {
                 width: 28
                 y: 1
                 horizontalAlignment: Text.AlignHCenter
-                text: Format.digitAt(trip.value, 3 - index)
+                text: Format.digitAt(trip.value, 4 - index)
                 color: Theme.textPrimary
                 font.family: Theme.fontFamily
                 font.pixelSize: 18
@@ -61,7 +67,7 @@ Item {
                 width: 28
                 y: 26
                 horizontalAlignment: Text.AlignHCenter
-                text: Format.digitAt(trip.value, 3 - index)
+                text: Format.digitAt(trip.value, 4 - index)
                 color: Theme.textPrimary
                 opacity: 0.12
                 font.family: Theme.fontFamily

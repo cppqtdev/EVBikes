@@ -5,6 +5,8 @@
 namespace evb::canid {
 
 constexpr uint32_t VcuStatus = 0x101;
+// Project demo protocol; replace with the production bike DBC mapping.
+constexpr uint32_t PowertrainStatus = 0x103;
 constexpr uint32_t MotorStatus = 0x102;
 constexpr uint32_t BmsStatus = 0x201;
 constexpr uint32_t BmsRange = 0x202;

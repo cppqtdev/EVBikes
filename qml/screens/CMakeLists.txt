@@ -11,6 +11,7 @@ qt_add_qml_module(cluster_screens
         BikeStatusPage.qml
         ChargingPage.qml
         ClusterShell.qml
+        ConnectivityPage.qml
         CrashOverlay.qml
         CustomizePage.qml
         DigilockerPage.qml

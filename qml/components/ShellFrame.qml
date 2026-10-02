@@ -26,37 +26,43 @@ Item {
     height: Theme.screenHeight
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/shell_backing.png"
+        x: 63; y: 0
+        source: "qrc:/assets/cluster/trimmed/shell_backing.png"
         color: Theme.black
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/shell_fill.png"
+        x: 80; y: 4
+        source: "qrc:/assets/cluster/trimmed/shell_fill.png"
         color: Theme.shell
         visible: frame.glowStyle === 0
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/shell_ride.png"
+        x: 90; y: 3
+        source: "qrc:/assets/cluster/trimmed/shell_ride.png"
         color: Theme.shell
         visible: frame.glowStyle !== 0
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/ride_outline.png"
+        x: 84; y: 45
+        source: "qrc:/assets/cluster/trimmed/ride_outline.png"
         color: frame.edgeColor
         opacity: frame.edgeOpacity
         visible: frame.glowStyle !== 0 && frame.edgeOpacity > 0
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/shell_vignette.png"
+        x: 128; y: 5
+        source: "qrc:/assets/cluster/trimmed/shell_vignette.png"
         color: "#FFFFFF"
         opacity: frame.centerLift
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/floor_glow.png"
+        x: 140; y: 311
+        source: "qrc:/assets/cluster/trimmed/floor_glow.png"
         color: frame.floorColor
         opacity: frame.floorOpacity
         visible: opacity > 0
@@ -67,36 +73,42 @@ Item {
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/panel_haze.png"
+        x: 112; y: 8
+        source: "qrc:/assets/cluster/trimmed/panel_haze.png"
         color: frame.glowColor
         opacity: 0.22
         visible: frame.showChannel
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/bar_channel.png"
+        x: 105; y: 94
+        source: "qrc:/assets/cluster/trimmed/bar_channel.png"
         color: Theme.channel
         visible: frame.showChannel
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/shell_edge.png"
+        x: 80; y: 4
+        source: "qrc:/assets/cluster/trimmed/shell_edge.png"
         color: "#6A7073"
         visible: frame.glowStyle === 0
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/housing_top.png"
+        x: 358; y: 0
+        source: "qrc:/assets/cluster/trimmed/housing_top.png"
         color: Theme.housing
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/housing_bottom.png"
+        x: 351; y: 409
+        source: "qrc:/assets/cluster/trimmed/housing_bottom.png"
         color: Theme.housingBottom
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/housing_light.png"
+        x: 348; y: 0
+        source: "qrc:/assets/cluster/trimmed/housing_light.png"
         color: frame.housingLight
         opacity: frame.housingLightOpacity
 
@@ -110,7 +122,8 @@ Item {
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/glow_ride.png"
+        x: 84; y: 45
+        source: "qrc:/assets/cluster/trimmed/glow_ride.png"
         color: frame.glowColor
         visible: frame.glowStyle === 1
 
@@ -120,7 +133,8 @@ Item {
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/glow_alert.png"
+        x: 78; y: 45
+        source: "qrc:/assets/cluster/trimmed/glow_alert.png"
         color: frame.glowColor
         visible: frame.glowStyle === 2
 

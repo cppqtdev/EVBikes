@@ -11,6 +11,11 @@ struct VehicleData : public Qul::Singleton<VehicleData>
     enum DriveState : uint8_t { Park = 0, Reverse = 1, Neutral = 2, Drive = 3 };
     enum ChargeState : uint8_t { NotCharging = 0, Charging = 1, ChargeComplete = 2, ChargeFault = 3 };
 
+    enum Powertrain : uint8_t { Electric = 0, Petrol = 1 };
+    // Bits 0..4: ICE; bits 6..10 and 15: EV; remaining bits: common.
+    Qul::Property<uint8_t> powertrain;
+    Qul::Property<uint8_t> fuelPercent;
+    Qul::Property<uint16_t> telltaleFlags;
     Qul::Property<uint16_t> speedKmh;
     Qul::Property<uint16_t> motorRpm;
     Qul::Property<int8_t> powerPercent;
@@ -50,6 +55,7 @@ struct VehicleData : public Qul::Singleton<VehicleData>
     Qul::Property<bool> driveStale;
     Qul::Property<bool> batteryStale;
     Qul::Property<bool> lampsStale;
+    Qul::Property<bool> powertrainStale;
 
     VehicleData();
 

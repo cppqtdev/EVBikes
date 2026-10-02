@@ -17,6 +17,7 @@ VehicleData::VehicleData()
     tyreRearPsiX10.setValue(320);
     lowBeam.setValue(true);
     driveState.setValue(Park);
+    powertrainStale.setValue(true);
     driveStale.setValue(true);
     batteryStale.setValue(true);
     lampsStale.setValue(true);
@@ -26,6 +27,9 @@ void VehicleData::applySignal(uint8_t signalId, int32_t value)
 {
     using evb::SignalId;
     switch (static_cast<SignalId>(signalId)) {
+    case SignalId::PowertrainType: powertrain.setValue(static_cast<uint8_t>(value)); break;
+    case SignalId::FuelPercent: fuelPercent.setValue(static_cast<uint8_t>(value)); break;
+    case SignalId::TelltaleFlags: telltaleFlags.setValue(static_cast<uint16_t>(value)); break;
     case SignalId::SpeedKmhX10: speedKmh.setValue(static_cast<uint16_t>((value + 5) / 10)); break;
     case SignalId::MotorRpm: motorRpm.setValue(static_cast<uint16_t>(value)); break;
     case SignalId::PhaseCurrentAx10: {

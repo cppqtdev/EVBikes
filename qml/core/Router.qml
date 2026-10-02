@@ -37,7 +37,9 @@ QtObject {
     // Menu carousel
     property bool menuOpen: false
     property int menuIndex: 1
-    property int menuCount: 9
+    onMenuIndexChanged: console.log("[route] menu=" + menuIndex + " " + menuTitle(menuIndex))
+    onMenuOpenChanged: console.log("[route] menuOpen=" + menuOpen)
+    property int menuCount: 10
     property int subIndex: 0
     property int subLevel: 0
 
@@ -50,6 +52,7 @@ QtObject {
     property int menuPayment: 6
     property int menuCustomize: 7
     property int menuMisc: 8
+    property int menuConnectivity: 9
 
     property bool menuAllowed: VehicleData.speedKmh <= Theme.menuLockSpeedKmh
     property bool paymentDone: false
@@ -69,6 +72,7 @@ QtObject {
         if (index === menuSecurity) return qsTr("Security")
         if (index === menuPayment) return qsTr("Payment")
         if (index === menuCustomize) return qsTr("Customize")
+        if (index === menuConnectivity) return qsTr("Connections")
         if (index === menuMisc) return qsTr("Misc.")
         return ""
     }
@@ -181,12 +185,7 @@ QtObject {
     }
 
     function cycleRideMode() {
-        if (VehicleData.rideMode === VehicleData.Eco)
-            VehicleData.rideMode = VehicleData.Normal
-        else if (VehicleData.rideMode === VehicleData.Normal)
-            VehicleData.rideMode = VehicleData.Sport
-        else
-            VehicleData.rideMode = VehicleData.Eco
+        Simulator.cycleRideMode()
     }
 
     function handleAlertButton(button: int) {
@@ -239,7 +238,12 @@ QtObject {
         var down = button === ClusterInput.Down
         var ok = button === ClusterInput.Ok
 
-        if (menuIndex === menuProfile) {
+        if (menuIndex === menuConnectivity) {
+            if (ok) {
+                if (ConnectivityData.bluetoothState === ConnectivityData.Connected) ConnectivityData.disconnect()
+                else ConnectivityData.pair()
+            }
+        } else if (menuIndex === menuProfile) {
             if (up || down)
                 SystemData.selectProfile(SystemData.profileIndex + (up ? -1 : 1))
         } else if (menuIndex === menuDigilocker) {

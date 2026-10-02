@@ -35,6 +35,9 @@ enum class SignalId : uint8_t {
     FaultCode,
     CrashDetected,
     AmbientTempC,
+    PowertrainType,
+    FuelPercent,
+    TelltaleFlags,
     Count
 };
 

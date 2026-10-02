@@ -37,4 +37,5 @@ qt_add_qml_module(cluster_components
         TelltaleStrip.qml
         ToggleSwitch.qml
         TripCounter.qml
+        VehicleWarnings.qml
 )

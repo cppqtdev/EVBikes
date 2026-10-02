@@ -126,6 +126,7 @@ Project {
             "qml/screens/BikeStatusPage.qml",
             "qml/screens/ChargingPage.qml",
             "qml/screens/ClusterShell.qml",
+            "qml/screens/ConnectivityPage.qml",
             "qml/screens/CrashOverlay.qml",
             "qml/screens/CustomizePage.qml",
             "qml/screens/DigilockerPage.qml",

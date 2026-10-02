@@ -112,16 +112,44 @@ Item {
         // expensive. Load only the page selected by the carousel, as in the
         // Crossware cluster.
                 Loader {
-                    active: Router.menuOpen
-                    sourceComponent: Router.menuIndex === Router.menuProfile ? profilePage
-                                   : Router.menuIndex === Router.menuDigilocker ? digilockerPage
-                                   : Router.menuIndex === Router.menuSeat ? seatPage
-                                   : Router.menuIndex === Router.menuCharging ? chargingPage
-                                   : Router.menuIndex === Router.menuBikeStatus ? bikeStatusPage
-                                   : Router.menuIndex === Router.menuSecurity ? securityPage
-                                   : Router.menuIndex === Router.menuPayment ? paymentPage
-                                   : Router.menuIndex === Router.menuCustomize ? customizePage
-                                   : miscPage
+                    active: Router.menuOpen && Router.menuIndex === Router.menuProfile
+                    sourceComponent: profilePage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuDigilocker
+                    sourceComponent: digilockerPage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuSeat
+                    sourceComponent: seatPage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuCharging
+                    sourceComponent: chargingPage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuBikeStatus
+                    sourceComponent: bikeStatusPage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuSecurity
+                    sourceComponent: securityPage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuPayment
+                    sourceComponent: paymentPage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuCustomize
+                    sourceComponent: customizePage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuMisc
+                    sourceComponent: miscPage
+                }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuConnectivity
+                    sourceComponent: connectivityPage
                 }
 
                 Component { id: profilePage; ProfilePage {} }
@@ -132,6 +160,7 @@ Item {
                 Component { id: securityPage; SecurityPage {} }
                 Component { id: paymentPage; PaymentPage {} }
                 Component { id: customizePage; CustomizePage {} }
+                Component { id: connectivityPage; ConnectivityPage {} }
                 Component { id: miscPage; MiscPage {} }
                 Component { id: classicRide; RideView {} }
                 Component { id: hexRide; HexSpeedoView {} }
@@ -212,6 +241,11 @@ Item {
             StatusCorners {
             }
         }
+    }
+
+    VehicleWarnings {
+        y: 62
+        selfTest: !shell.selfTestDone
     }
 
     TelltaleStrip {

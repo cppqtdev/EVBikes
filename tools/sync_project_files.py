@@ -222,6 +222,37 @@ Project {{
     return len(fonts)
 
 
+def write_traveo_profile():
+    """Separate board resources from the desktop decompression cache."""
+    from pathlib import Path
+    root = Path(ROOT)
+    profile = root / "profiles/traveo"
+    profile.mkdir(parents=True, exist_ok=True)
+    for name in MODULES:
+        text = (root / f"qml/{name}/{name}.qmlproject").read_text()
+        for dep in MODULES:
+            text = text.replace(f'"qml/{dep}/{dep}.qmlproject"',
+                                f'"profiles/traveo/{dep}.qmlproject"')
+        text = text.replace('MCU.resourceCompression: true',
+                            'MCU.resourceCompression: false\n'
+                            '        MCU.resourceCachePolicy: "NoCaching"\n'
+                            '        MCU.resourceStorageSection: "QulResourceDataInExternalFlash"')
+        text = text.replace('resourceImagePixelFormat: "Automatic"',
+                            'resourceImagePixelFormat: "AutomaticCompressedLossless"')
+        (profile / f"{name}.qmlproject").write_text(text)
+    text = (root / "EVBikes.qmlproject").read_text()
+    text = text.replace('projectRootPath: "."', 'projectRootPath: "../.."')
+    for name in MODULES:
+        text = text.replace(f'"qml/{name}/{name}.qmlproject"',
+                            f'"profiles/traveo/{name}.qmlproject"')
+    start = text.index('        //  Compressed resources')
+    end = text.index('    }', start)
+    text = text[:start] + ('        // Board resources are read from external flash.\n'
+                          '        resourceCachePolicy: "NoCaching"\n'
+                          '        glyphsCachePolicy: "NoCaching"\n') + text[end:]
+    (profile / "EVBikes.qmlproject").write_text(text)
+
+
 def main():
     owners = {}
     for name, (uri, target, singletons, imports, qul_modules) in MODULES.items():
@@ -237,6 +268,7 @@ def main():
             print(f"    {image}  <-  {', '.join(mods)}")
         sys.exit(1)
     print("root project: %d font file(s), no images of its own" % write_main_project())
+    write_traveo_profile()
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@ qt_add_library(evb_backend STATIC
     ${EVB_ROOT}/src/core/nav/PhoneLinkProtocol.cpp
     ${EVB_ROOT}/src/core/alerts/AlertEvaluator.cpp
     ${EVB_ROOT}/src/backend/Backend.cpp
+    ${EVB_ROOT}/src/backend/ConnectivityData.cpp
     ${EVB_ROOT}/src/backend/VehicleData.cpp
     ${EVB_ROOT}/src/backend/NavigationData.cpp
     ${EVB_ROOT}/src/backend/PhoneData.cpp

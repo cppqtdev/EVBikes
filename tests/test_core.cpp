@@ -3,6 +3,7 @@
 #include "../src/core/can/VehicleCanDecoder.h"
 #include "../src/core/nav/PhoneLinkProtocol.h"
 #include "../src/core/util/Filters.h"
+#include "../src/core/simulation/DistanceIntegrator.h"
 #include "../src/core/util/RingBuffer.h"
 
 #include <cstdio>
@@ -262,8 +263,51 @@ static void testUtils()
     CHECK(!d.update(true) && !d.update(true) && d.update(true));
 }
 
+static void testDistanceAndPowertrain()
+{
+    DistanceIntegrator fifty, hundred;
+    uint32_t a = 0, b = 0;
+    for (uint32_t t = 0; t < 3600000; t += 50) a += fifty.advance(360, 50);
+    for (uint32_t t = 0; t < 3600000; t += 100) b += hundred.advance(360, 100);
+    CHECK(a == 36000 && b == a);
+    CHECK(fifty.advance(0, 1000) == 0);
+    DistanceIntegrator slow;
+    uint32_t metres = 0;
+    for (uint16_t t = 0; t < 720; ++t) metres += slow.advance(1, 50);
+    CHECK(metres == 1);
+
+    std::vector<VehicleSignal> out;
+    VehicleCanDecoder dec(collect, &out);
+    CanFrame frame;
+    frame.id = canid::PowertrainStatus;
+    frame.dlc = 4;
+    frame.timestampMs = 100;
+    frame.data[0] = 1;
+    frame.data[1] = 65;
+    frame.data[2] = 0x01;
+    frame.data[3] = 0x80;
+    CHECK(dec.powertrainStale());
+    CHECK(dec.decode(frame));
+    CHECK(!dec.powertrainStale());
+    CHECK(find(out, SignalId::TelltaleFlags) == 0x8001);
+    frame.dlc = 9;
+    CHECK(!dec.decode(frame));
+    frame.dlc = 3;
+    CHECK(!dec.decode(frame));
+    frame.dlc = 4;
+    frame.data[1] = 101;
+    CHECK(!dec.decode(frame));
+    dec.checkTimeouts(600);
+    CHECK(dec.powertrainStale());
+    frame.data[1] = 65;
+    frame.timestampMs = 610;
+    CHECK(dec.decode(frame));
+    CHECK(!dec.powertrainStale());
+}
+
 int main()
 {
+    testDistanceAndPowertrain();
     testCanDecoder();
     testStaleness();
     testPhoneLink();

@@ -25,12 +25,13 @@ public:
     // the UI holds for those readings is then a memory, not the bike's state.
     bool driveStale() const { return stale(Vcu) || stale(Motor); }
     bool batteryStale() const { return stale(Bms); }
+    bool powertrainStale() const { return stale(Powertrain); }
     bool lampsStale() const { return stale(Body); }
 
     static constexpr uint32_t kTimeoutMs = 500;
 
 private:
-    enum Node : uint8_t { Vcu, Motor, Bms, Body, Abs, NodeCount };
+    enum Node : uint8_t { Vcu, Motor, Bms, Body, Abs, Powertrain, NodeCount };
 
     bool stale(Node node) const { return !m_everSeen[node] || m_timedOut[node]; }
     void markSeen(Node node, uint32_t timestampMs);

@@ -16,7 +16,7 @@ Item {
         y: 32 - height / 2
         size: 32
         source: "qrc:/assets/icons/32/tt_left.png"
-        blinking: !strip.selfTest
+        blinking: false
         active: strip.selfTest || VehicleData.indicatorLeft || VehicleData.hazard
         activeColor: Theme.telltaleGreen
     }
@@ -67,7 +67,7 @@ Item {
         y: 32 - height / 2
         size: 32
         source: "qrc:/assets/icons/32/tt_right.png"
-        blinking: !strip.selfTest
+        blinking: false
         active: strip.selfTest || VehicleData.indicatorRight || VehicleData.hazard
         activeColor: Theme.telltaleGreen
     }

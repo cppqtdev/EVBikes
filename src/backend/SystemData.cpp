@@ -28,7 +28,7 @@ SystemData::SystemData()
     softwareDimming.setValue(!evb::platform::hasBacklight());
     locked.setValue(true);
     pinAttemptsLeft.setValue(kMaxPinAttempts);
-    demoMode.setValue(true);
+    demoMode.setValue(evb::platform::isSimulator());
     authState.setValue(AuthIdle);
     profileIndex.setValue(1);
     seatLevel.setValue(2);
@@ -87,7 +87,7 @@ void SystemData::advanceRuntime(uint32_t elapsedMs)
         const uint32_t elapsed = static_cast<uint32_t>(m_authElapsedMs) + elapsedMs;
         m_authElapsedMs = static_cast<uint16_t>(elapsed > 65535 ? 65535 : elapsed);
         authElapsedMs.setValue(m_authElapsedMs);
-        if (authState.value() == AuthScanning && m_authElapsedMs >= 1600)
+        if (demoMode.value() && authState.value() == AuthScanning && m_authElapsedMs >= 1600)
             completeScan();
     }
 

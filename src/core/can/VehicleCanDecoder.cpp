@@ -46,6 +46,7 @@ void VehicleCanDecoder::markSeen(Node node, uint32_t timestampMs)
 
 bool VehicleCanDecoder::decode(const CanFrame &f)
 {
+    if (f.dlc > 8) return false;
     const uint8_t *d = f.data;
     switch (f.id) {
     case canid::VcuStatus:
@@ -58,6 +59,13 @@ bool VehicleCanDecoder::decode(const CanFrame &f)
         emitIfChanged(SignalId::SideStandDown, static_cast<int32_t>(canGetBitsLE(d, 22, 1)));
         emitIfChanged(SignalId::CrashDetected, static_cast<int32_t>(canGetBitsLE(d, 23, 1)));
         emitIfChanged(SignalId::AmbientTempC, static_cast<int32_t>(canGetBitsLE(d, 24, 8)) - 40);
+        return true;
+    case canid::PowertrainStatus:
+        if (f.dlc < 4 || d[0] > 1 || d[1] > 100) return false;
+        markSeen(Powertrain, f.timestampMs);
+        emitIfChanged(SignalId::PowertrainType, d[0]);
+        emitIfChanged(SignalId::FuelPercent, d[1]);
+        emitIfChanged(SignalId::TelltaleFlags, static_cast<int32_t>(canGetBitsLE(d, 16, 16)));
         return true;
     case canid::MotorStatus:
         if (f.dlc < 6) return false;
