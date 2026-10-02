@@ -66,7 +66,16 @@ void SystemData::advanceRuntime(uint32_t elapsedMs)
 {
     ++g_runtimeCalls;
     EVB_STAGE("uptime");
-    uptimeMs.setValue(uptimeMs.value() + elapsedMs);
+    // The runtime tick is 50 ms, but publishing this general-purpose property
+    // that often wakes every UI animation/number binding on each CAN cycle.
+    // Publish it at 200 ms; screen-specific elapsed properties below retain
+    // their own timing and update only when their values actually change.
+    m_uptimePublishMs = static_cast<uint16_t>(m_uptimePublishMs + elapsedMs);
+    if (m_uptimePublishMs >= 200) {
+        const uint16_t publishMs = static_cast<uint16_t>((m_uptimePublishMs / 200) * 200);
+        m_uptimePublishMs = static_cast<uint16_t>(m_uptimePublishMs % 200);
+        uptimeMs.setValue(uptimeMs.value() + publishMs);
+    }
 
     //  The step count is kept here rather than read back out of the property.
     //  Writing a property and reading it again in the same breath is not

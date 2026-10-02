@@ -207,6 +207,12 @@ void Simulator::start()
     std::fflush(stdout);
 }
 
+void Simulator::stop()
+{
+    m_timer.stop();
+    m_started = false;
+}
+
 void Simulator::onRuntimeTick()
 {
     const uint32_t nowMs = evb::platform::millis();

@@ -51,17 +51,6 @@ Item {
                       : 0.0
     }
 
-    PowerBar {
-        visible: shell.showBars
-        value: VehicleData.driveStale ? 0 : Math.abs(VehicleData.powerPercent)
-    }
-
-    RpmBar {
-        visible: shell.showBars
-        value: VehicleData.driveStale ? 0 : VehicleData.motorRpm / 100
-        redZoneTop: true
-    }
-
     // Keep the small boot pages static so Splash exists on the first frame.
     // Dynamic loading is reserved for the larger settings pages below.
     SplashScreen {
@@ -76,94 +65,121 @@ Item {
         visible: Router.stage === Router.stagePreRide
     }
 
-    Item {
-        width: Theme.screenWidth
-        height: Theme.screenHeight
-        visible: shell.riding && !shell.fullAlert
+    // The ride dashboard contains many bindings to live CAN data. Do not
+    // instantiate it while boot/auth/pre-ride screens are active; the first
+    // CAN freshness update must not wake the entire hidden dashboard tree.
+    Loader {
+        active: shell.riding
+        sourceComponent: rideContent
+    }
 
-        RideView {
-            visible: !shell.hexStyle
-        }
+    Component {
+        id: rideContent
 
-        HexSpeedoView {
-            visible: shell.hexStyle && !Router.menuOpen && !Theme.alertMode
-        }
+        Item {
+            width: Theme.screenWidth
+            height: Theme.screenHeight
+
+            PowerBar {
+                visible: shell.showBars
+                value: VehicleData.driveStale ? 0 : Math.abs(VehicleData.powerPercent)
+            }
+
+            RpmBar {
+                visible: shell.showBars
+                value: VehicleData.driveStale ? 0 : VehicleData.motorRpm / 100
+                redZoneTop: true
+            }
+
+            Item {
+                width: Theme.screenWidth
+                height: Theme.screenHeight
+                visible: !shell.fullAlert
+
+                RideView {
+                    visible: !shell.hexStyle
+                }
+
+                HexSpeedoView {
+                    visible: shell.hexStyle && !Router.menuOpen && !Theme.alertMode
+                }
 
         // Keep menu pages out of the initial scene. The Qt for MCUs desktop
         // platform shows its window after the first frame, and constructing
         // every settings page before that frame makes startup unnecessarily
         // expensive. Load only the page selected by the carousel, as in the
         // Crossware cluster.
-        Loader {
-            active: shell.riding && Router.menuOpen
-            sourceComponent: Router.menuIndex === Router.menuProfile ? profilePage
-                           : Router.menuIndex === Router.menuDigilocker ? digilockerPage
-                           : Router.menuIndex === Router.menuSeat ? seatPage
-                           : Router.menuIndex === Router.menuCharging ? chargingPage
-                           : Router.menuIndex === Router.menuBikeStatus ? bikeStatusPage
-                           : Router.menuIndex === Router.menuSecurity ? securityPage
-                           : Router.menuIndex === Router.menuPayment ? paymentPage
-                           : Router.menuIndex === Router.menuCustomize ? customizePage
-                           : miscPage
+                Loader {
+                    active: Router.menuOpen
+                    sourceComponent: Router.menuIndex === Router.menuProfile ? profilePage
+                                   : Router.menuIndex === Router.menuDigilocker ? digilockerPage
+                                   : Router.menuIndex === Router.menuSeat ? seatPage
+                                   : Router.menuIndex === Router.menuCharging ? chargingPage
+                                   : Router.menuIndex === Router.menuBikeStatus ? bikeStatusPage
+                                   : Router.menuIndex === Router.menuSecurity ? securityPage
+                                   : Router.menuIndex === Router.menuPayment ? paymentPage
+                                   : Router.menuIndex === Router.menuCustomize ? customizePage
+                                   : miscPage
+                }
+
+                Component { id: profilePage; ProfilePage {} }
+                Component { id: digilockerPage; DigilockerPage {} }
+                Component { id: seatPage; SeatPage {} }
+                Component { id: chargingPage; ChargingPage {} }
+                Component { id: bikeStatusPage; BikeStatusPage {} }
+                Component { id: securityPage; SecurityPage {} }
+                Component { id: paymentPage; PaymentPage {} }
+                Component { id: customizePage; CustomizePage {} }
+                Component { id: miscPage; MiscPage {} }
+
+                MenuCarousel {
+                    y: 303
+                    visible: Router.menuOpen
+                }
+
+                BatteryTempBars {
+                    y: 363
+                }
+
+                BottomDock {
+                    y: 410
+                    mapActive: Router.centerView === Router.viewMap && !Router.menuOpen && !shell.hexStyle
+                    menuActive: Router.menuOpen
+                    focusIndex: Router.menuOpen ? -1 : Router.dockIndex
+                }
+
+                TyreAlertOverlay {
+                    visible: shell.tyreAlert
+                }
+
+                GenericAlertOverlay {
+                    visible: shell.otherAlert
+                }
+
+                CallScreen {}
+
+                NotificationToast {
+                    x: 430
+                    y: 250
+                }
+
+                MenuLockHint {
+                    x: 470
+                    y: 262
+                }
+            }
+
+            CrashOverlay {
+                visible: shell.crashAlert
+            }
+
+            OverheatOverlay {
+                visible: shell.heatAlert
+            }
+
+            StatusCorners {
+            }
         }
-
-        Component { id: profilePage; ProfilePage {} }
-        Component { id: digilockerPage; DigilockerPage {} }
-        Component { id: seatPage; SeatPage {} }
-        Component { id: chargingPage; ChargingPage {} }
-        Component { id: bikeStatusPage; BikeStatusPage {} }
-        Component { id: securityPage; SecurityPage {} }
-        Component { id: paymentPage; PaymentPage {} }
-        Component { id: customizePage; CustomizePage {} }
-        Component { id: miscPage; MiscPage {} }
-
-        MenuCarousel {
-            y: 303
-            visible: Router.menuOpen
-        }
-
-        BatteryTempBars {
-            y: 363
-        }
-
-        BottomDock {
-            y: 410
-            mapActive: Router.centerView === Router.viewMap && !Router.menuOpen && !shell.hexStyle
-            menuActive: Router.menuOpen
-            focusIndex: Router.menuOpen ? -1 : Router.dockIndex
-        }
-
-        TyreAlertOverlay {
-            visible: shell.tyreAlert
-        }
-
-        GenericAlertOverlay {
-            visible: shell.otherAlert
-        }
-
-        CallScreen {}
-
-        NotificationToast {
-            x: 430
-            y: 250
-        }
-
-        MenuLockHint {
-            x: 470
-            y: 262
-        }
-    }
-
-    CrashOverlay {
-        visible: shell.crashAlert
-    }
-
-    OverheatOverlay {
-        visible: shell.heatAlert
-    }
-
-    StatusCorners {
-        visible: shell.riding
     }
 
     TelltaleStrip {

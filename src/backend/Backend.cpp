@@ -10,6 +10,7 @@
 #include "NavigationData.h"
 #include "PhoneData.h"
 #include "PhoneListData.h"
+#include "Simulator.h"
 #include "SystemData.h"
 #include "TripData.h"
 #include "VehicleData.h"
@@ -109,7 +110,7 @@ evb::link::Parser g_phoneParser(g_phoneHandler);
 //  desktop shim differs most: it delivers them inside step() instead.
 uint32_t g_traceEvents = 0;
 
-class CanQueue : public Qul::EventQueue<evb::CanFrame>
+class CanQueue : public Qul::EventQueue<evb::CanFrame, Qul::EventQueueOverrunPolicy_Discard, 16>
 {
 public:
     void onEvent(const evb::CanFrame &frame) override
@@ -130,7 +131,7 @@ public:
     }
 };
 
-class PhoneQueue : public Qul::EventQueue<PhoneChunk>
+class PhoneQueue : public Qul::EventQueue<PhoneChunk, Qul::EventQueueOverrunPolicy_Discard, 32>
 {
 public:
     void onEvent(const PhoneChunk &chunk) override
@@ -208,6 +209,16 @@ void init()
 
 }
 
+void startRuntime()
+{
+    Simulator::instance().start();
+}
+
+void stopRuntime()
+{
+    Simulator::instance().stop();
+}
+
 void postCanFrame(const evb::CanFrame &frame)
 {
     static uint32_t posted = 0;
@@ -217,13 +228,7 @@ void postCanFrame(const evb::CanFrame &frame)
                     static_cast<unsigned>(frame.id));
         std::fflush(stdout);
     }
-    //  Decoded here and not queued. This is the caller that is already on the
-    //  UI thread -- the simulator, and a driver that polls -- so the queue
-    //  bought nothing, and it cost: it holds a fixed number of events, the
-    //  eight frames a tick posts did not fit, and the last three of every
-    //  tick were dropped before anything read them. An interrupt still has
-    //  postCanFrameFromIsr, which is what the queue is for.
-    g_decoder.decode(frame);
+    canQueue().postEvent(frame);
 }
 
 void postCanFrameFromIsr(const evb::CanFrame &frame)

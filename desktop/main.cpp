@@ -89,6 +89,9 @@ int main(int argc, char *argv[])
         view.setPosition(screen->availableGeometry().center() - QPoint(view.width() / 2, view.height() / 2));
     view.show();
     view.requestActivate();
+    Backend::startRuntime();
 
-    return app.exec();
+    const int result = app.exec();
+    Backend::stopRuntime();
+    return result;
 }

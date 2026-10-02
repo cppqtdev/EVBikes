@@ -69,6 +69,7 @@ struct SystemData : public Qul::Singleton<SystemData>
     void clearTheftCaptures();
 
 private:
+    uint16_t m_uptimePublishMs = 0;
     uint32_t m_splashElapsedMs = 0;
     uint8_t m_splashStep = 0;
     uint16_t m_authElapsedMs = 0;

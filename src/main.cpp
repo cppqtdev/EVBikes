@@ -24,8 +24,12 @@ int main()
     static struct ::Main item;
     EVB_TRACE("setRootItem");
     app.setRootItem(&item);
+    EVB_TRACE("start runtime");
+    Backend::startRuntime();
     EVB_TRACE("exec");
     app.exec();
+    EVB_TRACE("stop runtime");
+    Backend::stopRuntime();
     EVB_TRACE("exec returned");
     return 0;
 }

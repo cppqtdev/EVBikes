@@ -10,6 +10,8 @@
 namespace Backend {
 
 void init();
+void startRuntime();
+void stopRuntime();
 
 void postCanFrame(const evb::CanFrame &frame);
 void postCanFrameFromIsr(const evb::CanFrame &frame);

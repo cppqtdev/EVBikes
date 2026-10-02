@@ -15,6 +15,7 @@ struct Simulator : public Qul::Singleton<Simulator>
     Simulator();
 
     void start();
+    void stop();
     void step(uint32_t elapsedMs);
     void nextScenario();
     void togglePark();

@@ -20,7 +20,9 @@ void uiTask(void *)
     Qul::Application app;
     static struct ::Main item;
     app.setRootItem(&item);
+    Backend::startRuntime();
     app.exec();
+    Backend::stopRuntime();
 }
 
 // Low-rate housekeeping that must not block the UI: e.g. polling sensors

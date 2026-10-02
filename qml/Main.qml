@@ -9,12 +9,8 @@ Rectangle {
     width: Theme.screenWidth
     height: Theme.screenHeight
     color: Theme.black
-    focus: true
 
     ClusterShell {}
-
-    // Start runtime activity only after the first QML scene has completed.
-    Component.onCompleted: Simulator.start()
 
     Connections {
         target: ClusterInput
