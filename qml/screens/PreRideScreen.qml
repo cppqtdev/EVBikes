@@ -10,7 +10,7 @@ Item {
 
     property bool standDown: VehicleData.sideStandDown
     property bool ready: !standDown
-    property bool preRideDelayDone: check.visible && check.ready && SystemData.preRideElapsedMs >= 2500
+    property int elapsedMs: SystemData.preRideElapsedMs
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -21,8 +21,8 @@ Item {
 
     onVisibleChanged: updateReadyWait()
     onReadyChanged: updateReadyWait()
-    onPreRideDelayDoneChanged: {
-        if (preRideDelayDone)
+    onElapsedMsChanged: {
+        if (check.visible && check.ready && elapsedMs >= 2500)
             Router.finishPreRide()
     }
     Component.onCompleted: updateReadyWait()

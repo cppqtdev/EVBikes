@@ -11,6 +11,7 @@ namespace {
 
 enum Scenario : uint8_t { CityEco = 0, SportRun, LowTyre, Overheat, Crash, ScenarioCount };
 
+constexpr uint32_t kMaxTickMs = 100;
 constexpr uint32_t kBootStandDownMs = 11000;
 constexpr uint32_t kBootParkedMs = 14000;
 
@@ -193,7 +194,12 @@ void Simulator::start()
 void Simulator::onRuntimeTick()
 {
     const uint32_t nowMs = evb::platform::millis();
-    const uint32_t elapsedMs = nowMs - m_lastTickMs;
+    //  A long gap -- the resources loading before the first frame, or a slow
+    //  frame later -- is not time the rider saw. Counting it would run the
+    //  boot animation to its end in one step and the splash would never
+    //  appear, so a tick is worth at most one frame of it.
+    const uint32_t gapMs = nowMs - m_lastTickMs;
+    const uint32_t elapsedMs = gapMs > kMaxTickMs ? kMaxTickMs : gapMs;
     m_lastTickMs = nowMs;
     if (elapsedMs == 0)
         return;

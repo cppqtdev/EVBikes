@@ -9,15 +9,14 @@ Item {
     id: auth
 
     property int authState: SystemData.authState
-    property int dots: Math.floor(SystemData.authElapsedMs / 120) % 8
-    property bool matchedDelayDone: auth.authState === SystemData.AuthMatched
-                                   && SystemData.authElapsedMs >= 1200
+    property int elapsedMs: SystemData.authElapsedMs
+    property int dots: Math.floor(auth.elapsedMs / 120) % 8
 
     width: Theme.screenWidth
     height: Theme.screenHeight
 
-    onMatchedDelayDoneChanged: {
-        if (matchedDelayDone)
+    onElapsedMsChanged: {
+        if (auth.authState === SystemData.AuthMatched && elapsedMs >= 1200)
             Router.finishAuth()
     }
 
