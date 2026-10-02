@@ -15,7 +15,7 @@ Item {
     height: 64
 
     Telltale {
-        x: 406; y: 20
+        x: 422; y: 20
         size: strip.iconSize
         source: "qrc:/assets/icons/32/tt_left.png"
         blinking: false
@@ -23,7 +23,7 @@ Item {
         activeColor: Theme.telltaleGreen
     }
     Telltale {
-        x: 870; y: 20
+        x: 866; y: 20
         size: strip.iconSize
         source: "qrc:/assets/icons/32/tt_right.png"
         blinking: false
@@ -32,6 +32,7 @@ Item {
     }
     Row {
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: 16
         y: 20
         spacing: strip.iconGap
         Telltale {

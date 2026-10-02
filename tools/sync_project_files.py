@@ -21,7 +21,7 @@ MODULES = {
     "core": ("ClusterCore", "cluster_core", ["Theme.qml", "Router.qml", "Format.qml"],
              ["backend"], []),
     "components": ("ClusterComponents", "cluster_components", [],
-                   ["backend", "core"], []),
+                   ["backend", "core"], ["Shapes"]),
     "screens": ("ClusterScreens", "cluster_screens", [],
                 ["backend", "core", "components"], ["Shapes"]),
 }

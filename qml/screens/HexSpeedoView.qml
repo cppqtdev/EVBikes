@@ -166,6 +166,46 @@ Item {
         font.pixelSize: 14
     }
 
+    // Compact guidance stays above the route and clear of the gauge labels.
+    Rectangle {
+        x: 866; y: 64; width: 260; height: 66
+        radius: 6
+        color: Theme.surfaceSunken
+        visible: NavigationData.active
+        Text {
+            x: 14; y: 5; width: 232; height: 24
+            text: NavigationData.roadName
+            elide: Text.ElideRight
+            color: Theme.textPrimary
+            font.family: Theme.fontFamily
+            font.pixelSize: 16
+        }
+        Icon {
+            x: 14; y: 34; size: 24
+            source: Format.turnIcon(NavigationData.maneuver)
+            color: Theme.teal
+            fillMode: Image.PreserveAspectFit
+        }
+        Text {
+            x: 50; y: 31; width: 196; height: 30
+            text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
+                  + Format.distanceUnit(NavigationData.distanceToManeuverM)
+            color: Theme.textPrimary
+            font.family: Theme.fontFamily
+            font.pixelSize: 22
+        }
+    }
+    Text {
+        x: 866; y: 80; width: 260; height: 48
+        visible: !NavigationData.active
+        text: PhoneData.connected ? qsTr("Start a route in the app") : qsTr("Connect phone for navigation")
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignHCenter
+        color: Theme.textSecondary
+        font.family: Theme.fontFamily
+        font.pixelSize: 16
+    }
+
     Text {
         x: 930
         y: 400

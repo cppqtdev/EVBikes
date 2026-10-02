@@ -7,6 +7,7 @@ This is a desktop-verified prototype with a board resource profile, not a certif
 
 - Settings uses one Router index for fixed menu slots and separate page loaders. Both chevrons and neighbouring titles accept clicks; keyboard left/right uses the same route.
 - Three permanent speed digit cells, fixed alignment and baseline, fixed unit label. Hundreds hide without moving the other cells. Two digits remain visible below 100.
+- The hex gauge uses five bounded QUL Shapes for a continuous fill edge driven by the needle angle, replacing binary segment fill. The hex map includes road name, turn icon and distance. Actual TRAVEO rendering cost still requires measurement.
 - Trip shows tenths; speed, trip, odometer, range, fuel and warning flags originate in project CAN frames.
 - Simulator preserves fractional distance between 50 ms updates. Previously integer truncation discarded sub-metre travel, freezing trip and turn distances.
 - Repeatable 90-second city speed cycle includes acceleration, braking, stops and restarting. Sport targets exceed 100 km/h. Demo energy consumption drives SOC/range.

@@ -12,6 +12,7 @@ Project {
             "qml/backend/backend.qmlproject",
             "profiles/traveo/core.qmlproject"
         ]
+        MCU.qulModules: ["Shapes"]
     }
 
     ImageFiles {
@@ -161,6 +162,7 @@ Project {
             "qml/components/GlowBand.qml",
             "qml/components/GlowSpot.qml",
             "qml/components/HexGauge.qml",
+            "qml/components/HexGaugeFill.qml",
             "qml/components/Icon.qml",
             "qml/components/MenuCarousel.qml",
             "qml/components/MenuLockHint.qml",

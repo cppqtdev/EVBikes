@@ -19,7 +19,6 @@ Item {
         return miles ? "" + Math.round(kmh * 0.621371) : "" + kmh
     }
 
-    property int litHalves: stale ? 0 : Math.round(3 + clamped / 10)
     property color litColor: "#7DFFDB"
     property color offColor: "#3C3C3D"
     readonly property real targetNeedleAngle: (clamped < 20 ? 160.2 + (clamped - 0) * 1.543 : (clamped < 40 ? 191.1 + (clamped - 20) * 1.306 : (clamped < 60 ? 217.2 + (clamped - 40) * 1.896 : (clamped < 80 ? 255.1 + (clamped - 60) * 1.726 : (clamped < 100 ? 289.7 + (clamped - 80) * 1.631 : (clamped < 120 ? 322.3 + (clamped - 100) * 1.321 : (clamped < 140 ? 348.7 + (clamped - 120) * 1.395 : 376.6)))))))
@@ -41,140 +40,146 @@ Item {
         x: 90
         y: 210
         source: "qrc:/assets/cluster/hex_piece0.png"
-        color: gauge.litHalves > 0 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 68
         y: 188
         source: "qrc:/assets/cluster/hex_piece1.png"
-        color: gauge.litHalves > 1 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 46
         y: 165
         source: "qrc:/assets/cluster/hex_piece2.png"
-        color: gauge.litHalves > 2 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 25
         y: 135
         source: "qrc:/assets/cluster/hex_piece3.png"
-        color: gauge.litHalves > 3 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 25
         y: 104
         source: "qrc:/assets/cluster/hex_piece4.png"
-        color: gauge.litHalves > 4 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 46
         y: 72
         source: "qrc:/assets/cluster/hex_piece5.png"
-        color: gauge.litHalves > 5 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 68
         y: 41
         source: "qrc:/assets/cluster/hex_piece6.png"
-        color: gauge.litHalves > 6 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 90
         y: 11
         source: "qrc:/assets/cluster/hex_piece7.png"
-        color: gauge.litHalves > 7 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 112
         y: 11
         source: "qrc:/assets/cluster/hex_piece8.png"
-        color: gauge.litHalves > 8 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 156
         y: 11
         source: "qrc:/assets/cluster/hex_piece9.png"
-        color: gauge.litHalves > 9 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 201
         y: 11
         source: "qrc:/assets/cluster/hex_piece10.png"
-        color: gauge.litHalves > 10 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 234
         y: 11
         source: "qrc:/assets/cluster/hex_piece11.png"
-        color: gauge.litHalves > 11 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 265
         y: 11
         source: "qrc:/assets/cluster/hex_piece12.png"
-        color: gauge.litHalves > 12 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 281
         y: 41
         source: "qrc:/assets/cluster/hex_piece13.png"
-        color: gauge.litHalves > 13 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 297
         y: 72
         source: "qrc:/assets/cluster/hex_piece14.png"
-        color: gauge.litHalves > 14 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 313
         y: 104
         source: "qrc:/assets/cluster/hex_piece15.png"
-        color: gauge.litHalves > 15 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 302
         y: 135
         source: "qrc:/assets/cluster/hex_piece16.png"
-        color: gauge.litHalves > 16 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 286
         y: 165
         source: "qrc:/assets/cluster/hex_piece17.png"
-        color: gauge.litHalves > 17 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 270
         y: 188
         source: "qrc:/assets/cluster/hex_piece18.png"
-        color: gauge.litHalves > 18 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
     }
 
     ColorizedImage {
         x: 255
         y: 210
         source: "qrc:/assets/cluster/hex_piece19.png"
-        color: gauge.litHalves > 19 ? gauge.litColor : gauge.offColor
+        color: gauge.offColor
+    }
+
+    HexGaugeFill {
+        angle: gauge.needleAngle
+        color: gauge.litColor
+        visible: !gauge.stale
     }
 
     ColorizedImage {

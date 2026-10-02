@@ -19,6 +19,7 @@ qt_add_qml_module(cluster_components
         GlowBand.qml
         GlowSpot.qml
         HexGauge.qml
+        HexGaugeFill.qml
         Icon.qml
         MenuCarousel.qml
         MenuLockHint.qml
