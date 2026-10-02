@@ -10,6 +10,7 @@ constexpr uint16_t kDefaultPin = 1234;
 constexpr uint8_t kMaxPinAttempts = 3;
 constexpr uint8_t kProfileCount = 3;
 constexpr int8_t kMaxSeatLevel = 5;
+constexpr uint8_t kSplashSteps = 40;
 constexpr bool kEnrolledProfiles[kProfileCount] = {true, true, false};
 
 uint32_t g_clockBaseMs = 0;
@@ -34,6 +35,7 @@ SystemData::SystemData()
     antiTheftArmed.setValue(false);
     theftCaptures.setValue(1);
     uptimeMs.setValue(0);
+    m_splashStep = 0;
     splashStep.setValue(0);
     authElapsedMs.setValue(0);
     preRideElapsedMs.setValue(0);
@@ -54,10 +56,20 @@ void SystemData::advanceRuntime(uint32_t elapsedMs)
 {
     uptimeMs.setValue(uptimeMs.value() + elapsedMs);
 
-    m_splashElapsedMs += elapsedMs;
-    while (m_splashElapsedMs >= 220 && splashStep.value() < 40) {
-        m_splashElapsedMs -= 220;
-        splashStep.setValue(static_cast<uint8_t>(splashStep.value() + 1));
+    //  The step count is kept here rather than read back out of the property.
+    //  Writing a property and reading it again in the same breath is not
+    //  something a loop can lean on, and as a loop condition it never ended:
+    //  the desktop shim happened to answer straight away, the real one does
+    //  not, and the first tick past 220 ms froze the application.
+    if (m_splashStep < kSplashSteps) {
+        m_splashElapsedMs += elapsedMs;
+        const uint32_t due = m_splashElapsedMs / 220;
+        if (due > 0) {
+            m_splashElapsedMs -= due * 220;
+            const uint32_t next = m_splashStep + due;
+            m_splashStep = static_cast<uint8_t>(next > kSplashSteps ? kSplashSteps : next);
+            splashStep.setValue(m_splashStep);
+        }
     }
 
     if (authState.value() == AuthScanning || authState.value() == AuthMatched) {

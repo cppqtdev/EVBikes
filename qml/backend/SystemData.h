@@ -70,6 +70,7 @@ struct SystemData : public Qul::Singleton<SystemData>
 
 private:
     uint32_t m_splashElapsedMs = 0;
+    uint8_t m_splashStep = 0;
     uint16_t m_authElapsedMs = 0;
     uint16_t m_preRideElapsedMs = 0;
     uint16_t m_menuHintRemainingMs = 0;
