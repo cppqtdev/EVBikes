@@ -15,7 +15,8 @@ Item {
     height: 480
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/battery_tall.png"
+        x: 116; y: 107
+        source: "qrc:/assets/cluster/trimmed/battery_tall.png"
         color: column.offColor
     }
 

@@ -35,6 +35,7 @@ Item {
 
     NumberReadout {
         id: batteryValue
+        digits: 3
         x: 404
         y: 0
         value: bars.battery
@@ -104,6 +105,7 @@ Item {
 
     NumberReadout {
         id: tempValue
+        digits: 3
         x: 852 - width
         y: -2
         value: bars.temperature

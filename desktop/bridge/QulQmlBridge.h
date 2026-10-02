@@ -379,6 +379,9 @@ class SystemDataQml : public QObject
     Q_PROPERTY(int hours READ hours WRITE qmlWriteHours NOTIFY hoursChanged FINAL)
     Q_PROPERTY(int minutes READ minutes WRITE qmlWriteMinutes NOTIFY minutesChanged FINAL)
     Q_PROPERTY(int uptimeMs READ uptimeMs WRITE qmlWriteUptimeMs NOTIFY uptimeMsChanged FINAL)
+    Q_PROPERTY(bool showPerformance READ showPerformance WRITE qmlWriteShowPerformance NOTIFY showPerformanceChanged FINAL)
+    Q_PROPERTY(int heapPeakKiB READ heapPeakKiB WRITE qmlWriteHeapPeakKiB NOTIFY heapPeakKiBChanged FINAL)
+    Q_PROPERTY(int stackPeakKiB READ stackPeakKiB WRITE qmlWriteStackPeakKiB NOTIFY stackPeakKiBChanged FINAL)
     Q_PROPERTY(int splashStep READ splashStep WRITE qmlWriteSplashStep NOTIFY splashStepChanged FINAL)
     Q_PROPERTY(int authElapsedMs READ authElapsedMs WRITE qmlWriteAuthElapsedMs NOTIFY authElapsedMsChanged FINAL)
     Q_PROPERTY(int preRideElapsedMs READ preRideElapsedMs WRITE qmlWritePreRideElapsedMs NOTIFY preRideElapsedMsChanged FINAL)
@@ -417,6 +420,12 @@ public:
     void qmlWriteMinutes(int value);
     int uptimeMs() const;
     void qmlWriteUptimeMs(int value);
+    bool showPerformance() const;
+    void qmlWriteShowPerformance(bool value);
+    int heapPeakKiB() const;
+    void qmlWriteHeapPeakKiB(int value);
+    int stackPeakKiB() const;
+    void qmlWriteStackPeakKiB(int value);
     int splashStep() const;
     void qmlWriteSplashStep(int value);
     int authElapsedMs() const;
@@ -487,6 +496,9 @@ signals:
     void hoursChanged();
     void minutesChanged();
     void uptimeMsChanged();
+    void showPerformanceChanged();
+    void heapPeakKiBChanged();
+    void stackPeakKiBChanged();
     void splashStepChanged();
     void authElapsedMsChanged();
     void preRideElapsedMsChanged();

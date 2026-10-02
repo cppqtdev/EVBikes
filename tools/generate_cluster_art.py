@@ -931,8 +931,8 @@ def wheel(base, cx, cy, r, scale, masks=None):
         md.ellipse([(cx - r) * s, (cy - r) * s, (cx + r) * s, (cy + r) * s], fill=255)
 
 
-# Your own bike render (any size, transparent background). Kept outside assets/cluster
-# so the big source file is not packed into the firmware.
+# Optional replacement bike render (transparent background). The large source
+# is not tracked or packaged; without it, retain the checked-in bike_180 PNGs.
 BIKE_PHOTO = os.path.join(ROOT, "assets", "source", "bike.png")
 # Only the size the ride screen asks for; every other screen uses the side view
 # below, which is the shape the reference draws.

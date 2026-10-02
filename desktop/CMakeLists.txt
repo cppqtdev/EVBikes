@@ -49,12 +49,14 @@ target_include_directories(cluster_backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/br
 target_link_libraries(cluster_backend PRIVATE Qt6::Qml evb_backend)
 
 # --- QML module: QtQuickUltralite.Extras (ColorizedImage) ---------------------
+set_source_files_properties(extras/QulPerf.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 qt_add_library(qul_extras STATIC)
 qt_add_qml_module(qul_extras
     URI QtQuickUltralite.Extras
     VERSION 1.0
     OUTPUT_DIRECTORY ${EVB_QML_OUT}/QtQuickUltralite/Extras
     SOURCES extras/ColorizedImage.h extras/ColorizedImage.cpp
+    QML_FILES extras/QulPerf.qml
 )
 target_include_directories(qul_extras PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/extras)
 target_link_libraries(qul_extras PRIVATE Qt6::Quick)
@@ -76,14 +78,7 @@ qt_add_qml_module(cluster_app
     QML_FILES ${EVB_ROOT}/qml/Main.qml
 )
 
-file(GLOB_RECURSE EVB_ASSETS CONFIGURE_DEPENDS RELATIVE ${EVB_ROOT}
-    ${EVB_ROOT}/assets/icons/*.png
-    ${EVB_ROOT}/assets/turns/*.png
-    ${EVB_ROOT}/assets/images/*.png
-    ${EVB_ROOT}/assets/cluster/*.png
-    ${EVB_ROOT}/assets/fonts/*.ttf
-)
-list(TRANSFORM EVB_ASSETS PREPEND ${EVB_ROOT}/)
+include(${CMAKE_CURRENT_SOURCE_DIR}/AssetFiles.cmake)
 
 set(EVB_QML_MODULES
     evb_backend

@@ -15,13 +15,15 @@ Item {
     height: Theme.screenHeight
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/battery_edge_outer.png"
+        x: 95; y: 108
+        source: "qrc:/assets/cluster/trimmed/battery_edge_outer.png"
         color: "#3F9C80"
         opacity: 0.8
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/battery_edge_inner.png"
+        x: 143; y: 96
+        source: "qrc:/assets/cluster/trimmed/battery_edge_inner.png"
         color: "#3A4A46"
         opacity: 0.8
     }
@@ -31,13 +33,15 @@ Item {
     }
 
     ColorizedImage {
-        source: "qrc:/assets/cluster/battery_tall_gloss.png"
+        x: 126; y: 109
+        source: "qrc:/assets/cluster/trimmed/battery_tall_gloss.png"
         color: "#FFFFFF"
         opacity: 0.2
     }
 
     NumberReadout {
         id: socText
+        digits: 3
         x: 223
         y: 186
         value: VehicleData.batteryPercent
@@ -71,6 +75,7 @@ Item {
 
     NumberReadout {
         id: rangeText
+        digits: 5
         x: 320
         y: 267
         value: Format.distanceValueKm(VehicleData.rangeKm)

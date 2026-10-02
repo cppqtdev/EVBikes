@@ -8,6 +8,12 @@ project(EVBikes VERSION 0.1.0 LANGUAGES C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(EVB_SIZE_OPTIMIZED_RELEASE "Optimize GNU release builds for size" ON)
+if(EVB_SIZE_OPTIMIZED_RELEASE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options($<$<CONFIG:Release>:-Os> $<$<CONFIG:Release>:-ffunction-sections> $<$<CONFIG:Release>:-fdata-sections>)
+    add_link_options($<$<CONFIG:Release>:-Wl,--gc-sections>)
+endif()
+
 option(EVB_BUILD_HOST_TESTS "Build host unit tests instead of the Qt for MCUs app" OFF)
 if(EVB_BUILD_HOST_TESTS)
     enable_testing()
@@ -75,6 +81,8 @@ qul_add_target(EVBikes
     QML_PROJECT ${EVB_QML_PROJECT}
 )
 
+target_compile_definitions(EVBikes PRIVATE EVB_QUL_RUNTIME=1)
+
 target_include_directories(EVBikes PRIVATE
     src
     qml/backend
@@ -85,3 +93,13 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 app_target_setup_os(EVBikes)
+
+# Strip only a distribution copy. Keep the linked executable for debugging.
+if(CMAKE_STRIP AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_custom_target(EVBikes-package
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/package
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:EVBikes> ${CMAKE_CURRENT_BINARY_DIR}/package/EVBikes
+        COMMAND ${CMAKE_STRIP} --strip-unneeded ${CMAKE_CURRENT_BINARY_DIR}/package/EVBikes
+        DEPENDS EVBikes
+        COMMENT "Create a stripped distribution executable")
+endif()

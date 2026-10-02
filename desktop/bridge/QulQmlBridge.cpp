@@ -821,6 +821,9 @@ SystemDataQml::SystemDataQml(QObject *parent)
     d.hours.setOnChanged([this] { emit hoursChanged(); });
     d.minutes.setOnChanged([this] { emit minutesChanged(); });
     d.uptimeMs.setOnChanged([this] { emit uptimeMsChanged(); });
+    d.showPerformance.setOnChanged([this] { emit showPerformanceChanged(); });
+    d.heapPeakKiB.setOnChanged([this] { emit heapPeakKiBChanged(); });
+    d.stackPeakKiB.setOnChanged([this] { emit stackPeakKiBChanged(); });
     d.splashStep.setOnChanged([this] { emit splashStepChanged(); });
     d.authElapsedMs.setOnChanged([this] { emit authElapsedMsChanged(); });
     d.preRideElapsedMs.setOnChanged([this] { emit preRideElapsedMsChanged(); });
@@ -875,6 +878,36 @@ int SystemDataQml::uptimeMs() const
 void SystemDataQml::qmlWriteUptimeMs(int value)
 {
     SystemData::instance().uptimeMs.setValue(value);
+}
+
+bool SystemDataQml::showPerformance() const
+{
+    return SystemData::instance().showPerformance.value();
+}
+
+void SystemDataQml::qmlWriteShowPerformance(bool value)
+{
+    SystemData::instance().showPerformance.setValue(value);
+}
+
+int SystemDataQml::heapPeakKiB() const
+{
+    return SystemData::instance().heapPeakKiB.value();
+}
+
+void SystemDataQml::qmlWriteHeapPeakKiB(int value)
+{
+    SystemData::instance().heapPeakKiB.setValue(value);
+}
+
+int SystemDataQml::stackPeakKiB() const
+{
+    return SystemData::instance().stackPeakKiB.value();
+}
+
+void SystemDataQml::qmlWriteStackPeakKiB(int value)
+{
+    SystemData::instance().stackPeakKiB.setValue(value);
 }
 
 int SystemDataQml::splashStep() const

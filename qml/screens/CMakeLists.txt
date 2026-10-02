@@ -23,6 +23,7 @@ qt_add_qml_module(cluster_screens
         OverheatOverlay.qml
         PageBase.qml
         PaymentPage.qml
+        PerformanceOverlay.qml
         PreRideScreen.qml
         ProfilePage.qml
         RideView.qml

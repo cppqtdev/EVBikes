@@ -128,6 +128,7 @@ PageBase {
 
     NumberReadout {
         id: socReadout
+        digits: 3
         x: 645 - (width + percentSign.width) / 2
         y: 193
         value: page.soc

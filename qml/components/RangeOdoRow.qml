@@ -28,6 +28,7 @@ Item {
 
     NumberReadout {
         id: rangeValue
+        digits: 5
         x: 525
         y: 1
         value: Format.distanceValueKm(VehicleData.rangeKm)

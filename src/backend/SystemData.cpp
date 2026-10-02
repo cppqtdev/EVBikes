@@ -1,6 +1,10 @@
 #include "SystemData.h"
 
 #include <cstdio>
+#ifdef EVB_QUL_RUNTIME
+#include <platform/platform.h>
+#include <platform/performancemetrics.h>
+#endif
 
 #include "AlertData.h"
 #include "Backend.h"
@@ -37,6 +41,7 @@ SystemData::SystemData()
     antiTheftArmed.setValue(false);
     theftCaptures.setValue(1);
     uptimeMs.setValue(0);
+    showPerformance.setValue(true);
     m_splashStep = 0;
     splashStep.setValue(0);
     authElapsedMs.setValue(0);
@@ -144,6 +149,15 @@ void SystemData::showNotificationToast()
 
 void SystemData::tick()
 {
+#ifdef EVB_QUL_RUNTIME
+    if (showPerformance.value()) {
+        auto *metrics = Qul::Platform::getPlatformInstance()->performanceMetrics();
+        if (metrics) {
+            heapPeakKiB.setValue(static_cast<uint32_t>(metrics->maxHeapUsage() / 1024u));
+            stackPeakKiB.setValue(static_cast<uint32_t>(metrics->maxStackUsage() / 1024u));
+        }
+    }
+#endif
     const uint32_t now = evb::platform::millis();
     AlertData::instance().tickSecond();
 

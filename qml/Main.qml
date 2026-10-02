@@ -13,6 +13,10 @@ Rectangle {
     Component.onCompleted: root.forceActiveFocus()
 
     ClusterShell {}
+    PerformanceOverlay {
+        x: 4
+        y: root.height - height - 4
+    }
 
     Connections {
         target: ClusterInput
@@ -30,6 +34,7 @@ Rectangle {
         else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) ClusterInput.inject(ClusterInput.Ok, ClusterInput.Press)
         else if (event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape) ClusterInput.inject(ClusterInput.Back, ClusterInput.Press)
         else if (event.key === Qt.Key_M) ClusterInput.inject(ClusterInput.Mode, ClusterInput.LongPress)
+        else if (event.key === Qt.Key_F12) SystemData.showPerformance = !SystemData.showPerformance
         else if (event.key === Qt.Key_P) Simulator.togglePark()
     }
 }

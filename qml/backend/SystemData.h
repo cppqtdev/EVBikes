@@ -14,6 +14,9 @@ struct SystemData : public Qul::Singleton<SystemData>
     Qul::Property<uint8_t> hours;
     Qul::Property<uint8_t> minutes;
     Qul::Property<uint32_t> uptimeMs;
+    Qul::Property<bool> showPerformance;
+    Qul::Property<uint32_t> heapPeakKiB;
+    Qul::Property<uint32_t> stackPeakKiB;
     Qul::Property<uint8_t> splashStep;
     Qul::Property<uint16_t> authElapsedMs;
     Qul::Property<uint16_t> preRideElapsedMs;

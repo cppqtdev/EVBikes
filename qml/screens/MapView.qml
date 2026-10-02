@@ -166,6 +166,7 @@ Item {
         // digit; above it the reading changes slowly enough to be plain text.
         NumberReadout {
             id: turnDistance
+            digits: 4
             x: 620
             y: 88
             visible: !map.longWay
