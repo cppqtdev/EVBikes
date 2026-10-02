@@ -217,7 +217,13 @@ void postCanFrame(const evb::CanFrame &frame)
                     static_cast<unsigned>(frame.id));
         std::fflush(stdout);
     }
-    canQueue().postEvent(frame);
+    //  Decoded here and not queued. This is the caller that is already on the
+    //  UI thread -- the simulator, and a driver that polls -- so the queue
+    //  bought nothing, and it cost: it holds a fixed number of events, the
+    //  eight frames a tick posts did not fit, and the last three of every
+    //  tick were dropped before anything read them. An interrupt still has
+    //  postCanFrameFromIsr, which is what the queue is for.
+    g_decoder.decode(frame);
 }
 
 void postCanFrameFromIsr(const evb::CanFrame &frame)
