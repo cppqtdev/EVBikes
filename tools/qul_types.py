@@ -21,7 +21,7 @@ BUILTIN = {
         "x", "y", "z", "width", "height", "implicitWidth", "implicitHeight",
         "opacity", "visible", "clip", "enabled", "parent", "anchors", "children",
         "data", "state", "states", "transitions", "activeFocus", "focus",
-        "baselineOffset", "childAt"}),
+        "baselineOffset", "childAt", "forceActiveFocus"}),
     "Rectangle":  ("Item", {"color", "gradient", "radius"}),
     "Text":       ("Item", {
         "color", "font", "text", "elide", "wrapMode", "horizontalAlignment",
@@ -32,7 +32,7 @@ BUILTIN = {
     "StaticText": ("Text", set()),
     "Image":      ("Item", {
         "source", "rotation", "scale", "transform", "transformOrigin", "status",
-        "sourceSize", "horizontalAlignment", "verticalAlignment"}),
+        "sourceSize", "horizontalAlignment", "verticalAlignment", "fillMode"}),
     "ColorizedImage": ("Image", {"color"}),
     "Column":     ("Item", {"spacing", "padding"}),
     "Row":        ("Item", {"spacing", "padding"}),

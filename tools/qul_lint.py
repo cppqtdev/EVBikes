@@ -128,15 +128,21 @@ FONT_CONST = {
 
 
 def runtime_font_binding(line):
-    m = FONT_SUB.match(line)
-    if not m:
-        return None
-    prop, value = m.group(1), m.group(2)
-    rx = FONT_CONST.get(prop)
-    if rx is None or rx.match(value):
-        return None
-    return (f"font.{prop} cannot be bound to '{value}' with the static font "
-            f"engine; bind the whole font to a readonly Qt.font(...) instead")
+    #  Two properties can share a line, separated by a semicolon, so each part
+    #  is weighed on its own rather than the whole line being read as one value.
+    for part in line.split(";"):
+        m = FONT_SUB.match(part)
+        if not m:
+            continue
+        #  An inline element closes on the same line, so drop the braces the
+        #  value is sitting in front of before judging it.
+        prop, value = m.group(1), re.sub(r"[\s}]+$", "", m.group(2))
+        rx = FONT_CONST.get(prop)
+        if rx is None or rx.match(value):
+            continue
+        return (f"font.{prop} cannot be bound to '{value}' with the static font "
+                f"engine; bind the whole font to a readonly Qt.font(...) instead")
+    return None
 
 
 #  A font can be built but not read back, so NumberReadout is told its digit
