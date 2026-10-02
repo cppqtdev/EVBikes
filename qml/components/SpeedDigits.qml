@@ -21,12 +21,7 @@ Item {
 
     // The raw speed changes many times a second, which reads as the number
     // flickering. Follow it at a readable rate instead.
-    readonly property int shownValue: damper.value
-
-    DampedInt {
-        id: damper
-        source: speed.value
-    }
+    readonly property int shownValue: speed.value
 
     // Fade band measured on the reference frames: 18 rows, then a flat tail.
     readonly property int fadeTop: 104

@@ -69,7 +69,6 @@ Item {
         digitSize: 30
         digitFont: Qt.font({ family: Theme.fontFamily, pixelSize: 30, bold: true, italic: true })
         widthFactor: 0.6
-        duration: Theme.animSlow
     }
 
     Text {

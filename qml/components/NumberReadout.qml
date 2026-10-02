@@ -28,17 +28,11 @@ Item {
     // fit lets the cell count follow the value, so a row keeps flowing and only
     // moves when a digit is gained or lost, never on every tick.
     property bool fit: false
-    property int duration: Theme.animNormal
     property real widthFactor: 0.62
 
-    //  shown is assigned, never bound. A Behavior animates an assignment. On a
-    //  bound property Qt for MCUs re-runs the binding whenever the value is read,
-    //  the Behavior restarts from there, and a frame that reads it never ends.
-    property real shown: 0
-    onValueChanged: shown = value
-    Component.onCompleted: shown = value
-
-    readonly property int shownValue: Math.round(shown)
+    //  Keep this readout directly bound to its data. Animating every cell on
+    //  each CAN update starves the QUL event loop when the live dashboard loads.
+    readonly property int shownValue: value
     readonly property int cellWidth: Math.round(digitSize * widthFactor)
     // Digit count by arithmetic: String.length is not part of the JavaScript
     // subset Qt for MCUs provides.
@@ -60,10 +54,6 @@ Item {
 
     width: drawn * cellWidth
     height: Math.round(digitSize * 1.25)
-
-    Behavior on shown {
-        NumberAnimation { duration: readout.duration }
-    }
 
     Item {
         //  The width already counts only the drawn cells, so there is nothing

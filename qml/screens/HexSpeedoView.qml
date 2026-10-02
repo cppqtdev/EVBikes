@@ -125,15 +125,10 @@ Item {
 
     // Centred on 640 with a fixed 37 px cell per digit, the pitch measured on
     // the reference, so the reading counts without shifting under itself.
-    DampedInt {
-        id: speedDamper
-        source: hex.shownSpeed
-    }
-
     NumberReadout {
         x: 640 - width / 2
         y: 272
-        value: speedDamper.value
+        value: hex.shownSpeed
         stale: VehicleData.driveStale
         digits: 3
         centered: true

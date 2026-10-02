@@ -10,6 +10,8 @@ Rectangle {
     height: Theme.screenHeight
     color: Theme.black
 
+    Component.onCompleted: root.forceActiveFocus()
+
     ClusterShell {}
 
     Connections {

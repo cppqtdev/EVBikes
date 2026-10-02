@@ -3,6 +3,13 @@
 namespace {
 constexpr uint8_t kCardSeconds = 3;
 constexpr uint8_t kSosCountdownSeconds = 60;
+
+template <typename T>
+void setIfChanged(Qul::Property<T> &property, T value)
+{
+    if (property.value() != value)
+        property.setValue(value);
+}
 }
 
 void AlertData::update(uint8_t newKind, uint8_t newLevel)
@@ -22,13 +29,13 @@ void AlertData::update(uint8_t newKind, uint8_t newLevel)
     if (newKind == NoAlert)
         m_acknowledgedKind = NoAlert;
 
-    kind.setValue(newKind);
-    level.setValue(newLevel);
+    setIfChanged(kind, newKind);
+    setIfChanged(level, newLevel);
 
     const bool crashHandled = newKind == CrashDetected && m_sosCancelled;
     const bool mustShow = newLevel == LevelCritical && !crashHandled;
     const bool canShow = newLevel >= LevelWarning && newKind != m_acknowledgedKind && !crashHandled;
-    popupVisible.setValue(mustShow || canShow);
+    setIfChanged(popupVisible, mustShow || canShow);
 }
 
 void AlertData::tickSecond()

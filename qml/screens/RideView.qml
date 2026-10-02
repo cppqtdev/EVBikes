@@ -22,8 +22,9 @@ Item {
             NumberAnimation { duration: Theme.animNormal }
         }
 
-        MapView {
-            visible: Router.centerView === Router.viewMap
+        Loader {
+            active: Router.centerView === Router.viewMap
+            sourceComponent: mapContent
         }
 
         SpeedDigits {
@@ -45,5 +46,10 @@ Item {
         RangeOdoRow {
             y: 322
         }
+    }
+
+    Component {
+        id: mapContent
+        MapView {}
     }
 }

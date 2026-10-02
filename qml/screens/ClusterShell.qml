@@ -96,12 +96,14 @@ Item {
                 height: Theme.screenHeight
                 visible: !shell.fullAlert
 
-                RideView {
-                    visible: !shell.hexStyle
+                Loader {
+                    active: !shell.hexStyle && !Router.menuOpen && !Theme.alertMode
+                    sourceComponent: classicRide
                 }
 
-                HexSpeedoView {
-                    visible: shell.hexStyle && !Router.menuOpen && !Theme.alertMode
+                Loader {
+                    active: shell.hexStyle && !Router.menuOpen && !Theme.alertMode
+                    sourceComponent: hexRide
                 }
 
         // Keep menu pages out of the initial scene. The Qt for MCUs desktop
@@ -131,6 +133,8 @@ Item {
                 Component { id: paymentPage; PaymentPage {} }
                 Component { id: customizePage; CustomizePage {} }
                 Component { id: miscPage; MiscPage {} }
+                Component { id: classicRide; RideView {} }
+                Component { id: hexRide; HexSpeedoView {} }
 
                 MenuCarousel {
                     y: 303
