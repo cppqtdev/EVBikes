@@ -13,6 +13,7 @@ void init();
 
 void postCanFrame(const evb::CanFrame &frame);
 void postCanFrameFromIsr(const evb::CanFrame &frame);
+void receiveCanFrameFromIsr(uint32_t id, const uint8_t *data, uint8_t dlc);
 
 void postPhoneBytes(const uint8_t *data, std::size_t len);
 void postPhoneBytesFromIsr(const uint8_t *data, std::size_t len);

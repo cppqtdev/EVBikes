@@ -2,7 +2,7 @@
 # Same QML and the same C++ backend; Qul headers come from qul_shim/, the C++
 # singletons are exposed through the generated bridge/QulQmlBridge.*
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Gui Quick Qml)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Quick Qml)
 qt_standard_project_setup(REQUIRES 6.5)
 
 set(EVB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -33,6 +33,8 @@ target_include_directories(evb_backend PUBLIC
 )
 target_compile_features(evb_backend PUBLIC cxx_std_17)
 set_target_properties(evb_backend PROPERTIES AUTOMOC OFF)
+target_compile_definitions(evb_backend PUBLIC EVB_QT_DESKTOP=1)
+target_link_libraries(evb_backend PUBLIC Qt6::Core)
 
 # --- QML module: ClusterBackend (generated QObject singletons) ---------------
 qt_add_library(cluster_backend STATIC)

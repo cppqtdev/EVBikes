@@ -1,11 +1,11 @@
 #include "AlertData.h"
 
 namespace {
-constexpr int kCardSeconds = 3;
-constexpr int kSosCountdownSeconds = 60;
+constexpr uint8_t kCardSeconds = 3;
+constexpr uint8_t kSosCountdownSeconds = 60;
 }
 
-void AlertData::update(int newKind, int newLevel)
+void AlertData::update(uint8_t newKind, uint8_t newLevel)
 {
     if (newKind != kind.value()) {
         m_secondsInAlert = 0;
@@ -37,14 +37,14 @@ void AlertData::tickSecond()
         return;
     ++m_secondsInAlert;
 
-    const int k = kind.value();
+    const uint8_t k = kind.value();
     const bool phased = k == CrashDetected || k == MotorOverheat || k == BatteryOverheat;
     if (phased && phase.value() == 0 && m_secondsInAlert >= kCardSeconds)
         phase.setValue(1);
 
     if (k == CrashDetected && phase.value() == 1 && !sosSent.value()) {
-        const int left = sosSecondsLeft.value() - 1;
-        sosSecondsLeft.setValue(left > 0 ? left : 0);
+        const uint8_t left = static_cast<uint8_t>(sosSecondsLeft.value() - 1);
+        sosSecondsLeft.setValue(left);
         if (left <= 0)
             sosSent.setValue(true);
     }

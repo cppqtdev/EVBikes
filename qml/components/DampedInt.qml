@@ -1,5 +1,6 @@
 import QtQuick
 import ClusterCore
+import ClusterBackend
 
 // Follows a fast-changing integer at a rate a person can read.
 //
@@ -25,17 +26,19 @@ Item {
     width: 0
     height: 0
 
-    Timer {
-        interval: damped.tickMs
-        repeat: true
-        running: true
+    function advance() {
+        var gap = damped.source - damped.value
+        if (gap === 0)
+            return
+        var step = Math.max(1, Math.round(Math.abs(gap) * damped.fraction))
+        damped.value = gap > 0 ? damped.value + step : damped.value - step
+    }
 
-        onTriggered: {
-            var gap = damped.source - damped.value
-            if (gap === 0)
-                return
-            var step = Math.max(1, Math.round(Math.abs(gap) * damped.fraction))
-            damped.value = gap > 0 ? damped.value + step : damped.value - step
+    Connections {
+        target: SystemData
+        function onUptimeMsChanged(uptimeMs: int) {
+            if (SystemData.uptimeMs % damped.tickMs < 50)
+                damped.advance()
         }
     }
 }

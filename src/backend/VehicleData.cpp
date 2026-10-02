@@ -3,7 +3,7 @@
 #include "../core/can/VehicleSignals.h"
 
 namespace {
-constexpr int kMaxPhaseCurrentAx10 = 2500;
+constexpr int32_t kMaxPhaseCurrentAx10 = 2500;
 }
 
 VehicleData::VehicleData()
@@ -22,16 +22,16 @@ VehicleData::VehicleData()
     lampsStale.setValue(true);
 }
 
-void VehicleData::applySignal(int signalId, int value)
+void VehicleData::applySignal(uint8_t signalId, int32_t value)
 {
     using evb::SignalId;
     switch (static_cast<SignalId>(signalId)) {
-    case SignalId::SpeedKmhX10: speedKmh.setValue((value + 5) / 10); break;
-    case SignalId::MotorRpm: motorRpm.setValue(value); break;
+    case SignalId::SpeedKmhX10: speedKmh.setValue(static_cast<uint16_t>((value + 5) / 10)); break;
+    case SignalId::MotorRpm: motorRpm.setValue(static_cast<uint16_t>(value)); break;
     case SignalId::PhaseCurrentAx10: {
-        int pct = value * 100 / kMaxPhaseCurrentAx10;
+        int32_t pct = value * 100 / kMaxPhaseCurrentAx10;
         pct = pct > 100 ? 100 : (pct < -100 ? -100 : pct);
-        powerPercent.setValue(pct);
+        powerPercent.setValue(static_cast<int8_t>(pct));
         break;
     }
     case SignalId::RideMode: rideMode.setValue(value); break;
@@ -39,13 +39,13 @@ void VehicleData::applySignal(int signalId, int value)
     case SignalId::ReadyToRide: readyToRide.setValue(value != 0); break;
     case SignalId::SideStandDown: sideStandDown.setValue(value != 0); break;
     case SignalId::SocPercentX10: batteryPercent.setValue((value + 5) / 10); break;
-    case SignalId::PackVoltageX10: packVoltageX10.setValue(value); break;
-    case SignalId::PackCurrentAx10: packCurrentAx10.setValue(value); break;
-    case SignalId::PackTempC: packTempC.setValue(value); break;
-    case SignalId::MotorTempC: motorTempC.setValue(value); break;
-    case SignalId::ControllerTempC: controllerTempC.setValue(value); break;
-    case SignalId::ChargingState: chargeState.setValue(value); break;
-    case SignalId::RangeKm: rangeKm.setValue(value); break;
+    case SignalId::PackVoltageX10: packVoltageX10.setValue(static_cast<uint16_t>(value)); break;
+    case SignalId::PackCurrentAx10: packCurrentAx10.setValue(static_cast<int16_t>(value)); break;
+    case SignalId::PackTempC: packTempC.setValue(static_cast<int16_t>(value)); break;
+    case SignalId::MotorTempC: motorTempC.setValue(static_cast<int16_t>(value)); break;
+    case SignalId::ControllerTempC: controllerTempC.setValue(static_cast<int16_t>(value)); break;
+    case SignalId::ChargingState: chargeState.setValue(static_cast<uint8_t>(value)); break;
+    case SignalId::RangeKm: rangeKm.setValue(static_cast<uint16_t>(value)); break;
     case SignalId::IndicatorLeft: indicatorLeft.setValue(value != 0); break;
     case SignalId::IndicatorRight: indicatorRight.setValue(value != 0); break;
     case SignalId::HighBeam: highBeam.setValue(value != 0); break;
@@ -53,13 +53,13 @@ void VehicleData::applySignal(int signalId, int value)
     case SignalId::Hazard: hazard.setValue(value != 0); break;
     case SignalId::AbsFault: absFault.setValue(value != 0); break;
     case SignalId::AbsActive: absActive.setValue(value != 0); break;
-    case SignalId::TyreFrontPsiX10: tyreFrontPsiX10.setValue(value); break;
-    case SignalId::TyreRearPsiX10: tyreRearPsiX10.setValue(value); break;
-    case SignalId::OdometerKmX10: odometerKm.setValue(value / 10); break;
-    case SignalId::TripAKmX10: tripKmX10.setValue(value); break;
-    case SignalId::FaultCode: faultCode.setValue(value); break;
+    case SignalId::TyreFrontPsiX10: tyreFrontPsiX10.setValue(static_cast<uint16_t>(value)); break;
+    case SignalId::TyreRearPsiX10: tyreRearPsiX10.setValue(static_cast<uint16_t>(value)); break;
+    case SignalId::OdometerKmX10: odometerKm.setValue(static_cast<uint32_t>(value) / 10); break;
+    case SignalId::TripAKmX10: tripKmX10.setValue(static_cast<uint32_t>(value)); break;
+    case SignalId::FaultCode: faultCode.setValue(static_cast<uint16_t>(value)); break;
     case SignalId::CrashDetected: crashDetected.setValue(value != 0); break;
-    case SignalId::AmbientTempC: ambientTempC.setValue(value); break;
+    case SignalId::AmbientTempC: ambientTempC.setValue(static_cast<int16_t>(value)); break;
     default: break;
     }
 }

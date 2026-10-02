@@ -1,6 +1,7 @@
 #include "Simulator.h"
 
 #include "Backend.h"
+#include "SystemData.h"
 #include "../core/can/CanIds.h"
 #include "../platform/PlatformIo.h"
 
@@ -8,26 +9,26 @@
 
 namespace {
 
-enum Scenario { CityEco = 0, SportRun, LowTyre, Overheat, Crash, ScenarioCount };
+enum Scenario : uint8_t { CityEco = 0, SportRun, LowTyre, Overheat, Crash, ScenarioCount };
 
-constexpr int kBootStandDownMs = 11000;
-constexpr int kBootParkedMs = 14000;
+constexpr uint32_t kBootStandDownMs = 11000;
+constexpr uint32_t kBootParkedMs = 14000;
 
 struct SimState
 {
-    int timeMs = 0;
-    int speedX10 = 0;
-    int targetSpeedX10 = 450;
-    int socX10 = 820;
-    int packTemp = 34;
-    int motorTemp = 48;
-    int rearPsiX10 = 320;
+    uint32_t timeMs = 0;
+    uint16_t speedX10 = 0;
+    uint16_t targetSpeedX10 = 450;
+    uint16_t socX10 = 820;
+    uint8_t packTemp = 34;
+    uint8_t motorTemp = 48;
+    uint16_t rearPsiX10 = 320;
     uint32_t odoX10 = 123560;
     uint32_t tripX10 = 90;
-    int navDistance = 850;
-    int navStep = 0;
-    int phoneTimerMs = 0;
-    int blinkMs = 0;
+    uint16_t navDistance = 850;
+    uint8_t navStep = 0;
+    uint16_t phoneTimerMs = 0;
+    uint16_t blinkMs = 0;
     bool blinkOn = false;
 };
 
@@ -42,16 +43,19 @@ evb::CanFrame makeFrame(uint32_t id, uint8_t dlc)
     return f;
 }
 
-void approach(int &value, int target, int step)
+template <typename T, typename U, typename V>
+void approach(T &value, U targetValue, V stepValue)
 {
-    if (value < target) value = (value + step > target) ? target : value + step;
-    else if (value > target) value = (value - step < target) ? target : value - step;
+    const T target = static_cast<T>(targetValue);
+    const T step = static_cast<T>(stepValue);
+    if (value < target) value = (target - value < step) ? target : static_cast<T>(value + step);
+    else if (value > target) value = (value - target < step) ? target : static_cast<T>(value - step);
 }
 
 struct NavStep
 {
     evb::link::Maneuver maneuver;
-    int distance;
+    uint16_t distance;
     const char *road;
 };
 
@@ -63,9 +67,9 @@ constexpr NavStep kRoute[] = {
     {evb::link::Maneuver::Left, 300, "Electronic City Phase 1"},
     {evb::link::Maneuver::Destination, 150, "Office"},
 };
-constexpr int kRouteLen = sizeof(kRoute) / sizeof(kRoute[0]);
+constexpr uint8_t kRouteLen = sizeof(kRoute) / sizeof(kRoute[0]);
 
-void sendPhoneTraffic(int scenario)
+void sendPhoneTraffic()
 {
     uint8_t frame[evb::link::kMaxFrame];
 
@@ -75,7 +79,7 @@ void sendPhoneTraffic(int scenario)
     nav.roundaboutExit = step.maneuver == evb::link::Maneuver::RoundaboutEnter ? 2 : 0;
     nav.distanceToManeuverM = static_cast<uint32_t>(g.navDistance);
     uint32_t remaining = static_cast<uint32_t>(g.navDistance);
-    for (int i = g.navStep + 1; i < kRouteLen; ++i)
+    for (uint8_t i = static_cast<uint8_t>(g.navStep + 1); i < kRouteLen; ++i)
         remaining += static_cast<uint32_t>(kRoute[i].distance);
     nav.distanceRemainingM = remaining;
     nav.etaMinutes = static_cast<uint16_t>(remaining / 400 + 1);
@@ -95,7 +99,7 @@ void sendPhoneTraffic(int scenario)
     std::size_t m = 0;
     media[m++] = 1;
     media[m++] = 60;
-    const int pos = (g.timeMs / 1000) % 233;
+    const uint16_t pos = static_cast<uint16_t>((g.timeMs / 1000) % 233);
     media[m++] = static_cast<uint8_t>(pos);
     media[m++] = static_cast<uint8_t>(pos >> 8);
     media[m++] = 233;
@@ -109,7 +113,6 @@ void sendPhoneTraffic(int scenario)
     n = evb::link::buildFrame(evb::link::MsgType::MediaState, media, m, frame, sizeof(frame));
     Backend::postPhoneBytes(frame, n);
 
-    (void)scenario;
 }
 
 // The phone owns these lists; the simulator stands in for it so the rows have
@@ -141,7 +144,7 @@ void sendListsOnce()
     for (const Row &row : kRows) {
         evb::link::ListEntry entry;
         entry.list = row.list;
-        const int which = static_cast<int>(row.list);
+        const uint8_t which = static_cast<uint8_t>(row.list);
         entry.slot = slot[which]++;
         std::strncpy(entry.title, row.title, evb::link::kMaxText);
         std::strncpy(entry.text, row.text, evb::link::kMaxText);
@@ -171,9 +174,46 @@ void sendTimeSyncOnce()
 
 Simulator::Simulator()
 {
-    running.setValue(true);
+    running.setValue(evb::platform::isSimulator());
     scenario.setValue(CityEco);
     parked.setValue(false);
+}
+
+void Simulator::start()
+{
+    if (m_started)
+        return;
+    m_started = true;
+    m_lastTickMs = evb::platform::millis();
+    m_timer.setSingleShot(false);
+    m_timer.onTimeout([this]() { onRuntimeTick(); });
+    m_timer.start(50);
+}
+
+void Simulator::onRuntimeTick()
+{
+    const uint32_t nowMs = evb::platform::millis();
+    const uint32_t elapsedMs = nowMs - m_lastTickMs;
+    m_lastTickMs = nowMs;
+    if (elapsedMs == 0)
+        return;
+
+    if (running.value())
+        step(elapsedMs);
+
+    SystemData::instance().advanceRuntime(elapsedMs);
+
+    m_pollElapsedMs += elapsedMs;
+    if (m_pollElapsedMs >= 100) {
+        m_pollElapsedMs %= 100;
+        Backend::periodic(nowMs);
+    }
+
+    m_clockElapsedMs += elapsedMs;
+    if (m_clockElapsedMs >= 1000) {
+        m_clockElapsedMs %= 1000;
+        SystemData::instance().tick();
+    }
 }
 
 void Simulator::togglePark()
@@ -183,24 +223,24 @@ void Simulator::togglePark()
 
 void Simulator::nextScenario()
 {
-    const int next = (scenario.value() + 1) % ScenarioCount;
+    const uint8_t next = static_cast<uint8_t>((scenario.value() + 1) % ScenarioCount);
     scenario.setValue(next);
     g.rearPsiX10 = 320;
     g.packTemp = 34;
     g.motorTemp = 48;
 }
 
-void Simulator::step(int elapsedMs)
+void Simulator::step(uint32_t elapsedMs)
 {
     if (!running.value())
         return;
 
-    const int sc = scenario.value();
+    const uint8_t sc = scenario.value();
     g.timeMs += elapsedMs;
     sendTimeSyncOnce();
     sendListsOnce();
 
-    const int phase = (g.timeMs / 1000) % 40;
+    const uint8_t phase = static_cast<uint8_t>((g.timeMs / 1000) % 40);
     if (sc == SportRun && !parked.value())
         g.targetSpeedX10 = phase < 25 ? 980 : 300;
     else if (sc == Crash || parked.value())
@@ -211,9 +251,9 @@ void Simulator::step(int elapsedMs)
         g.targetSpeedX10 = phase < 5 ? 0 : (phase < 30 ? 520 : 250);
     approach(g.speedX10, g.targetSpeedX10, sc == SportRun ? 12 : 6);
 
-    const int accel = g.targetSpeedX10 - g.speedX10;
-    const int currentX10 = g.speedX10 == 0 ? 0 : (accel > 0 ? 900 + accel * 8 : (accel < 0 ? -300 : 350));
-    const int rpm = g.speedX10 * 9;
+    const int32_t accel = static_cast<int32_t>(g.targetSpeedX10) - static_cast<int32_t>(g.speedX10);
+    const int16_t currentX10 = static_cast<int16_t>(g.speedX10 == 0 ? 0 : (accel > 0 ? 900 + accel * 8 : (accel < 0 ? -300 : 350)));
+    const uint16_t rpm = static_cast<uint16_t>(g.speedX10 * 9u);
 
     g.odoX10 += static_cast<uint32_t>(g.speedX10 * elapsedMs / 360000);
     g.tripX10 += static_cast<uint32_t>(g.speedX10 * elapsedMs / 360000);
@@ -281,7 +321,8 @@ void Simulator::step(int elapsedMs)
     evb::canSetBitsLE(odo.data, 32, 32, g.tripX10);
     Backend::postCanFrame(odo);
 
-    g.navDistance -= g.speedX10 * elapsedMs / 36000;
+    const uint32_t distanceStep = static_cast<uint32_t>(g.speedX10) * elapsedMs / 36000;
+    g.navDistance = distanceStep >= g.navDistance ? 0 : static_cast<uint16_t>(g.navDistance - distanceStep);
     if (g.navDistance <= 0) {
         g.navStep = (g.navStep + 1) % kRouteLen;
         g.navDistance = kRoute[g.navStep].distance;
@@ -290,6 +331,6 @@ void Simulator::step(int elapsedMs)
     g.phoneTimerMs += elapsedMs;
     if (g.phoneTimerMs >= 1000) {
         g.phoneTimerMs = 0;
-        sendPhoneTraffic(sc);
+        sendPhoneTraffic();
     }
 }

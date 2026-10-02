@@ -7,8 +7,10 @@ namespace evb::platform {
 
 void init()
 {
-    std::printf("[sim] platform init: data comes from Simulator.step()\n");
+    std::printf("[sim] platform init: CAN frames come from the C++ simulator\n");
 }
+
+bool isSimulator() { return true; }
 
 uint32_t millis()
 {
@@ -23,7 +25,7 @@ bool sendPhoneBytes(const uint8_t *data, std::size_t len)
     return true;
 }
 
-void setBacklight(int percent)
+void setBacklight(uint8_t percent)
 {
     std::printf("[sim] backlight %d%%\n", percent);
 }

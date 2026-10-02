@@ -18,7 +18,7 @@ Item {
     property bool fullAlert: crashAlert || heatAlert
     property bool hexStyle: SystemData.speedoStyle === SystemData.SpeedoHex
     property bool showBars: riding && !fullAlert && (!hexStyle || Router.menuOpen)
-    property bool selfTestDone: false
+    property bool selfTestDone: SystemData.uptimeMs >= 1500
 
     width: Theme.screenWidth
     height: Theme.screenHeight
@@ -27,12 +27,6 @@ Item {
         anchors.fill: parent
         color: Theme.black
         radius: 4
-    }
-
-    Timer {
-        interval: 1500
-        running: true
-        onTriggered: shell.selfTestDone = true
     }
 
     ShellFrame {
@@ -68,6 +62,8 @@ Item {
         redZoneTop: true
     }
 
+    // Keep the small boot pages static so Splash exists on the first frame.
+    // Dynamic loading is reserved for the larger settings pages below.
     SplashScreen {
         visible: Router.stage === Router.stageSplash
     }
@@ -93,15 +89,33 @@ Item {
             visible: shell.hexStyle && !Router.menuOpen && !Theme.alertMode
         }
 
-        ProfilePage {}
-        DigilockerPage {}
-        SeatPage {}
-        ChargingPage {}
-        BikeStatusPage {}
-        SecurityPage {}
-        PaymentPage {}
-        CustomizePage {}
-        MiscPage {}
+        // Keep menu pages out of the initial scene. The Qt for MCUs desktop
+        // platform shows its window after the first frame, and constructing
+        // every settings page before that frame makes startup unnecessarily
+        // expensive. Load only the page selected by the carousel, as in the
+        // Crossware cluster.
+        Loader {
+            active: shell.riding && Router.menuOpen
+            sourceComponent: Router.menuIndex === Router.menuProfile ? profilePage
+                           : Router.menuIndex === Router.menuDigilocker ? digilockerPage
+                           : Router.menuIndex === Router.menuSeat ? seatPage
+                           : Router.menuIndex === Router.menuCharging ? chargingPage
+                           : Router.menuIndex === Router.menuBikeStatus ? bikeStatusPage
+                           : Router.menuIndex === Router.menuSecurity ? securityPage
+                           : Router.menuIndex === Router.menuPayment ? paymentPage
+                           : Router.menuIndex === Router.menuCustomize ? customizePage
+                           : miscPage
+        }
+
+        Component { id: profilePage; ProfilePage {} }
+        Component { id: digilockerPage; DigilockerPage {} }
+        Component { id: seatPage; SeatPage {} }
+        Component { id: chargingPage; ChargingPage {} }
+        Component { id: bikeStatusPage; BikeStatusPage {} }
+        Component { id: securityPage; SecurityPage {} }
+        Component { id: paymentPage; PaymentPage {} }
+        Component { id: customizePage; CustomizePage {} }
+        Component { id: miscPage; MiscPage {} }
 
         MenuCarousel {
             y: 303

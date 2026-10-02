@@ -10,15 +10,22 @@ Item {
 
     property bool standDown: VehicleData.sideStandDown
     property bool ready: !standDown
+    property bool preRideDelayDone: check.visible && check.ready && SystemData.preRideElapsedMs >= 2500
 
     width: Theme.screenWidth
     height: Theme.screenHeight
 
-    Timer {
-        interval: 2500
-        running: check.visible && check.ready
-        onTriggered: Router.finishPreRide()
+    function updateReadyWait() {
+        SystemData.setPreRideReady(check.visible && check.ready)
     }
+
+    onVisibleChanged: updateReadyWait()
+    onReadyChanged: updateReadyWait()
+    onPreRideDelayDoneChanged: {
+        if (preRideDelayDone)
+            Router.finishPreRide()
+    }
+    Component.onCompleted: updateReadyWait()
 
     // Measured on frame_0260: the side view, 250 by 120, at x 518.
     Image {

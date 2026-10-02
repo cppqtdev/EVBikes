@@ -92,6 +92,22 @@ int main()
 
     SystemData &sys = SystemData::instance();
     CHECK(sys.locked.value());
+    sys.advanceRuntime(220u * 26u);
+    CHECK(sys.splashStep.value() == 26);
+    sys.startScan();
+    sys.advanceRuntime(1599);
+    CHECK(sys.authState.value() == SystemData::AuthScanning);
+    sys.advanceRuntime(1);
+    CHECK(sys.authState.value() == SystemData::AuthMatched);
+    CHECK(sys.authElapsedMs.value() == 0);
+    sys.advanceRuntime(1200);
+    CHECK(sys.authElapsedMs.value() == 1200);
+    sys.setPreRideReady(true);
+    sys.advanceRuntime(2499);
+    CHECK(sys.preRideElapsedMs.value() == 2499);
+    sys.advanceRuntime(1);
+    CHECK(sys.preRideElapsedMs.value() == 2500);
+    sys.setPreRideReady(false);
     // The simulator has no panel backlight, so brightness has to be drawn.
     CHECK(sys.softwareDimming.value());
     sys.setBrightnessLevel(5);
@@ -99,7 +115,7 @@ int main()
     sys.setBrightnessLevel(120);
     CHECK(sys.brightness.value() == 100);
     // Units are a display choice only: nothing stored changes with them.
-    const int odoBefore = v.odometerKm.value();
+    const uint32_t odoBefore = v.odometerKm.value();
     CHECK(!sys.useMiles.value());
     sys.toggleUnits();
     CHECK(sys.useMiles.value());

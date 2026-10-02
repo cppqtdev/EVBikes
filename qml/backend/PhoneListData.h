@@ -3,6 +3,7 @@
 #include <qul/property.h>
 #include <qul/singleton.h>
 
+#include <cstdint>
 #include <string>
 
 // The contacts and reminders the phone sends up. Three slots each, because that
@@ -30,12 +31,12 @@ struct PhoneListData : public Qul::Singleton<PhoneListData>
     Qul::Property<std::string> reminder2Text;
     Qul::Property<std::string> reminder2Initial;
 
-    Qul::Property<int> contactCount;
-    Qul::Property<int> reminderCount;
+    Qul::Property<uint8_t> contactCount;
+    Qul::Property<uint8_t> reminderCount;
 
     // list 0 = contacts, 1 = reminders. The initial is worked out here because
     // the JavaScript subset on the board has no way to take the first letter of
     // a string.
-    void setEntry(int list, int slot, const std::string &name, const std::string &text);
+    void setEntry(uint8_t list, uint8_t slot, const std::string &name, const std::string &text);
     void clear();
 };

@@ -11,7 +11,8 @@ Item {
     readonly property bool active: PhoneData.callStatus === PhoneData.Active
     readonly property string who: PhoneData.callerName !== "" ? PhoneData.callerName : qsTr("Unknown")
 
-    property int seconds: 0
+    property real startedAtMs: 0
+    readonly property int seconds: active ? Math.floor((SystemData.uptimeMs - startedAtMs) / 1000) : 0
     property real pulse: 0.0
 
     width: Theme.screenWidth
@@ -25,14 +26,7 @@ Item {
 
     onActiveChanged: {
         if (call.active)
-            call.seconds = 0
-    }
-
-    Timer {
-        interval: 1000
-        repeat: true
-        running: call.active
-        onTriggered: call.seconds = call.seconds + 1
+            call.startedAtMs = SystemData.uptimeMs
     }
 
     SequentialAnimation {

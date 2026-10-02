@@ -10,14 +10,14 @@
 // power-up or from the moment the rider zeroes that counter.
 struct TripData : public Qul::Singleton<TripData>
 {
-    Qul::Property<int> rideMinutes;
-    Qul::Property<int> socUsedPercent;
+    Qul::Property<uint16_t> rideMinutes;
+    Qul::Property<uint8_t> socUsedPercent;
 
     // Share of the moving time spent in each mode, as whole per cent summing
     // to 100 once the bike has moved at all.
-    Qul::Property<int> ecoShare;
-    Qul::Property<int> normalShare;
-    Qul::Property<int> sportShare;
+    Qul::Property<uint8_t> ecoShare;
+    Qul::Property<uint8_t> normalShare;
+    Qul::Property<uint8_t> sportShare;
 
     // False until the bike has moved, so a screen can say so rather than show
     // a row of confident zeroes.
@@ -36,6 +36,6 @@ private:
     uint32_t m_lastMs = 0;
     uint32_t m_movingMs = 0;
     uint32_t m_modeMs[3] = {0, 0, 0};
-    int m_lastTripKmX10 = 0;
-    int m_startSoc = -1;
+    uint32_t m_lastTripKmX10 = 0;
+    int16_t m_startSoc = -1;
 };

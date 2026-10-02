@@ -28,7 +28,7 @@ struct PhoneChunk
 
 void onVehicleSignal(const evb::VehicleSignal &signal, void *)
 {
-    VehicleData::instance().applySignal(static_cast<int>(signal.id), signal.value);
+    VehicleData::instance().applySignal(static_cast<uint8_t>(signal.id), signal.value);
 }
 
 evb::VehicleCanDecoder g_decoder(onVehicleSignal, nullptr);
@@ -41,10 +41,10 @@ public:
     void onNavUpdate(const evb::link::NavUpdate &n) override
     {
         NavigationData &nav = NavigationData::instance();
-        nav.maneuver.setValue(static_cast<int>(n.maneuver));
+        nav.maneuver.setValue(static_cast<uint8_t>(n.maneuver));
         nav.roundaboutExit.setValue(n.roundaboutExit);
-        nav.distanceToManeuverM.setValue(static_cast<int>(n.distanceToManeuverM));
-        nav.distanceRemainingM.setValue(static_cast<int>(n.distanceRemainingM));
+        nav.distanceToManeuverM.setValue(n.distanceToManeuverM);
+        nav.distanceRemainingM.setValue(n.distanceRemainingM);
         nav.etaMinutes.setValue(n.etaMinutes);
         nav.laneMask.setValue(n.laneMask);
         nav.recommendedLaneMask.setValue(n.recommendedLaneMask);
@@ -57,7 +57,7 @@ public:
     void onCallState(const evb::link::CallState &c) override
     {
         PhoneData &p = PhoneData::instance();
-        p.callStatus.setValue(static_cast<int>(c.status));
+        p.callStatus.setValue(static_cast<uint8_t>(c.status));
         p.callerName.setValue(std::string(c.caller));
     }
 
@@ -82,12 +82,12 @@ public:
 
     void onListEntry(const evb::link::ListEntry &e) override
     {
-        PhoneListData::instance().setEntry(static_cast<int>(e.list), e.slot, std::string(e.title), std::string(e.text));
+        PhoneListData::instance().setEntry(static_cast<uint8_t>(e.list), e.slot, std::string(e.title), std::string(e.text));
     }
 
     void onTimeSync(const evb::link::TimeSync &t) override
     {
-        SystemData::instance().setClock(static_cast<int>(t.unixSeconds), t.utcOffsetMinutes);
+        SystemData::instance().setClock(t.unixSeconds, t.utcOffsetMinutes);
     }
 
     void onPhoneStatus(const evb::link::PhoneStatus &s) override
@@ -152,7 +152,7 @@ void evaluateAlerts()
     in.crashDetected = v.crashDetected.value();
     in.faultCode = v.faultCode.value();
     const evb::AlertResult r = g_alerts.evaluate(in);
-    AlertData::instance().update(static_cast<int>(r.kind), static_cast<int>(r.level));
+    AlertData::instance().update(static_cast<uint8_t>(r.kind), static_cast<uint8_t>(r.level));
 }
 
 template <typename PostFn>
@@ -183,6 +183,7 @@ void init()
     // level the rider left it rather than whatever the driver came up at.
     SystemData &system = SystemData::instance();
     system.setBrightnessLevel(system.brightness.value());
+
 }
 
 void postCanFrame(const evb::CanFrame &frame)
@@ -192,6 +193,20 @@ void postCanFrame(const evb::CanFrame &frame)
 
 void postCanFrameFromIsr(const evb::CanFrame &frame)
 {
+    canQueue().postEventFromInterrupt(frame);
+}
+
+void receiveCanFrameFromIsr(uint32_t id, const uint8_t *data, uint8_t dlc)
+{
+    if ((!data && dlc != 0) || id > 0x1FFFFFFFu)
+        return;
+
+    evb::CanFrame frame;
+    frame.id = id;
+    frame.dlc = dlc > sizeof(frame.data) ? sizeof(frame.data) : dlc;
+    frame.timestampMs = evb::platform::millis();
+    for (uint8_t i = 0; i < frame.dlc; ++i)
+        frame.data[i] = data[i];
     canQueue().postEventFromInterrupt(frame);
 }
 

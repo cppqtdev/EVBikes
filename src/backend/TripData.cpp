@@ -33,7 +33,7 @@ void TripData::update(uint32_t nowMs)
     VehicleData &vehicle = VehicleData::instance();
 
     // The rider zeroing the bike's trip counter starts a new ride here too.
-    const int trip = vehicle.tripKmX10.value();
+    const uint32_t trip = vehicle.tripKmX10.value();
     if (trip < m_lastTripKmX10)
         reset();
     m_lastTripKmX10 = trip;
@@ -52,8 +52,8 @@ void TripData::update(uint32_t nowMs)
         m_startSoc = vehicle.batteryPercent.value();
 
     m_movingMs += step;
-    const int mode = vehicle.rideMode.value();
-    if (mode >= 0 && mode < 3)
+    const uint8_t mode = vehicle.rideMode.value();
+    if (mode < 3)
         m_modeMs[mode] += step;
 
     publish();
@@ -61,12 +61,12 @@ void TripData::update(uint32_t nowMs)
 
 void TripData::publish()
 {
-    rideMinutes.setValue(static_cast<int>(m_movingMs / 60000));
+    rideMinutes.setValue(static_cast<uint16_t>(m_movingMs / 60000));
     recorded.setValue(m_movingMs > 0);
 
     if (m_startSoc >= 0) {
-        const int used = m_startSoc - VehicleData::instance().batteryPercent.value();
-        socUsedPercent.setValue(used > 0 ? used : 0);
+        const int16_t used = static_cast<int16_t>(m_startSoc - VehicleData::instance().batteryPercent.value());
+        socUsedPercent.setValue(static_cast<uint8_t>(used > 0 ? used : 0));
     }
 
     if (m_movingMs == 0) {
@@ -78,10 +78,11 @@ void TripData::publish()
 
     // Two shares are rounded and the third takes the remainder, so the three
     // always add up to the 100 per cent the ring is drawn from.
-    const int eco = static_cast<int>((m_modeMs[0] * 100 + m_movingMs / 2) / m_movingMs);
-    const int normal = static_cast<int>((m_modeMs[1] * 100 + m_movingMs / 2) / m_movingMs);
-    const int sport = 100 - eco - normal;
+    const uint8_t eco = static_cast<uint8_t>((m_modeMs[0] * 100 + m_movingMs / 2) / m_movingMs);
+    const uint8_t normal = static_cast<uint8_t>((m_modeMs[1] * 100 + m_movingMs / 2) / m_movingMs);
+    const int16_t sportPct = static_cast<int16_t>(100 - eco - normal);
+    const uint8_t sport = static_cast<uint8_t>(sportPct < 0 ? 0 : sportPct);
     ecoShare.setValue(eco);
     normalShare.setValue(normal);
-    sportShare.setValue(sport < 0 ? 0 : sport);
+    sportShare.setValue(sport);
 }

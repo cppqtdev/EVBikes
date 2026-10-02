@@ -16,13 +16,7 @@ namespace {
 // TODO: call from the CAN RX interrupt after reading the message buffer.
 [[maybe_unused]] void onCanRxIsr(uint32_t id, uint8_t dlc, const uint8_t *payload)
 {
-    CanFrame f;
-    f.id = id;
-    f.dlc = dlc > 8 ? 8 : dlc;
-    for (uint8_t i = 0; i < f.dlc; ++i)
-        f.data[i] = payload[i];
-    f.timestampMs = millis();
-    Backend::postCanFrameFromIsr(f);
+    Backend::receiveCanFrameFromIsr(id, payload, dlc);
 }
 
 // TODO: call from the UART RX interrupt (or DMA idle-line callback) of the BLE module.
@@ -41,6 +35,8 @@ void init()
     // TODO: ambient light sensor -> SystemData::instance().nightMode
 }
 
+bool isSimulator() { return false; }
+
 uint32_t millis()
 {
     return static_cast<uint32_t>(Qul::Platform::getPlatformInstance()->currentTimestamp());
@@ -54,7 +50,7 @@ bool sendPhoneBytes(const uint8_t *data, std::size_t len)
     return false;
 }
 
-void setBacklight(int percent)
+void setBacklight(uint8_t percent)
 {
     (void)percent;
     // TODO: PWM duty cycle

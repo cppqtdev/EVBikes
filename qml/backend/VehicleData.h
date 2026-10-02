@@ -3,29 +3,31 @@
 #include <qul/property.h>
 #include <qul/singleton.h>
 
+#include <cstdint>
+
 struct VehicleData : public Qul::Singleton<VehicleData>
 {
-    enum RideMode { Eco = 0, Normal = 1, Sport = 2 };
-    enum DriveState { Park = 0, Reverse = 1, Neutral = 2, Drive = 3 };
-    enum ChargeState { NotCharging = 0, Charging = 1, ChargeComplete = 2, ChargeFault = 3 };
+    enum RideMode : uint8_t { Eco = 0, Normal = 1, Sport = 2 };
+    enum DriveState : uint8_t { Park = 0, Reverse = 1, Neutral = 2, Drive = 3 };
+    enum ChargeState : uint8_t { NotCharging = 0, Charging = 1, ChargeComplete = 2, ChargeFault = 3 };
 
-    Qul::Property<int> speedKmh;
-    Qul::Property<int> motorRpm;
-    Qul::Property<int> powerPercent;
-    Qul::Property<int> rideMode;
-    Qul::Property<int> driveState;
+    Qul::Property<uint16_t> speedKmh;
+    Qul::Property<uint16_t> motorRpm;
+    Qul::Property<int8_t> powerPercent;
+    Qul::Property<uint8_t> rideMode;
+    Qul::Property<uint8_t> driveState;
     Qul::Property<bool> readyToRide;
     Qul::Property<bool> sideStandDown;
 
-    Qul::Property<int> batteryPercent;
-    Qul::Property<int> packVoltageX10;
-    Qul::Property<int> packCurrentAx10;
-    Qul::Property<int> packTempC;
-    Qul::Property<int> motorTempC;
-    Qul::Property<int> controllerTempC;
-    Qul::Property<int> ambientTempC;
-    Qul::Property<int> chargeState;
-    Qul::Property<int> rangeKm;
+    Qul::Property<uint8_t> batteryPercent;
+    Qul::Property<uint16_t> packVoltageX10;
+    Qul::Property<int16_t> packCurrentAx10;
+    Qul::Property<int16_t> packTempC;
+    Qul::Property<int16_t> motorTempC;
+    Qul::Property<int16_t> controllerTempC;
+    Qul::Property<int16_t> ambientTempC;
+    Qul::Property<uint8_t> chargeState;
+    Qul::Property<uint16_t> rangeKm;
 
     Qul::Property<bool> indicatorLeft;
     Qul::Property<bool> indicatorRight;
@@ -35,11 +37,11 @@ struct VehicleData : public Qul::Singleton<VehicleData>
     Qul::Property<bool> absFault;
     Qul::Property<bool> absActive;
 
-    Qul::Property<int> tyreFrontPsiX10;
-    Qul::Property<int> tyreRearPsiX10;
-    Qul::Property<int> odometerKm;
-    Qul::Property<int> tripKmX10;
-    Qul::Property<int> faultCode;
+    Qul::Property<uint16_t> tyreFrontPsiX10;
+    Qul::Property<uint16_t> tyreRearPsiX10;
+    Qul::Property<uint32_t> odometerKm;
+    Qul::Property<uint32_t> tripKmX10;
+    Qul::Property<uint16_t> faultCode;
     Qul::Property<bool> crashDetected;
 
     // Set while the readings in that group are not arriving. The values above
@@ -51,5 +53,5 @@ struct VehicleData : public Qul::Singleton<VehicleData>
 
     VehicleData();
 
-    void applySignal(int signalId, int value);
+    void applySignal(uint8_t signalId, int32_t value);
 };

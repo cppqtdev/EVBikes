@@ -6,7 +6,7 @@ import ClusterBackend
 Item {
     id: hint
 
-    property bool shown: false
+    property bool shown: SystemData.menuHintVisible
     property int requestSeq: Router.menuBlockedSeq
 
     width: 340
@@ -19,14 +19,7 @@ Item {
     }
 
     onRequestSeqChanged: {
-        hint.shown = true
-        hideTimer.restart()
-    }
-
-    Timer {
-        id: hideTimer
-        interval: 2000
-        onTriggered: hint.shown = false
+        SystemData.showMenuHint()
     }
 
     Rectangle {

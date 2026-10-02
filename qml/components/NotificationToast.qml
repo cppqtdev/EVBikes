@@ -6,7 +6,7 @@ import ClusterBackend
 Item {
     id: toast
 
-    property bool shown: false
+    property bool shown: SystemData.notificationToastVisible
 
     width: 420
     height: 56
@@ -20,15 +20,8 @@ Item {
     Connections {
         target: PhoneData
         function onNotificationSeqChanged(notificationSeq: int) {
-            toast.shown = true
-            hideTimer.restart()
+            SystemData.showNotificationToast()
         }
-    }
-
-    Timer {
-        id: hideTimer
-        interval: 4000
-        onTriggered: toast.shown = false
     }
 
     Rectangle {

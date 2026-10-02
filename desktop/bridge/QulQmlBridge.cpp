@@ -25,22 +25,22 @@ AlertDataQml::AlertDataQml(QObject *parent)
     d.activeProtocol.setOnChanged([this] { emit activeProtocolChanged(); });
 }
 
-int AlertDataQml::kind() const
+quint8 AlertDataQml::kind() const
 {
     return AlertData::instance().kind.value();
 }
 
-void AlertDataQml::qmlWriteKind(int value)
+void AlertDataQml::qmlWriteKind(quint8 value)
 {
     AlertData::instance().kind.setValue(value);
 }
 
-int AlertDataQml::level() const
+quint8 AlertDataQml::level() const
 {
     return AlertData::instance().level.value();
 }
 
-void AlertDataQml::qmlWriteLevel(int value)
+void AlertDataQml::qmlWriteLevel(quint8 value)
 {
     AlertData::instance().level.setValue(value);
 }
@@ -55,22 +55,22 @@ void AlertDataQml::qmlWritePopupVisible(bool value)
     AlertData::instance().popupVisible.setValue(value);
 }
 
-int AlertDataQml::phase() const
+quint8 AlertDataQml::phase() const
 {
     return AlertData::instance().phase.value();
 }
 
-void AlertDataQml::qmlWritePhase(int value)
+void AlertDataQml::qmlWritePhase(quint8 value)
 {
     AlertData::instance().phase.setValue(value);
 }
 
-int AlertDataQml::sosSecondsLeft() const
+quint8 AlertDataQml::sosSecondsLeft() const
 {
     return AlertData::instance().sosSecondsLeft.value();
 }
 
-void AlertDataQml::qmlWriteSosSecondsLeft(int value)
+void AlertDataQml::qmlWriteSosSecondsLeft(quint8 value)
 {
     AlertData::instance().sosSecondsLeft.setValue(value);
 }
@@ -85,22 +85,22 @@ void AlertDataQml::qmlWriteSosSent(bool value)
     AlertData::instance().sosSent.setValue(value);
 }
 
-int AlertDataQml::protocolIndex() const
+quint8 AlertDataQml::protocolIndex() const
 {
     return AlertData::instance().protocolIndex.value();
 }
 
-void AlertDataQml::qmlWriteProtocolIndex(int value)
+void AlertDataQml::qmlWriteProtocolIndex(quint8 value)
 {
     AlertData::instance().protocolIndex.setValue(value);
 }
 
-int AlertDataQml::activeProtocol() const
+qint8 AlertDataQml::activeProtocol() const
 {
     return AlertData::instance().activeProtocol.value();
 }
 
-void AlertDataQml::qmlWriteActiveProtocol(int value)
+void AlertDataQml::qmlWriteActiveProtocol(qint8 value)
 {
     AlertData::instance().activeProtocol.setValue(value);
 }
@@ -110,7 +110,7 @@ void AlertDataQml::acknowledge()
     AlertData::instance().acknowledge();
 }
 
-void AlertDataQml::update(int newKind, int newLevel)
+void AlertDataQml::update(quint8 newKind, quint8 newLevel)
 {
     AlertData::instance().update(newKind, newLevel);
 }
@@ -137,7 +137,7 @@ ClusterInputQml::ClusterInputQml(QObject *parent)
     d.buttonEvent.connect([this](int button, int action) { emit buttonEvent(button, action); });
 }
 
-void ClusterInputQml::inject(int button, int action)
+void ClusterInputQml::inject(quint8 button, quint8 action)
 {
     ClusterInput::instance().inject(button, action);
 }
@@ -167,72 +167,72 @@ void NavigationDataQml::qmlWriteActive(bool value)
     NavigationData::instance().active.setValue(value);
 }
 
-int NavigationDataQml::maneuver() const
+quint8 NavigationDataQml::maneuver() const
 {
     return NavigationData::instance().maneuver.value();
 }
 
-void NavigationDataQml::qmlWriteManeuver(int value)
+void NavigationDataQml::qmlWriteManeuver(quint8 value)
 {
     NavigationData::instance().maneuver.setValue(value);
 }
 
-int NavigationDataQml::roundaboutExit() const
+quint8 NavigationDataQml::roundaboutExit() const
 {
     return NavigationData::instance().roundaboutExit.value();
 }
 
-void NavigationDataQml::qmlWriteRoundaboutExit(int value)
+void NavigationDataQml::qmlWriteRoundaboutExit(quint8 value)
 {
     NavigationData::instance().roundaboutExit.setValue(value);
 }
 
-int NavigationDataQml::distanceToManeuverM() const
+quint32 NavigationDataQml::distanceToManeuverM() const
 {
     return NavigationData::instance().distanceToManeuverM.value();
 }
 
-void NavigationDataQml::qmlWriteDistanceToManeuverM(int value)
+void NavigationDataQml::qmlWriteDistanceToManeuverM(quint32 value)
 {
     NavigationData::instance().distanceToManeuverM.setValue(value);
 }
 
-int NavigationDataQml::distanceRemainingM() const
+quint32 NavigationDataQml::distanceRemainingM() const
 {
     return NavigationData::instance().distanceRemainingM.value();
 }
 
-void NavigationDataQml::qmlWriteDistanceRemainingM(int value)
+void NavigationDataQml::qmlWriteDistanceRemainingM(quint32 value)
 {
     NavigationData::instance().distanceRemainingM.setValue(value);
 }
 
-int NavigationDataQml::etaMinutes() const
+quint16 NavigationDataQml::etaMinutes() const
 {
     return NavigationData::instance().etaMinutes.value();
 }
 
-void NavigationDataQml::qmlWriteEtaMinutes(int value)
+void NavigationDataQml::qmlWriteEtaMinutes(quint16 value)
 {
     NavigationData::instance().etaMinutes.setValue(value);
 }
 
-int NavigationDataQml::laneMask() const
+quint8 NavigationDataQml::laneMask() const
 {
     return NavigationData::instance().laneMask.value();
 }
 
-void NavigationDataQml::qmlWriteLaneMask(int value)
+void NavigationDataQml::qmlWriteLaneMask(quint8 value)
 {
     NavigationData::instance().laneMask.setValue(value);
 }
 
-int NavigationDataQml::recommendedLaneMask() const
+quint8 NavigationDataQml::recommendedLaneMask() const
 {
     return NavigationData::instance().recommendedLaneMask.value();
 }
 
-void NavigationDataQml::qmlWriteRecommendedLaneMask(int value)
+void NavigationDataQml::qmlWriteRecommendedLaneMask(quint8 value)
 {
     NavigationData::instance().recommendedLaneMask.setValue(value);
 }
@@ -283,22 +283,22 @@ void PhoneDataQml::qmlWriteConnected(bool value)
     PhoneData::instance().connected.setValue(value);
 }
 
-int PhoneDataQml::batteryPercent() const
+quint8 PhoneDataQml::batteryPercent() const
 {
     return PhoneData::instance().batteryPercent.value();
 }
 
-void PhoneDataQml::qmlWriteBatteryPercent(int value)
+void PhoneDataQml::qmlWriteBatteryPercent(quint8 value)
 {
     PhoneData::instance().batteryPercent.setValue(value);
 }
 
-int PhoneDataQml::signalBars() const
+quint8 PhoneDataQml::signalBars() const
 {
     return PhoneData::instance().signalBars.value();
 }
 
-void PhoneDataQml::qmlWriteSignalBars(int value)
+void PhoneDataQml::qmlWriteSignalBars(quint8 value)
 {
     PhoneData::instance().signalBars.setValue(value);
 }
@@ -313,12 +313,12 @@ void PhoneDataQml::qmlWriteInternet(bool value)
     PhoneData::instance().internet.setValue(value);
 }
 
-int PhoneDataQml::callStatus() const
+quint8 PhoneDataQml::callStatus() const
 {
     return PhoneData::instance().callStatus.value();
 }
 
-void PhoneDataQml::qmlWriteCallStatus(int value)
+void PhoneDataQml::qmlWriteCallStatus(quint8 value)
 {
     PhoneData::instance().callStatus.setValue(value);
 }
@@ -343,32 +343,32 @@ void PhoneDataQml::qmlWriteMediaPlaying(bool value)
     PhoneData::instance().mediaPlaying.setValue(value);
 }
 
-int PhoneDataQml::volume() const
+quint8 PhoneDataQml::volume() const
 {
     return PhoneData::instance().volume.value();
 }
 
-void PhoneDataQml::qmlWriteVolume(int value)
+void PhoneDataQml::qmlWriteVolume(quint8 value)
 {
     PhoneData::instance().volume.setValue(value);
 }
 
-int PhoneDataQml::trackPositionS() const
+quint16 PhoneDataQml::trackPositionS() const
 {
     return PhoneData::instance().trackPositionS.value();
 }
 
-void PhoneDataQml::qmlWriteTrackPositionS(int value)
+void PhoneDataQml::qmlWriteTrackPositionS(quint16 value)
 {
     PhoneData::instance().trackPositionS.setValue(value);
 }
 
-int PhoneDataQml::trackDurationS() const
+quint16 PhoneDataQml::trackDurationS() const
 {
     return PhoneData::instance().trackDurationS.value();
 }
 
-void PhoneDataQml::qmlWriteTrackDurationS(int value)
+void PhoneDataQml::qmlWriteTrackDurationS(quint16 value)
 {
     PhoneData::instance().trackDurationS.setValue(value);
 }
@@ -393,12 +393,12 @@ void PhoneDataQml::qmlWriteTrackArtist(const QString &value)
     PhoneData::instance().trackArtist.setValue(value.toStdString());
 }
 
-int PhoneDataQml::notificationSeq() const
+quint16 PhoneDataQml::notificationSeq() const
 {
     return PhoneData::instance().notificationSeq.value();
 }
 
-void PhoneDataQml::qmlWriteNotificationSeq(int value)
+void PhoneDataQml::qmlWriteNotificationSeq(quint16 value)
 {
     PhoneData::instance().notificationSeq.setValue(value);
 }
@@ -654,22 +654,22 @@ void PhoneListDataQml::qmlWriteReminder2Initial(const QString &value)
     PhoneListData::instance().reminder2Initial.setValue(value.toStdString());
 }
 
-int PhoneListDataQml::contactCount() const
+quint8 PhoneListDataQml::contactCount() const
 {
     return PhoneListData::instance().contactCount.value();
 }
 
-void PhoneListDataQml::qmlWriteContactCount(int value)
+void PhoneListDataQml::qmlWriteContactCount(quint8 value)
 {
     PhoneListData::instance().contactCount.setValue(value);
 }
 
-int PhoneListDataQml::reminderCount() const
+quint8 PhoneListDataQml::reminderCount() const
 {
     return PhoneListData::instance().reminderCount.value();
 }
 
-void PhoneListDataQml::qmlWriteReminderCount(int value)
+void PhoneListDataQml::qmlWriteReminderCount(quint8 value)
 {
     PhoneListData::instance().reminderCount.setValue(value);
 }
@@ -698,12 +698,12 @@ void SimulatorQml::qmlWriteRunning(bool value)
     Simulator::instance().running.setValue(value);
 }
 
-int SimulatorQml::scenario() const
+quint8 SimulatorQml::scenario() const
 {
     return Simulator::instance().scenario.value();
 }
 
-void SimulatorQml::qmlWriteScenario(int value)
+void SimulatorQml::qmlWriteScenario(quint8 value)
 {
     Simulator::instance().scenario.setValue(value);
 }
@@ -718,7 +718,12 @@ void SimulatorQml::qmlWriteParked(bool value)
     Simulator::instance().parked.setValue(value);
 }
 
-void SimulatorQml::step(int elapsedMs)
+void SimulatorQml::start()
+{
+    Simulator::instance().start();
+}
+
+void SimulatorQml::step(quint32 elapsedMs)
 {
     Simulator::instance().step(elapsedMs);
 }
@@ -739,6 +744,12 @@ SystemDataQml::SystemDataQml(QObject *parent)
     SystemData &d = SystemData::instance();
     d.hours.setOnChanged([this] { emit hoursChanged(); });
     d.minutes.setOnChanged([this] { emit minutesChanged(); });
+    d.uptimeMs.setOnChanged([this] { emit uptimeMsChanged(); });
+    d.splashStep.setOnChanged([this] { emit splashStepChanged(); });
+    d.authElapsedMs.setOnChanged([this] { emit authElapsedMsChanged(); });
+    d.preRideElapsedMs.setOnChanged([this] { emit preRideElapsedMsChanged(); });
+    d.menuHintVisible.setOnChanged([this] { emit menuHintVisibleChanged(); });
+    d.notificationToastVisible.setOnChanged([this] { emit notificationToastVisibleChanged(); });
     d.clockValid.setOnChanged([this] { emit clockValidChanged(); });
     d.use24Hour.setOnChanged([this] { emit use24HourChanged(); });
     d.useMiles.setOnChanged([this] { emit useMilesChanged(); });
@@ -760,24 +771,84 @@ SystemDataQml::SystemDataQml(QObject *parent)
     d.profile2Name.setOnChanged([this] { emit profile2NameChanged(); });
 }
 
-int SystemDataQml::hours() const
+quint8 SystemDataQml::hours() const
 {
     return SystemData::instance().hours.value();
 }
 
-void SystemDataQml::qmlWriteHours(int value)
+void SystemDataQml::qmlWriteHours(quint8 value)
 {
     SystemData::instance().hours.setValue(value);
 }
 
-int SystemDataQml::minutes() const
+quint8 SystemDataQml::minutes() const
 {
     return SystemData::instance().minutes.value();
 }
 
-void SystemDataQml::qmlWriteMinutes(int value)
+void SystemDataQml::qmlWriteMinutes(quint8 value)
 {
     SystemData::instance().minutes.setValue(value);
+}
+
+quint32 SystemDataQml::uptimeMs() const
+{
+    return SystemData::instance().uptimeMs.value();
+}
+
+void SystemDataQml::qmlWriteUptimeMs(quint32 value)
+{
+    SystemData::instance().uptimeMs.setValue(value);
+}
+
+quint8 SystemDataQml::splashStep() const
+{
+    return SystemData::instance().splashStep.value();
+}
+
+void SystemDataQml::qmlWriteSplashStep(quint8 value)
+{
+    SystemData::instance().splashStep.setValue(value);
+}
+
+quint16 SystemDataQml::authElapsedMs() const
+{
+    return SystemData::instance().authElapsedMs.value();
+}
+
+void SystemDataQml::qmlWriteAuthElapsedMs(quint16 value)
+{
+    SystemData::instance().authElapsedMs.setValue(value);
+}
+
+quint16 SystemDataQml::preRideElapsedMs() const
+{
+    return SystemData::instance().preRideElapsedMs.value();
+}
+
+void SystemDataQml::qmlWritePreRideElapsedMs(quint16 value)
+{
+    SystemData::instance().preRideElapsedMs.setValue(value);
+}
+
+bool SystemDataQml::menuHintVisible() const
+{
+    return SystemData::instance().menuHintVisible.value();
+}
+
+void SystemDataQml::qmlWriteMenuHintVisible(bool value)
+{
+    SystemData::instance().menuHintVisible.setValue(value);
+}
+
+bool SystemDataQml::notificationToastVisible() const
+{
+    return SystemData::instance().notificationToastVisible.value();
+}
+
+void SystemDataQml::qmlWriteNotificationToastVisible(bool value)
+{
+    SystemData::instance().notificationToastVisible.setValue(value);
 }
 
 bool SystemDataQml::clockValid() const
@@ -820,12 +891,12 @@ void SystemDataQml::qmlWriteNightMode(bool value)
     SystemData::instance().nightMode.setValue(value);
 }
 
-int SystemDataQml::brightness() const
+quint8 SystemDataQml::brightness() const
 {
     return SystemData::instance().brightness.value();
 }
 
-void SystemDataQml::qmlWriteBrightness(int value)
+void SystemDataQml::qmlWriteBrightness(quint8 value)
 {
     SystemData::instance().brightness.setValue(value);
 }
@@ -850,12 +921,12 @@ void SystemDataQml::qmlWriteLocked(bool value)
     SystemData::instance().locked.setValue(value);
 }
 
-int SystemDataQml::pinAttemptsLeft() const
+quint8 SystemDataQml::pinAttemptsLeft() const
 {
     return SystemData::instance().pinAttemptsLeft.value();
 }
 
-void SystemDataQml::qmlWritePinAttemptsLeft(int value)
+void SystemDataQml::qmlWritePinAttemptsLeft(quint8 value)
 {
     SystemData::instance().pinAttemptsLeft.setValue(value);
 }
@@ -870,32 +941,32 @@ void SystemDataQml::qmlWriteDemoMode(bool value)
     SystemData::instance().demoMode.setValue(value);
 }
 
-int SystemDataQml::authState() const
+quint8 SystemDataQml::authState() const
 {
     return SystemData::instance().authState.value();
 }
 
-void SystemDataQml::qmlWriteAuthState(int value)
+void SystemDataQml::qmlWriteAuthState(quint8 value)
 {
     SystemData::instance().authState.setValue(value);
 }
 
-int SystemDataQml::profileIndex() const
+quint8 SystemDataQml::profileIndex() const
 {
     return SystemData::instance().profileIndex.value();
 }
 
-void SystemDataQml::qmlWriteProfileIndex(int value)
+void SystemDataQml::qmlWriteProfileIndex(quint8 value)
 {
     SystemData::instance().profileIndex.setValue(value);
 }
 
-int SystemDataQml::seatLevel() const
+quint8 SystemDataQml::seatLevel() const
 {
     return SystemData::instance().seatLevel.value();
 }
 
-void SystemDataQml::qmlWriteSeatLevel(int value)
+void SystemDataQml::qmlWriteSeatLevel(quint8 value)
 {
     SystemData::instance().seatLevel.setValue(value);
 }
@@ -910,12 +981,12 @@ void SystemDataQml::qmlWriteAutoTurnOff(bool value)
     SystemData::instance().autoTurnOff.setValue(value);
 }
 
-int SystemDataQml::speedoStyle() const
+quint8 SystemDataQml::speedoStyle() const
 {
     return SystemData::instance().speedoStyle.value();
 }
 
-void SystemDataQml::qmlWriteSpeedoStyle(int value)
+void SystemDataQml::qmlWriteSpeedoStyle(quint8 value)
 {
     SystemData::instance().speedoStyle.setValue(value);
 }
@@ -930,12 +1001,12 @@ void SystemDataQml::qmlWriteAntiTheftArmed(bool value)
     SystemData::instance().antiTheftArmed.setValue(value);
 }
 
-int SystemDataQml::theftCaptures() const
+quint8 SystemDataQml::theftCaptures() const
 {
     return SystemData::instance().theftCaptures.value();
 }
 
-void SystemDataQml::qmlWriteTheftCaptures(int value)
+void SystemDataQml::qmlWriteTheftCaptures(quint8 value)
 {
     SystemData::instance().theftCaptures.setValue(value);
 }
@@ -980,12 +1051,32 @@ void SystemDataQml::poll()
     SystemData::instance().poll();
 }
 
-bool SystemDataQml::submitPin(int pin)
+void SystemDataQml::advanceRuntime(quint32 elapsedMs)
+{
+    SystemData::instance().advanceRuntime(elapsedMs);
+}
+
+void SystemDataQml::setPreRideReady(bool ready)
+{
+    SystemData::instance().setPreRideReady(ready);
+}
+
+void SystemDataQml::showMenuHint()
+{
+    SystemData::instance().showMenuHint();
+}
+
+void SystemDataQml::showNotificationToast()
+{
+    SystemData::instance().showNotificationToast();
+}
+
+bool SystemDataQml::submitPin(quint16 pin)
 {
     return SystemData::instance().submitPin(pin);
 }
 
-void SystemDataQml::setBrightnessLevel(int level)
+void SystemDataQml::setBrightnessLevel(quint8 level)
 {
     SystemData::instance().setBrightnessLevel(level);
 }
@@ -1000,12 +1091,12 @@ void SystemDataQml::toggleUnits()
     SystemData::instance().toggleUnits();
 }
 
-void SystemDataQml::setClock(int unixSeconds, int utcOffsetMinutes)
+void SystemDataQml::setClock(quint32 unixSeconds, qint16 utcOffsetMinutes)
 {
     SystemData::instance().setClock(unixSeconds, utcOffsetMinutes);
 }
 
-void SystemDataQml::selectProfile(int index)
+void SystemDataQml::selectProfile(qint16 index)
 {
     SystemData::instance().selectProfile(index);
 }
@@ -1020,7 +1111,7 @@ void SystemDataQml::completeScan()
     SystemData::instance().completeScan();
 }
 
-void SystemDataQml::setSeatLevel(int level)
+void SystemDataQml::setSeatLevel(qint8 level)
 {
     SystemData::instance().setSeatLevel(level);
 }
@@ -1047,52 +1138,52 @@ TripDataQml::TripDataQml(QObject *parent)
     d.recorded.setOnChanged([this] { emit recordedChanged(); });
 }
 
-int TripDataQml::rideMinutes() const
+quint16 TripDataQml::rideMinutes() const
 {
     return TripData::instance().rideMinutes.value();
 }
 
-void TripDataQml::qmlWriteRideMinutes(int value)
+void TripDataQml::qmlWriteRideMinutes(quint16 value)
 {
     TripData::instance().rideMinutes.setValue(value);
 }
 
-int TripDataQml::socUsedPercent() const
+quint8 TripDataQml::socUsedPercent() const
 {
     return TripData::instance().socUsedPercent.value();
 }
 
-void TripDataQml::qmlWriteSocUsedPercent(int value)
+void TripDataQml::qmlWriteSocUsedPercent(quint8 value)
 {
     TripData::instance().socUsedPercent.setValue(value);
 }
 
-int TripDataQml::ecoShare() const
+quint8 TripDataQml::ecoShare() const
 {
     return TripData::instance().ecoShare.value();
 }
 
-void TripDataQml::qmlWriteEcoShare(int value)
+void TripDataQml::qmlWriteEcoShare(quint8 value)
 {
     TripData::instance().ecoShare.setValue(value);
 }
 
-int TripDataQml::normalShare() const
+quint8 TripDataQml::normalShare() const
 {
     return TripData::instance().normalShare.value();
 }
 
-void TripDataQml::qmlWriteNormalShare(int value)
+void TripDataQml::qmlWriteNormalShare(quint8 value)
 {
     TripData::instance().normalShare.setValue(value);
 }
 
-int TripDataQml::sportShare() const
+quint8 TripDataQml::sportShare() const
 {
     return TripData::instance().sportShare.value();
 }
 
-void TripDataQml::qmlWriteSportShare(int value)
+void TripDataQml::qmlWriteSportShare(quint8 value)
 {
     TripData::instance().sportShare.setValue(value);
 }
@@ -1110,6 +1201,11 @@ void TripDataQml::qmlWriteRecorded(bool value)
 void TripDataQml::reset()
 {
     TripData::instance().reset();
+}
+
+void TripDataQml::update(quint32 nowMs)
+{
+    TripData::instance().update(nowMs);
 }
 
 VehicleDataQml::VehicleDataQml(QObject *parent)
@@ -1150,52 +1246,52 @@ VehicleDataQml::VehicleDataQml(QObject *parent)
     d.lampsStale.setOnChanged([this] { emit lampsStaleChanged(); });
 }
 
-int VehicleDataQml::speedKmh() const
+quint16 VehicleDataQml::speedKmh() const
 {
     return VehicleData::instance().speedKmh.value();
 }
 
-void VehicleDataQml::qmlWriteSpeedKmh(int value)
+void VehicleDataQml::qmlWriteSpeedKmh(quint16 value)
 {
     VehicleData::instance().speedKmh.setValue(value);
 }
 
-int VehicleDataQml::motorRpm() const
+quint16 VehicleDataQml::motorRpm() const
 {
     return VehicleData::instance().motorRpm.value();
 }
 
-void VehicleDataQml::qmlWriteMotorRpm(int value)
+void VehicleDataQml::qmlWriteMotorRpm(quint16 value)
 {
     VehicleData::instance().motorRpm.setValue(value);
 }
 
-int VehicleDataQml::powerPercent() const
+qint8 VehicleDataQml::powerPercent() const
 {
     return VehicleData::instance().powerPercent.value();
 }
 
-void VehicleDataQml::qmlWritePowerPercent(int value)
+void VehicleDataQml::qmlWritePowerPercent(qint8 value)
 {
     VehicleData::instance().powerPercent.setValue(value);
 }
 
-int VehicleDataQml::rideMode() const
+quint8 VehicleDataQml::rideMode() const
 {
     return VehicleData::instance().rideMode.value();
 }
 
-void VehicleDataQml::qmlWriteRideMode(int value)
+void VehicleDataQml::qmlWriteRideMode(quint8 value)
 {
     VehicleData::instance().rideMode.setValue(value);
 }
 
-int VehicleDataQml::driveState() const
+quint8 VehicleDataQml::driveState() const
 {
     return VehicleData::instance().driveState.value();
 }
 
-void VehicleDataQml::qmlWriteDriveState(int value)
+void VehicleDataQml::qmlWriteDriveState(quint8 value)
 {
     VehicleData::instance().driveState.setValue(value);
 }
@@ -1220,92 +1316,92 @@ void VehicleDataQml::qmlWriteSideStandDown(bool value)
     VehicleData::instance().sideStandDown.setValue(value);
 }
 
-int VehicleDataQml::batteryPercent() const
+quint8 VehicleDataQml::batteryPercent() const
 {
     return VehicleData::instance().batteryPercent.value();
 }
 
-void VehicleDataQml::qmlWriteBatteryPercent(int value)
+void VehicleDataQml::qmlWriteBatteryPercent(quint8 value)
 {
     VehicleData::instance().batteryPercent.setValue(value);
 }
 
-int VehicleDataQml::packVoltageX10() const
+quint16 VehicleDataQml::packVoltageX10() const
 {
     return VehicleData::instance().packVoltageX10.value();
 }
 
-void VehicleDataQml::qmlWritePackVoltageX10(int value)
+void VehicleDataQml::qmlWritePackVoltageX10(quint16 value)
 {
     VehicleData::instance().packVoltageX10.setValue(value);
 }
 
-int VehicleDataQml::packCurrentAx10() const
+qint16 VehicleDataQml::packCurrentAx10() const
 {
     return VehicleData::instance().packCurrentAx10.value();
 }
 
-void VehicleDataQml::qmlWritePackCurrentAx10(int value)
+void VehicleDataQml::qmlWritePackCurrentAx10(qint16 value)
 {
     VehicleData::instance().packCurrentAx10.setValue(value);
 }
 
-int VehicleDataQml::packTempC() const
+qint16 VehicleDataQml::packTempC() const
 {
     return VehicleData::instance().packTempC.value();
 }
 
-void VehicleDataQml::qmlWritePackTempC(int value)
+void VehicleDataQml::qmlWritePackTempC(qint16 value)
 {
     VehicleData::instance().packTempC.setValue(value);
 }
 
-int VehicleDataQml::motorTempC() const
+qint16 VehicleDataQml::motorTempC() const
 {
     return VehicleData::instance().motorTempC.value();
 }
 
-void VehicleDataQml::qmlWriteMotorTempC(int value)
+void VehicleDataQml::qmlWriteMotorTempC(qint16 value)
 {
     VehicleData::instance().motorTempC.setValue(value);
 }
 
-int VehicleDataQml::controllerTempC() const
+qint16 VehicleDataQml::controllerTempC() const
 {
     return VehicleData::instance().controllerTempC.value();
 }
 
-void VehicleDataQml::qmlWriteControllerTempC(int value)
+void VehicleDataQml::qmlWriteControllerTempC(qint16 value)
 {
     VehicleData::instance().controllerTempC.setValue(value);
 }
 
-int VehicleDataQml::ambientTempC() const
+qint16 VehicleDataQml::ambientTempC() const
 {
     return VehicleData::instance().ambientTempC.value();
 }
 
-void VehicleDataQml::qmlWriteAmbientTempC(int value)
+void VehicleDataQml::qmlWriteAmbientTempC(qint16 value)
 {
     VehicleData::instance().ambientTempC.setValue(value);
 }
 
-int VehicleDataQml::chargeState() const
+quint8 VehicleDataQml::chargeState() const
 {
     return VehicleData::instance().chargeState.value();
 }
 
-void VehicleDataQml::qmlWriteChargeState(int value)
+void VehicleDataQml::qmlWriteChargeState(quint8 value)
 {
     VehicleData::instance().chargeState.setValue(value);
 }
 
-int VehicleDataQml::rangeKm() const
+quint16 VehicleDataQml::rangeKm() const
 {
     return VehicleData::instance().rangeKm.value();
 }
 
-void VehicleDataQml::qmlWriteRangeKm(int value)
+void VehicleDataQml::qmlWriteRangeKm(quint16 value)
 {
     VehicleData::instance().rangeKm.setValue(value);
 }
@@ -1380,52 +1476,52 @@ void VehicleDataQml::qmlWriteAbsActive(bool value)
     VehicleData::instance().absActive.setValue(value);
 }
 
-int VehicleDataQml::tyreFrontPsiX10() const
+quint16 VehicleDataQml::tyreFrontPsiX10() const
 {
     return VehicleData::instance().tyreFrontPsiX10.value();
 }
 
-void VehicleDataQml::qmlWriteTyreFrontPsiX10(int value)
+void VehicleDataQml::qmlWriteTyreFrontPsiX10(quint16 value)
 {
     VehicleData::instance().tyreFrontPsiX10.setValue(value);
 }
 
-int VehicleDataQml::tyreRearPsiX10() const
+quint16 VehicleDataQml::tyreRearPsiX10() const
 {
     return VehicleData::instance().tyreRearPsiX10.value();
 }
 
-void VehicleDataQml::qmlWriteTyreRearPsiX10(int value)
+void VehicleDataQml::qmlWriteTyreRearPsiX10(quint16 value)
 {
     VehicleData::instance().tyreRearPsiX10.setValue(value);
 }
 
-int VehicleDataQml::odometerKm() const
+quint32 VehicleDataQml::odometerKm() const
 {
     return VehicleData::instance().odometerKm.value();
 }
 
-void VehicleDataQml::qmlWriteOdometerKm(int value)
+void VehicleDataQml::qmlWriteOdometerKm(quint32 value)
 {
     VehicleData::instance().odometerKm.setValue(value);
 }
 
-int VehicleDataQml::tripKmX10() const
+quint32 VehicleDataQml::tripKmX10() const
 {
     return VehicleData::instance().tripKmX10.value();
 }
 
-void VehicleDataQml::qmlWriteTripKmX10(int value)
+void VehicleDataQml::qmlWriteTripKmX10(quint32 value)
 {
     VehicleData::instance().tripKmX10.setValue(value);
 }
 
-int VehicleDataQml::faultCode() const
+quint16 VehicleDataQml::faultCode() const
 {
     return VehicleData::instance().faultCode.value();
 }
 
-void VehicleDataQml::qmlWriteFaultCode(int value)
+void VehicleDataQml::qmlWriteFaultCode(quint16 value)
 {
     VehicleData::instance().faultCode.setValue(value);
 }
@@ -1470,7 +1566,7 @@ void VehicleDataQml::qmlWriteLampsStale(bool value)
     VehicleData::instance().lampsStale.setValue(value);
 }
 
-void VehicleDataQml::applySignal(int signalId, int value)
+void VehicleDataQml::applySignal(quint8 signalId, qint32 value)
 {
     VehicleData::instance().applySignal(signalId, value);
 }

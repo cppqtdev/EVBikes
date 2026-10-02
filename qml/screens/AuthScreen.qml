@@ -9,28 +9,16 @@ Item {
     id: auth
 
     property int authState: SystemData.authState
-    property int dots: 0
+    property int dots: Math.floor(SystemData.authElapsedMs / 120) % 8
+    property bool matchedDelayDone: auth.authState === SystemData.AuthMatched
+                                   && SystemData.authElapsedMs >= 1200
 
     width: Theme.screenWidth
     height: Theme.screenHeight
 
-    Timer {
-        interval: 1600
-        running: auth.visible && auth.authState === SystemData.AuthScanning
-        onTriggered: SystemData.completeScan()
-    }
-
-    Timer {
-        interval: 1200
-        running: auth.visible && auth.authState === SystemData.AuthMatched
-        onTriggered: Router.finishAuth()
-    }
-
-    Timer {
-        interval: 120
-        running: auth.visible && auth.authState === SystemData.AuthScanning
-        repeat: true
-        onTriggered: auth.dots = (auth.dots + 1) % 8
+    onMatchedDelayDoneChanged: {
+        if (matchedDelayDone)
+            Router.finishAuth()
     }
 
     Item {

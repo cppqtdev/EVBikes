@@ -9,32 +9,10 @@ Rectangle {
     width: Theme.screenWidth
     height: Theme.screenHeight
     color: Theme.black
-    focus: true
-
     ClusterShell {}
 
-    Timer {
-        interval: 50
-        running: Simulator.running
-        repeat: true
-        onTriggered: Simulator.step(50)
-    }
-
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: SystemData.tick()
-    }
-
-    // Faster than the clock tick: a node that stops talking has to be noticed
-    // within a few frames, not at the next second.
-    Timer {
-        interval: 100
-        running: true
-        repeat: true
-        onTriggered: SystemData.poll()
-    }
+    // Start runtime activity only after the first QML scene has completed.
+    Component.onCompleted: Simulator.start()
 
     Connections {
         target: ClusterInput

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuickUltralite.Extras
 import ClusterCore
+import ClusterBackend
 import ClusterComponents
 
 // Boot animation: the bike front is drawn stroke by stroke, the headlight
@@ -8,18 +9,11 @@ import ClusterComponents
 Item {
     id: splash
 
-    property int step: 0
+    property int step: SystemData.splashStep
     property int strokes: 8
 
     width: Theme.screenWidth
     height: Theme.screenHeight
-
-    Timer {
-        interval: 220
-        running: splash.visible && splash.step < 40
-        repeat: true
-        onTriggered: splash.step = splash.step + 1
-    }
 
     onStepChanged: {
         if (step >= 26)

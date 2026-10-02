@@ -79,8 +79,10 @@ int main(int argc, char *argv[])
         return -1;
 
     // The board clears the screen to black; on the desktop only the frame is drawn.
-    if (QQuickItem *root = view.rootObject())
+    if (QQuickItem *root = view.rootObject()) {
         root->setProperty("color", QColor(Qt::transparent));
+        root->setFocus(true);
+    }
 
     view.installEventFilter(new WindowController(&view));
     if (QScreen *screen = view.screen())
