@@ -3,28 +3,16 @@ import ClusterCore
 import ClusterBackend
 
 // Extra warning lamps from the project CAN powertrain frame.
-Item {
-    id: warnings
-    property bool selfTest: false
-    width: Theme.screenWidth
-    height: 28
-    Text {
-        x: 550; width: 220; height: 24
-        visible: VehicleData.powertrainStale && !warnings.selfTest
-        text: qsTr("Warning data unavailable")
-        color: Theme.telltaleAmber
-        font.family: Theme.fontFamily
-        font.pixelSize: 14
-    }
+Row {
+    spacing: 2
+    height: 24
     Repeater {
         model: 16
         Telltale {
-            x: 384 + index * 32
-            y: 0
             size: 24
             readonly property bool applicable: index < 5 ? VehicleData.powertrain === VehicleData.Petrol
                 : ((index >= 6 && index <= 10) || index === 15 ? VehicleData.powertrain === VehicleData.Electric : true)
-            visible: applicable && (warnings.selfTest || (!VehicleData.powertrainStale && (VehicleData.telltaleFlags & (1 << index)) !== 0))
+            visible: applicable && !VehicleData.powertrainStale && (VehicleData.telltaleFlags & (1 << index)) !== 0
             active: visible
             activeColor: index === 1 || index === 2 || index === 8 || index === 11 ? Theme.telltaleRed
                        : (index === 13 || index === 15 ? Theme.telltaleGreen : Theme.telltaleAmber)

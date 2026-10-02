@@ -34,7 +34,8 @@ Item {
 
     readonly property int startX: 640
     readonly property int startY: 316
-    readonly property int endY: 112
+    // Keep the pin above the endpoint, below the distance label (ends at y=122).
+    readonly property int endY: 164
 
     readonly property int lateral: {
         var m = NavigationData.maneuver
@@ -90,7 +91,7 @@ Item {
                 x: map.startX + map.routeLateral
                 y: map.endY
                 control1X: map.startX
-                control1Y: map.startY - 200 * (1 - 0.55 * map.routeNearness)
+                control1Y: map.startY - 150 * (1 - 0.55 * map.routeNearness)
                 control2X: map.startX + map.routeLateral
                 control2Y: map.endY + 80
             }

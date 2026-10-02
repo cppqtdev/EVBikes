@@ -12,7 +12,7 @@ This is a desktop-verified prototype with a board resource profile, not a certif
 - Repeatable 90-second city speed cycle includes acceleration, braking, stops and restarting. Sport targets exceed 100 km/h. Demo energy consumption drives SOC/range.
 - Route distance retains fractional travel and advances through six maneuver segments. Navigation uses the existing phone transport, not an invented OEM CAN navigation mapping. The map is schematic guidance, not a GPS road map.
 - CAN controls left/right/hazard blink phase. QML no longer adds a second independent blink cycle.
-- Sixteen additional EV/ICE/common telltales; independent powertrain freshness displays “Warning data unavailable” after missing frames. Telltale applicability depends on powertrain type.
+- Sixteen additional EV/ICE/common telltales; independent powertrain freshness activates the general header warning after missing frames. Active additional telltales share the header; inactive lamps are hidden. Telltale applicability depends on powertrain type.
 - Connections page supports explicit demo-phone disconnect/re-pair while stopped, including clearing/restoring navigation and lists. Hardware Bluetooth and Wi-Fi are unavailable until a radio driver is supplied.
 - Ride-mode selection reaches the UI through simulator CAN frames. It does not directly overwrite VehicleData.
 - New simulation counters and payloads use fixed-width types. `uint64_t` is used only for distance multiplication to prevent intermediate overflow. QML `int`, API-required integers and existing signed signal containers are not blindly narrowed.

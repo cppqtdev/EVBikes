@@ -243,11 +243,6 @@ Item {
         }
     }
 
-    VehicleWarnings {
-        y: 62
-        selfTest: !shell.selfTestDone
-    }
-
     TelltaleStrip {
         id: telltales
         selfTest: !shell.selfTestDone
