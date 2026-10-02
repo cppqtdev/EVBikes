@@ -1,6 +1,7 @@
 #include "ColorizedImage.h"
 
 #include <QPainter>
+#include <QPixmap>
 
 namespace {
 
@@ -44,6 +45,15 @@ void ColorizedImage::setColor(const QColor &color)
     emit colorChanged();
 }
 
+void ColorizedImage::setFillMode(int fillMode)
+{
+    if (m_fillMode == fillMode)
+        return;
+    m_fillMode = fillMode;
+    update();
+    emit fillModeChanged();
+}
+
 void ColorizedImage::rebuildTinted()
 {
     if (m_original.isNull()) {
@@ -65,6 +75,51 @@ void ColorizedImage::paint(QPainter *painter)
 {
     if (m_tinted.isNull())
         return;
-    // Qt Quick Ultralite draws images at their own size, so the preview does too.
-    painter->drawImage(QPointF(0, 0), m_tinted);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, smooth());
+
+    // Qt Quick Ultralite draws images at their own size, so the preview does too:
+    // that is what the implicit size is for, and fillMode only comes into it once
+    // the QML gives the item a size of its own.
+    const QRectF box(0, 0, width(), height());
+
+    switch (m_fillMode) {
+    case Pad:
+        painter->drawImage(QPointF(0, 0), m_tinted);
+        break;
+    case Tile:
+        painter->drawTiledPixmap(box, QPixmap::fromImage(m_tinted));
+        break;
+    case TileHorizontally:
+        painter->drawTiledPixmap(
+            box, QPixmap::fromImage(m_tinted.scaledToHeight(qRound(box.height()),
+                                                           Qt::SmoothTransformation)));
+        break;
+    case TileVertically:
+        painter->drawTiledPixmap(
+            box, QPixmap::fromImage(m_tinted.scaledToWidth(qRound(box.width()),
+                                                          Qt::SmoothTransformation)));
+        break;
+    case PreserveAspectFit:
+    case PreserveAspectCrop: {
+        QSizeF art(m_tinted.size());
+        art.scale(box.size(), m_fillMode == PreserveAspectFit ? Qt::KeepAspectRatio
+                                                              : Qt::KeepAspectRatioByExpanding);
+        const QRectF at(QPointF((box.width() - art.width()) / 2,
+                                (box.height() - art.height()) / 2),
+                        art);
+        if (m_fillMode == PreserveAspectFit) {
+            painter->drawImage(at, m_tinted);
+        } else {
+            painter->save();
+            painter->setClipRect(box);
+            painter->drawImage(at, m_tinted);
+            painter->restore();
+        }
+        break;
+    }
+    case Stretch:
+    default:
+        painter->drawImage(box, m_tinted);
+        break;
+    }
 }
