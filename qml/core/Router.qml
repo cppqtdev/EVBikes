@@ -47,7 +47,7 @@ QtObject {
     property int menuIndex: 1
     onMenuIndexChanged: console.log("[route] menu=" + menuIndex + " " + menuTitle(menuIndex))
     onMenuOpenChanged: console.log("[route] menuOpen=" + menuOpen)
-    property int menuCount: 10
+    property int menuCount: 11
     property int subIndex: 0
     property int subLevel: 0
 
@@ -61,6 +61,7 @@ QtObject {
     property int menuCustomize: 7
     property int menuMisc: 8
     property int menuConnectivity: 9
+    property int menuVitals: 10
 
     property bool menuAllowed: VehicleData.speedKmh <= Theme.menuLockSpeedKmh
     property bool paymentDone: false
@@ -82,6 +83,7 @@ QtObject {
         if (index === menuCustomize) return qsTr("Customize")
         if (index === menuConnectivity) return qsTr("Connections")
         if (index === menuMisc) return qsTr("Misc.")
+        if (index === menuVitals) return qsTr("Vitals")
         return ""
     }
 

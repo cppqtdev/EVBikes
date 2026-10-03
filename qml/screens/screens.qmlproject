@@ -138,7 +138,8 @@ Project {
             "qml/screens/SplashScreen.qml",
             "qml/screens/StatCard.qml",
             "qml/screens/TripStat.qml",
-            "qml/screens/TyreAlertOverlay.qml"
+            "qml/screens/TyreAlertOverlay.qml",
+            "qml/screens/VitalsPage.qml"
         ]
     }
 }

@@ -68,9 +68,9 @@ Item {
     }
 
     Repeater {
-        model: 10
+        model: 11
         Rectangle {
-            x: 583 + index * 13
+            x: 577 + index * 13
             y: 44
             width: 5
             height: 5

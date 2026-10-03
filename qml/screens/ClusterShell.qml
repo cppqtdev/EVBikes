@@ -151,10 +151,18 @@ Item {
                     active: Router.menuOpen && Router.menuIndex === Router.menuConnectivity
                     sourceComponent: connectivityPage
                 }
+                Loader {
+                    active: Router.menuOpen && Router.menuIndex === Router.menuVitals
+                    sourceComponent: vitalsPage
+                }
 
                 Component {
                     id: profilePage
                     ProfilePage {}
+                }
+                Component {
+                    id: vitalsPage
+                    VitalsPage {}
                 }
                 Component {
                     id: digilockerPage

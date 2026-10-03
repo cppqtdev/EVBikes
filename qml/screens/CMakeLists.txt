@@ -33,4 +33,5 @@ qt_add_qml_module(cluster_screens
         StatCard.qml
         TripStat.qml
         TyreAlertOverlay.qml
+        VitalsPage.qml
 )
