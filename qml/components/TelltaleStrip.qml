@@ -4,18 +4,28 @@ import ClusterBackend
 
 // Main lamps remain visible in their disabled colour. Extra fault lamps
 // appear on demand. A shared square box and gap keep both groups consistent.
+//
+//  The two groups sit on their own rows. The top row is what a rider sees on
+//  every ride, so it holds its place whether the lamp is lit or not. The row
+//  under it is for faults, which should read as an event rather than as part
+//  of the furniture, so it is empty most of the time and centres whatever is
+//  actually on.
 Item {
     id: strip
 
     property bool selfTest: false
     readonly property int iconSize: 32
-    readonly property int iconGap: 2
+    //  Two pixels ran the lamps together into one band. This is the air that
+    //  lets each of them be read as its own thing.
+    readonly property int iconGap: 14
+    readonly property int headerY: 12
+    readonly property int faultY: 52
 
     width: Theme.screenWidth
-    height: 64
+    height: faultY + iconSize
 
     Telltale {
-        x: 422; y: 20
+        x: 422; y: strip.headerY
         size: strip.iconSize
         source: "qrc:/assets/icons/32/tt_left.png"
         blinking: false
@@ -23,7 +33,7 @@ Item {
         activeColor: Theme.telltaleGreen
     }
     Telltale {
-        x: 866; y: 20
+        x: 866; y: strip.headerY
         size: strip.iconSize
         source: "qrc:/assets/icons/32/tt_right.png"
         blinking: false
@@ -33,7 +43,7 @@ Item {
     Row {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 16
-        y: 20
+        y: strip.headerY
         spacing: strip.iconGap
         Telltale {
             size: strip.iconSize
@@ -67,6 +77,13 @@ Item {
                 || AlertData.kind === AlertData.BatteryOverheat
             activeColor: VehicleData.batteryPercent <= 5 || AlertData.kind === AlertData.BatteryOverheat ? Theme.telltaleRed : Theme.telltaleAmber
         }
-        VehicleWarnings { iconSize: strip.iconSize; spacing: strip.iconGap }
+    }
+
+    VehicleWarnings {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: 16
+        y: strip.faultY
+        iconSize: strip.iconSize
+        spacing: strip.iconGap
     }
 }

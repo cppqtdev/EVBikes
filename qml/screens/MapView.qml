@@ -121,7 +121,9 @@ Item {
         }
     }
 
+    //  Pushed clear of the fault row that sits under the header.
     Item {
+        y: 38
         width: Theme.screenWidth
         height: 120
         visible: NavigationData.active
@@ -234,7 +236,7 @@ Item {
 
         Text {
             x: 0
-            y: 72
+            y: 110
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: PhoneData.connected ? qsTr("Start a route in the app") : qsTr("Connect your phone to navigate")

@@ -120,7 +120,7 @@ Item {
 
     ColorizedImage {
         x: 380
-        y: 76
+        y: 84
         source: "qrc:/assets/cluster/hex_backdrop.png"
         color: "#050506"
         opacity: 0.5
@@ -135,6 +135,10 @@ Item {
     }
 
     HexGauge {
+        //  Down far enough to clear the fault row under the header. The
+        //  generated file carries 70; this is the only place that knows the
+        //  row is there, so the offset belongs here rather than in the art.
+        y: 78
         speed: hex.speed
         stale: VehicleData.driveStale
         miles: SystemData.useMiles
@@ -171,9 +175,10 @@ Item {
         font.pixelSize: 14
     }
 
-    // Compact guidance stays above the route and clear of the gauge labels.
+    // Compact guidance stays above the route and clear of the gauge labels,
+    // and now below the fault row as well.
     Rectangle {
-        x: 866; y: 64; width: 260; height: 66
+        x: 866; y: 102; width: 260; height: 66
         radius: 6
         color: Theme.surfaceSunken
         visible: NavigationData.active
@@ -201,7 +206,7 @@ Item {
         }
     }
     Text {
-        x: 866; y: 80; width: 260; height: 48
+        x: 866; y: 118; width: 260; height: 48
         visible: !NavigationData.active
         text: PhoneData.connected ? qsTr("Start a route in the app") : qsTr("Connect phone for navigation")
         wrapMode: Text.WordWrap
