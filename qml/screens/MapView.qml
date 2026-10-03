@@ -34,12 +34,13 @@ Item {
 
     readonly property int startX: 640
     readonly property int startY: 316
-    //  How far the guidance block is pushed down to clear the fault row under
-    //  the header. The route has to know, because its endpoint and pin sit
-    //  directly beneath that block.
-    readonly property int guidanceY: 38
-    // Keep the pin above the endpoint, below the distance label (ends at y=160).
-    readonly property int endY: 202
+    //  Where the top of the road name lands. The guidance and the three map
+    //  buttons read as one line at this height, tucked under the clock. The
+    //  fault row does not reach either of them: it is centred and stops well
+    //  short of this side of the screen.
+    readonly property int guidanceTop: 58
+    // Keep the pin above the endpoint, below the distance label (ends at y=113).
+    readonly property int endY: 164
 
     readonly property int lateral: {
         var m = NavigationData.maneuver
@@ -125,12 +126,12 @@ Item {
         }
     }
 
-    //  Pushed clear of the fault row that sits under the header, and over to
-    //  the right of the route line now that the map buttons have left this
-    //  corner for the space above the trip counter.
+    //  Over on the right, level with the map buttons and clear of the route
+    //  line that runs up the middle. The children of this box start 66 down
+    //  inside it, which is what the offset below takes off.
     Item {
-        x: 60
-        y: map.guidanceY
+        x: 200
+        y: map.guidanceTop - 66
         width: Theme.screenWidth
         height: 120
         visible: NavigationData.active
@@ -220,7 +221,7 @@ Item {
 
         Item {
             x: 964 + index * 43
-            y: 92
+            y: map.guidanceTop
             width: 30
             height: 30
             visible: NavigationData.active
