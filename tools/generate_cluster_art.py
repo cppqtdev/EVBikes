@@ -678,6 +678,59 @@ def make_alert_cards():
     print("alert card offsets", offsets)
 
 
+#  The road is drawn as moving by cycling a few pictures of it rather than by
+#  shifting one: a perspective grid cannot be scrolled, because the rows have
+#  to spread apart as they come towards the rider while the converging lines
+#  stay where they are.
+#
+#  The loop is exact. Rows sit at v = (r + phase) / ROWS, so at phase 1 the
+#  set of rows is the set at phase 0 moved on by one, which is the same
+#  picture. That only holds with the ground flat -- the hills in make_terrain
+#  have a period of their own and would not come back round with the rows --
+#  so the moving version has none, and the still one keeps them.
+TERRAIN_FRAMES = 4
+
+
+def make_terrain_frames():
+    w, h = 660, 270
+    horizon, cx = 12, w / 2
+    rows, cols = 38, 50
+
+    def project(u, v):
+        v = min(v, 1.0)
+        depth = 0.12 + v * 1.6
+        return (round((cx + u * w * 0.9 / depth) * 2),
+                round((horizon + 40 + (h - horizon - 40) * max(0.0, 1 - v) ** 1.6) * 2))
+
+    fade = Image.new("L", (w, h), 0)
+    fd = ImageDraw.Draw(fade)
+    for y in range(h):
+        fd.line([(0, y), (w, y)], fill=int(255 * min(1, y / 60)))
+    side = Image.new("L", (w, h), 0)
+    sd = ImageDraw.Draw(side)
+    for x in range(w):
+        sd.line([(x, 0), (x, h)], fill=int(255 * min(1, min(x, w - 1 - x) / 90)))
+    veil = ImageChops.multiply(fade, side)
+
+    for k in range(TERRAIN_FRAMES):
+        phase = k / TERRAIN_FRAMES
+        img = Image.new("RGBA", (w * 2, h * 2), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        for r in range(rows + 2):
+            v = (r + phase) / rows
+            if v > 1.0:
+                continue
+            d.line([project(-1.4 + 2.8 * c / cols, v) for c in range(cols + 1)],
+                   fill=(255, 255, 255, int(40 + 150 * (1 - v))), width=2)
+        for c in range(cols + 1):
+            u = -1.4 + 2.8 * c / cols
+            d.line([project(u, r / rows) for r in range(rows + 1)],
+                   fill=(255, 255, 255, 110), width=2)
+        img = img.resize((w, h), Image.LANCZOS)
+        img.putalpha(ImageChops.multiply(img.getchannel("A"), veil))
+        save(img, f"terrain_move{k}")
+
+
 def make_terrain():
     w, h = 660, 270
     img = Image.new("RGBA", (w * 2, h * 2), (0, 0, 0, 0))
@@ -894,6 +947,7 @@ def main():
     make_card_shapes()
     make_alert_cards()
     make_terrain()
+    make_terrain_frames()
     make_routes()
     make_hex_map()
     make_cursor()

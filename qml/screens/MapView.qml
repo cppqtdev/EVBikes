@@ -12,10 +12,31 @@ Item {
     width: Theme.screenWidth
     height: Theme.screenHeight
 
+    //  The road moves. Four pictures of the grid, each one row further on, so
+    //  the rows sweep down and spread while the converging lines hold still.
+    //
+    //  Stepped by the bike, not by a timer: at a standstill the road should
+    //  stand still too. The counter takes the speed on every runtime tick and
+    //  advances a frame each time it has gathered enough, which makes the
+    //  flow follow the speed without anything here knowing the tick rate.
+    property int roadFrame: 0
+    property int roadCarry: 0
+
+    Connections {
+        target: SystemData
+        function onUptimeMsChanged(uptimeMs: int) {
+            map.roadCarry = map.roadCarry + VehicleData.speedKmh
+            if (map.roadCarry >= 250) {
+                map.roadCarry = map.roadCarry - 250
+                map.roadFrame = (map.roadFrame + 1) % 4
+            }
+        }
+    }
+
     ColorizedImage {
         x: 310
         y: 55
-        source: "qrc:/assets/cluster/terrain.png"
+        source: Format.terrainFrame(map.roadFrame)
         color: "#4FD9B2"
         opacity: 0.6
     }
