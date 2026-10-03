@@ -186,7 +186,8 @@ Item {
         x: 836; y: 92; width: 260; height: 66
         visible: NavigationData.active
         Text {
-            x: 14; y: 5; width: 232; height: 24
+            x: 14; y: 5; width: 164; height: 24
+            verticalAlignment: Text.AlignVCenter
             text: NavigationData.roadName
             elide: Text.ElideRight
             color: Theme.textPrimary
@@ -199,14 +200,15 @@ Item {
             color: Theme.teal
             fillMode: Image.PreserveAspectFit
         }
-        //  The controls share the distance line. Inside the guidance, so the
-        //  two travel together and cannot drift apart by a stray offset.
+        //  The controls sit on the road name's line, not the distance's.
+        //  Inside the guidance, so the two travel together and cannot drift
+        //  apart by a stray offset.
         MapButtons {
-            x: 140; y: 31
+            x: 194; y: 2
         }
 
         Text {
-            x: 50; y: 31; width: 76; height: 30
+            x: 50; y: 31; width: 140; height: 30
             verticalAlignment: Text.AlignVCenter
             text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
                   + Format.distanceUnit(NavigationData.distanceToManeuverM)
