@@ -55,3 +55,19 @@ cmake --build build/Qt_for_MCUs_2_12_Desktop_32bpp_GCC_Release --target EVBikes-
 After regenerating original artwork, rerun trimming and project synchronization. Distribution executable: `build/Qt_for_MCUs_2_12_Desktop_32bpp_GCC_Release/package/EVBikes`.
 
 References: [Qt performance logging](https://doc.qt.io/QtForMCUs/qtul-performance-logging.html), [QulPerf](https://doc.qt.io/QtForMCUs/qml-qtquickultralite-extras-qulperf.html), [TRAVEO layer/VRAM guide](https://doc.qt.io/QtForMCUs/qtul-t2g-layer-vram-guide.html). Profiling support depends on the platform and library build.
+
+## Debug size update — 3 October 2026
+
+The latest UI changes were rebuilt without changing their layout or simulator logic.
+Linux GNU Debug builds now enable `EVB_SEPARATE_DEBUG_SYMBOLS` by default:
+
+- Debug executable: 40,450,696 → 7,098,656 bytes (38.58 → 6.77 MiB).
+- Full debug information: compressed companion `EVBikes.debug`, 15,975,280 bytes (15.24 MiB).
+- Combined executable and companion: 22.01 MiB. Object files and static libraries still retain their own debugging information; this does not shrink the entire build directory.
+- Latest Release executable: 5,036,736 bytes (4.80 MiB).
+
+The companion is refreshed after each Debug link. Keep it beside `EVBikes` for full debugging; GDB automatically finds it through the executable's CRC-checked `.gnu_debuglink`. GDB source-line lookup for `SystemData::tick` and full `SystemData` type inspection were verified after separation. Compiler optimization and runtime behavior are unchanged. This reduces disk size, not runtime RAM.
+
+Use `-DEVB_SEPARATE_DEBUG_SYMBOLS=OFF` and rebuild to retain symbols inside the executable again. If a companion is manually deleted, relink/rebuild the executable to regenerate it.
+
+Latest stripped Release package: 3,907,928 bytes (3.73 MiB). A 25-second Release smoke run reached the hex cluster; speed/RPM and navigation distance continued updating. Captured renderer metrics: 60.6 FPS, sampled minimum 58.8, mean 59.9, repaint 0.8%. This brief run does not cover every page or establish long-duration stability.

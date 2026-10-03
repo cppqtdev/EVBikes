@@ -94,6 +94,23 @@ endif()
 
 app_target_setup_os(EVBikes)
 
+# Keep full debugging information beside the executable. GDB discovers it
+# through .gnu_debuglink, so source stepping and variable inspection still work.
+option(EVB_SEPARATE_DEBUG_SYMBOLS "Store Linux GNU Debug symbols in a compressed sidecar" ON)
+if(EVB_SEPARATE_DEBUG_SYMBOLS AND CMAKE_SYSTEM_NAME STREQUAL "Linux"
+   AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_OBJCOPY)
+    set_property(TARGET EVBikes APPEND PROPERTY LINK_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/SeparateDebugSymbols.cmake)
+    add_custom_command(TARGET EVBikes POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            "-DCONFIG=$<CONFIG>"
+            "-DEXECUTABLE=$<TARGET_FILE:EVBikes>"
+            "-DOBJCOPY=${CMAKE_OBJCOPY}"
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/SeparateDebugSymbols.cmake
+        VERBATIM
+        COMMENT "Keep Debug symbols in a compressed companion file")
+endif()
+
 # Strip only a distribution copy. Keep the linked executable for debugging.
 if(CMAKE_STRIP AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_custom_target(EVBikes-package
