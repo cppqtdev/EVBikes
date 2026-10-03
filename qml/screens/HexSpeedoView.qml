@@ -111,15 +111,6 @@ Item {
         color: Theme.white
     }
 
-    //  Under the guidance rather than beside it. On this layout the clock
-    //  takes the width across from it and the route fills the rest, so there
-    //  is no room for a row; there is room below.
-    MapButtons {
-        x: 964
-        y: 166
-        visible: NavigationData.active
-    }
-
     ColorizedImage {
         x: 976
         y: 278
@@ -208,8 +199,14 @@ Item {
             color: Theme.teal
             fillMode: Image.PreserveAspectFit
         }
+        //  The controls share the distance line. Inside the guidance, so the
+        //  two travel together and cannot drift apart by a stray offset.
+        MapButtons {
+            x: 156; y: 31
+        }
+
         Text {
-            x: 50; y: 31; width: 196; height: 30
+            x: 50; y: 31; width: 90; height: 30
             text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
                   + Format.distanceUnit(NavigationData.distanceToManeuverM)
             color: Theme.textPrimary
