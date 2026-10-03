@@ -219,35 +219,13 @@ Item {
 
     }
 
-    //  The map controls sit over the trip counter rather than beside the road
-    //  name. They belong to the map, not to the guidance, and crowding them
-    //  against it left the right half of the screen empty while that corner
-    //  had three things competing in it.
-    Repeater {
-        model: 3
-
-        Item {
-            x: 964 + index * 43
-            y: map.buttonsY
-            width: 30
-            height: 30
-            visible: NavigationData.active
-
-            Rectangle {
-                anchors.fill: parent
-                radius: 15
-                color: "#2E2E2E"
-                opacity: 0.8
-            }
-
-            Icon {
-                anchors.centerIn: parent
-                size: 18
-                source: index === 0 ? "qrc:/assets/icons/18/mic.png"
-                      : (index === 1 ? "qrc:/assets/icons/18/target.png" : "qrc:/assets/icons/18/layers.png")
-                color: "#C3C8CA"
-            }
-        }
+    //  The map controls, level with the road name so the corner reads as one
+    //  row. They are their own component because the hexagon layout carries
+    //  them too.
+    MapButtons {
+        x: 964
+        y: map.buttonsY
+        visible: NavigationData.active
     }
 
     Item {

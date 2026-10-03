@@ -111,6 +111,15 @@ Item {
         color: Theme.white
     }
 
+    //  Under the guidance rather than beside it. On this layout the clock
+    //  takes the width across from it and the route fills the rest, so there
+    //  is no room for a row; there is room below.
+    MapButtons {
+        x: 964
+        y: 166
+        visible: NavigationData.active
+    }
+
     ColorizedImage {
         x: 976
         y: 278
@@ -175,12 +184,15 @@ Item {
         font.pixelSize: 14
     }
 
-    // Compact guidance stays above the route and clear of the gauge labels.
-    // No card behind it: the fault row is centred and never reaches this far
-    // right, so there was nothing for a background to separate it from, and
-    // without one the text can sit back up where it reads against the sky.
+    // Compact guidance, no card behind it: without one the text reads against
+    // the terrain instead of sitting on a slab.
+    //
+    // Below the fault row, not beside it. I had it at 68 on the grounds that
+    // the row never reaches this far right, which was wrong -- it is centred
+    // and with every lamp lit it runs to x 902, and this starts at 866. The
+    // row ends at y 84 whatever is lit, so 92 clears it for good.
     Item {
-        x: 866; y: 68; width: 260; height: 66
+        x: 866; y: 92; width: 260; height: 66
         visible: NavigationData.active
         Text {
             x: 14; y: 5; width: 232; height: 24
@@ -206,7 +218,7 @@ Item {
         }
     }
     Text {
-        x: 866; y: 84; width: 260; height: 48
+        x: 866; y: 108; width: 260; height: 48
         visible: !NavigationData.active
         text: PhoneData.connected ? qsTr("Start a route in the app") : qsTr("Connect phone for navigation")
         wrapMode: Text.WordWrap

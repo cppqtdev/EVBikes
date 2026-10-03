@@ -21,6 +21,7 @@ qt_add_qml_module(cluster_components
         HexGauge.qml
         HexGaugeFill.qml
         Icon.qml
+        MapButtons.qml
         MenuCarousel.qml
         MenuLockHint.qml
         MenuRow.qml
