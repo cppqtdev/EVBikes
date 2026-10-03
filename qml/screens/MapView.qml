@@ -34,8 +34,12 @@ Item {
 
     readonly property int startX: 640
     readonly property int startY: 316
-    // Keep the pin above the endpoint, below the distance label (ends at y=122).
-    readonly property int endY: 164
+    //  How far the guidance block is pushed down to clear the fault row under
+    //  the header. The route has to know, because its endpoint and pin sit
+    //  directly beneath that block.
+    readonly property int guidanceY: 38
+    // Keep the pin above the endpoint, below the distance label (ends at y=160).
+    readonly property int endY: 202
 
     readonly property int lateral: {
         var m = NavigationData.maneuver
@@ -123,7 +127,7 @@ Item {
 
     //  Pushed clear of the fault row that sits under the header.
     Item {
-        y: 38
+        y: map.guidanceY
         width: Theme.screenWidth
         height: 120
         visible: NavigationData.active
