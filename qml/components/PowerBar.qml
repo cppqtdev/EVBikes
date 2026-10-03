@@ -18,53 +18,59 @@ Item {
     width: 1280
     height: 480
 
+    function segColor(fraction: real) : color {
+        return Qt.rgba(lowColor.r + (highColor.r - lowColor.r) * fraction,
+                       lowColor.g + (highColor.g - lowColor.g) * fraction,
+                       lowColor.b + (highColor.b - lowColor.b) * fraction, 1)
+    }
+
     ColorizedImage {
         x: 297
         y: 383
         source: "qrc:/assets/cluster/seg_l0.png"
-        color: bar.litCount > 0 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 0.00, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 0.00, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 0.00, 1) : bar.offColor
+        color: bar.litCount > 0 ? bar.segColor(0.00) : bar.offColor
     }
 
     ColorizedImage {
         x: 254
         y: 361
         source: "qrc:/assets/cluster/seg_l1.png"
-        color: bar.litCount > 1 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 0.17, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 0.17, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 0.17, 1) : bar.offColor
+        color: bar.litCount > 1 ? bar.segColor(0.17) : bar.offColor
     }
 
     ColorizedImage {
         x: 214
         y: 339
         source: "qrc:/assets/cluster/seg_l2.png"
-        color: bar.litCount > 2 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 0.33, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 0.33, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 0.33, 1) : bar.offColor
+        color: bar.litCount > 2 ? bar.segColor(0.33) : bar.offColor
     }
 
     ColorizedImage {
         x: 175
         y: 307
         source: "qrc:/assets/cluster/seg_l3.png"
-        color: bar.litCount > 3 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 0.50, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 0.50, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 0.50, 1) : bar.offColor
+        color: bar.litCount > 3 ? bar.segColor(0.50) : bar.offColor
     }
 
     ColorizedImage {
         x: 157
         y: 253
         source: "qrc:/assets/cluster/seg_l4.png"
-        color: bar.litCount > 4 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 0.67, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 0.67, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 0.67, 1) : bar.offColor
+        color: bar.litCount > 4 ? bar.segColor(0.67) : bar.offColor
     }
 
     ColorizedImage {
         x: 139
         y: 200
         source: "qrc:/assets/cluster/seg_l5.png"
-        color: bar.litCount > 5 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 0.83, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 0.83, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 0.83, 1) : bar.offColor
+        color: bar.litCount > 5 ? bar.segColor(0.83) : bar.offColor
     }
 
     ColorizedImage {
         x: 123
         y: 148
         source: "qrc:/assets/cluster/seg_l6.png"
-        color: bar.litCount > 6 ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * 1.00, bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * 1.00, bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * 1.00, 1) : bar.offColor
+        color: bar.litCount > 6 ? bar.segColor(1.00) : bar.offColor
     }
 
     ColorizedImage {

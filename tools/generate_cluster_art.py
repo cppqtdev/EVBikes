@@ -516,6 +516,12 @@ def write_bar_qml(name, geo, side, comment_label):
         "    width: 1280",
         "    height: 480",
         "",
+        "    function segColor(fraction: real) : color {",
+        "        return Qt.rgba(lowColor.r + (highColor.r - lowColor.r) * fraction,",
+        "                       lowColor.g + (highColor.g - lowColor.g) * fraction,",
+        "                       lowColor.b + (highColor.b - lowColor.b) * fraction, 1)",
+        "    }",
+        "",
     ]
     for k, (x, y, w, h, cx, cy) in enumerate(geo):
         t = k / float(top - 1)
@@ -528,9 +534,7 @@ def write_bar_qml(name, geo, side, comment_label):
         if k == top:
             lines.append(f"        color: bar.redZoneTop ? Theme.segRedZone : (bar.litCount >= {BAR_SEGMENTS} ? bar.topColor : bar.offColor)")
         else:
-            lines.append(f"        color: bar.litCount > {k} ? Qt.rgba(bar.lowColor.r + (bar.highColor.r - bar.lowColor.r) * {t:.2f}, "
-                         f"bar.lowColor.g + (bar.highColor.g - bar.lowColor.g) * {t:.2f}, "
-                         f"bar.lowColor.b + (bar.highColor.b - bar.lowColor.b) * {t:.2f}, 1) : bar.offColor")
+            lines.append(f"        color: bar.litCount > {k} ? bar.segColor({t:.2f}) : bar.offColor")
         lines += ["    }", ""]
     for k, text in labels.items():
         x, y, w, h, cx, cy = geo[k]
@@ -549,7 +553,7 @@ def write_bar_qml(name, geo, side, comment_label):
         lines += [
             "        font.family: Theme.fontFamily",
             "        font.pixelSize: 12",
-            "        font.weight: Font.DemiBold",
+            "        font.bold: true",
             "        font.italic: true",
             "    }",
             "",
