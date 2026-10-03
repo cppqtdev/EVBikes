@@ -159,8 +159,10 @@ Item {
             elide: Text.ElideRight
             text: NavigationData.roadName
             color: Theme.textPrimary
-            font.family: Theme.fontFamily
-            font.pixelSize: 16
+            // Road names arrive from the phone and are absent from QML literals.
+            // Keep coverage local to this 16px font, including the elision glyph.
+            font: Qt.font({ family: Theme.fontFamily, pixelSize: 16,
+                unicodeCoverage: [" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~…"] })
         }
 
         Rectangle {
