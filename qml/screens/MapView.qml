@@ -34,13 +34,18 @@ Item {
 
     readonly property int startX: 640
     readonly property int startY: 316
-    //  Where the top of the road name lands. The guidance and the three map
-    //  buttons read as one line at this height, tucked under the clock. The
-    //  fault row does not reach either of them: it is centred and stops well
-    //  short of this side of the screen.
-    readonly property int guidanceTop: 58
-    // Keep the pin above the endpoint, below the distance label (ends at y=113).
-    readonly property int endY: 164
+    //  The buttons tuck under the clock. The fault row never reaches them:
+    //  it is centred on the header and stops at x 902 even with every lamp
+    //  lit, while these start at 964.
+    readonly property int buttonsY: 58
+    //  The guidance cannot share that height. The fault row grows from the
+    //  centre outwards and reaches x 764 by the fifth lamp, which is into the
+    //  road name. A lamp must never be covered, so the guidance sits one step
+    //  below the row instead of beside the buttons -- still the same corner,
+    //  and now it cannot be reached however many faults are lit.
+    readonly property int guidanceTop: 92
+    // Keep the pin above the endpoint, below the distance label (ends at y=147).
+    readonly property int endY: 184
 
     readonly property int lateral: {
         var m = NavigationData.maneuver
@@ -126,11 +131,11 @@ Item {
         }
     }
 
-    //  Over on the right, level with the map buttons and clear of the route
-    //  line that runs up the middle. The children of this box start 66 down
-    //  inside it, which is what the offset below takes off.
+    //  Right-hand corner, under the buttons, clear of the route line up the
+    //  middle and short of the trip counter. The children of this box start
+    //  66 down inside it, which is what the offset below takes off.
     Item {
-        x: 200
+        x: 140
         y: map.guidanceTop - 66
         width: Theme.screenWidth
         height: 120
@@ -221,7 +226,7 @@ Item {
 
         Item {
             x: 964 + index * 43
-            y: map.guidanceTop
+            y: map.buttonsY
             width: 30
             height: 30
             visible: NavigationData.active
