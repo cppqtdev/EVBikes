@@ -20,9 +20,6 @@ Project {
         files: [
             "assets/cluster/avatar_106.png",
             "assets/cluster/avatar_92.png",
-            "assets/cluster/bikeside_crash_rear.png",
-            "assets/cluster/bikeside_tyre_front.png",
-            "assets/cluster/bikeside_tyre_wheel.png",
             "assets/cluster/callout.png",
             "assets/cluster/card_crash.png",
             "assets/cluster/card_crash_edge.png",
@@ -108,10 +105,7 @@ Project {
         files: [
             "assets/cluster/album_art.png",
             "assets/cluster/bike_180.png",
-            "assets/cluster/bikeside_crash.png",
-            "assets/cluster/bikeside_heat.png",
-            "assets/cluster/bikeside_preride.png",
-            "assets/cluster/bikeside_tyre.png",
+            "assets/cluster/bike_180_small.png",
             "assets/cluster/payment_card.png",
             "assets/cluster/seat.png"
         ]

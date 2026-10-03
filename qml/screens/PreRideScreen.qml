@@ -32,11 +32,12 @@ Item {
     }
     Component.onCompleted: updateReadyWait()
 
-    // Measured on frame_0260: the side view, 250 by 120, at x 518.
+    //  The same bike the home screen shows, centred in the 250 by 120 box the
+    //  reference drew the old flat side view in.
     Image {
-        x: 518
-        y: 103
-        source: "qrc:/assets/cluster/bikeside_preride.png"
+        x: 553
+        y: 96
+        source: "qrc:/assets/cluster/bike_180.png"
     }
 
     Item {

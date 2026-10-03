@@ -43,19 +43,21 @@ Item {
             text: qsTr("WARNING")
         }
 
-        // The side view, at the box the reference draws it in.
-        Image {
-            x: 562
+        //  Red behind the bike rather than painted onto it: the old overlay
+        //  was a mask cut for the flat side view and fits nothing else.
+        ColorizedImage {
+            x: 556
             y: 144
-            source: "qrc:/assets/cluster/bikeside_crash.png"
+            source: "qrc:/assets/images/glow_blob_200x90.png"
+            color: "#D51A2E"
+            opacity: 0.55
         }
 
-        ColorizedImage {
-            x: 562
-            y: 144
-            source: "qrc:/assets/cluster/bikeside_crash_rear.png"
-            color: "#D51A2E"
-            opacity: 0.9
+        // The bike, centred in the box the reference draws it in.
+        Image {
+            x: 566
+            y: 122
+            source: "qrc:/assets/cluster/bike_180.png"
         }
 
         Ribbon {

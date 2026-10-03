@@ -41,18 +41,18 @@ Item {
             font.pixelSize: 22
         }
 
-        // The side view, at the box the reference draws it in.
+        // The bike, centred in the box the reference draws it in.
         Image {
-            x: 568
-            y: 131
-            source: "qrc:/assets/cluster/bikeside_heat.png"
+            x: 562
+            y: 103
+            source: "qrc:/assets/cluster/bike_180.png"
         }
 
         // 94 px across on the reference, which is a 108 icon once the outline's
         // own inset is taken off, and it sits at about half opacity over the bike.
         Icon {
-            x: 599
-            y: 111
+            x: 598
+            y: 116
             size: 108
             source: "qrc:/assets/icons/108/triangle.png"
             color: "#D60006"

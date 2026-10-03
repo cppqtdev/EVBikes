@@ -29,21 +29,23 @@ Item {
         opacity: 0.94
     }
 
-    // The side view, at the box the reference draws it in.
+    // The bike, in the small copy that fits the box the reference draws.
     Image {
-        x: 591
-        y: 105
-        source: "qrc:/assets/cluster/bikeside_tyre.png"
+        x: 594
+        y: 93
+        source: "qrc:/assets/cluster/bike_180_small.png"
     }
 
     // The reference lights the wheel that is low, not always the same one.
-    ColorizedImage {
-        x: 591
-        y: 105
-        source: tyre.front ? "qrc:/assets/cluster/bikeside_tyre_front.png"
-                           : "qrc:/assets/cluster/bikeside_tyre_wheel.png"
+    // The two wheels sit where they do in the picture, measured off it.
+    Rectangle {
+        x: tyre.front ? 639 : 600
+        y: tyre.front ? 120 : 124
+        width: tyre.front ? 46 : 33
+        height: tyre.front ? 46 : 33
+        radius: width / 2
         color: Theme.red
-        opacity: 0.85
+        opacity: 0.45
     }
 
     Text {
