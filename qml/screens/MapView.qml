@@ -34,16 +34,18 @@ Item {
 
     readonly property int startX: 640
     readonly property int startY: 316
-    //  The buttons tuck under the clock. The fault row never reaches them:
-    //  it is centred on the header and stops at x 902 even with every lamp
-    //  lit, while these start at 964.
-    readonly property int buttonsY: 58
-    //  The guidance cannot share that height. The fault row grows from the
+    //  Where the top of the road name lands. The fault row grows from the
     //  centre outwards and reaches x 764 by the fifth lamp, which is into the
-    //  road name. A lamp must never be covered, so the guidance sits one step
-    //  below the row instead of beside the buttons -- still the same corner,
-    //  and now it cannot be reached however many faults are lit.
+    //  road name, so the guidance sits below the row rather than beside the
+    //  buttons. The row's height never changes however many lamps are lit, so
+    //  eight pixels under its bottom edge is clear for good.
     readonly property int guidanceTop: 92
+    //  The buttons line up with the road name rather than with the clock, so
+    //  the right-hand corner reads as one row. Four pixels above the text's
+    //  own top, which centres a 30 high button on a 21 high line. The fault
+    //  row never reaches them either: it stops at x 902 with every lamp lit
+    //  and these start at 964.
+    readonly property int buttonsY: map.guidanceTop - 4
     // Keep the pin above the endpoint, below the distance label (ends at y=147).
     readonly property int endY: 184
 
