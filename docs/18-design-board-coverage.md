@@ -15,8 +15,8 @@ Typography and palette on the board match what is in the tree: Inter, and
 | On the board | Here |
 |---|---|
 | Bike switched on, splash screen | **Built** — `SplashScreen.qml` |
-| No key: press toggle, enter PIN | **Built** — `SystemData::submitPin` |
-| Three wrong tries and the bike locks | **Built** — `kMaxPinAttempts` is 3 |
+| No key: press toggle, enter PIN | **Backend only, no UI** — `SystemData::submitPin` is written and unit tested, but no QML calls it. There is no keypad screen, so a PIN can never be entered |
+| Three wrong tries and the bike locks | **Backend only, no UI** — `kMaxPinAttempts` is 3 and the counter works, but nothing reads `locked` or `pinAttemptsLeft`. `AuthScreen` unlocks by fingerprint only |
 | Connectivity symbols: time, Bluetooth, SIM | **Built** — `StatusCorners` draws Bluetooth, signal and the clock. The board's flow also says "date"; no reference frame shows one, so the frames were followed |
 | Speedometer | **Built**, two styles |
 | Mode, toggled between Eco, Normal and Sport | **Built** |
@@ -72,6 +72,40 @@ Typography and palette on the board match what is in the tree: Inter, and
 | Tyre pressure warning | **Built** |
 | Navigation in the middle of the screen | **Built** |
 | App, smartwatch and helmet ecosystem, geo-fencing, servicing history | **Out of scope here** — these are companion apps, not cluster firmware |
+
+---
+
+## Decoded and then thrown away
+
+These properties are written by the backend — the data arrives, is decoded and
+is stored — and then nothing reads them, in QML or in C++. The backend work is
+done; only a place to show them is missing. Counted in the tree, not guessed.
+
+| Property | Where it comes from |
+|---|---|
+| `NavigationData.distanceRemainingM` | phone link |
+| `NavigationData.etaMinutes` | phone link |
+| `NavigationData.roundaboutExit` | phone link |
+| `NavigationData.laneMask` | phone link |
+| `NavigationData.recommendedLaneMask` | phone link |
+| `PhoneData.signalBars` | phone link |
+| `PhoneData.internet` | phone link |
+| `PhoneData.volume` | phone link |
+| `VehicleData.fuelPercent` | CAN |
+| `VehicleData.readyToRide` | CAN |
+| `VehicleData.packVoltageX10` | CAN |
+| `VehicleData.packCurrentAx10` | CAN |
+| `VehicleData.controllerTempC` | CAN |
+| `VehicleData.absActive` | CAN |
+| `ConnectivityData.wifiAvailable` | platform |
+| `SystemData.softwareDimming` | settings |
+
+The five navigation ones are the notable group: lane guidance and the arrival
+estimate already arrive over the Bluetooth link on every route update, and the
+cluster draws none of it.
+
+`VehicleData.crashDetected`, `lampsStale` and `motorTempC` are also unread by
+QML, but they are read in C++ by `AlertData`, which is where they belong.
 
 ---
 
