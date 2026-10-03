@@ -125,8 +125,11 @@ Item {
         }
     }
 
-    //  Pushed clear of the fault row that sits under the header.
+    //  Pushed clear of the fault row that sits under the header, and over to
+    //  the right of the route line now that the map buttons have left this
+    //  corner for the space above the trip counter.
     Item {
+        x: 60
         y: map.guidanceY
         width: Theme.screenWidth
         height: 120
@@ -206,29 +209,35 @@ Item {
             font.pixelSize: 26
         }
 
-        Repeater {
-            model: 3
+    }
 
-            Item {
-                x: 771 + index * 43
-                y: 61
-                width: 30
-                height: 30
+    //  The map controls sit over the trip counter rather than beside the road
+    //  name. They belong to the map, not to the guidance, and crowding them
+    //  against it left the right half of the screen empty while that corner
+    //  had three things competing in it.
+    Repeater {
+        model: 3
 
-                Rectangle {
-                    anchors.fill: parent
-                    radius: 15
-                    color: "#2E2E2E"
-                    opacity: 0.8
-                }
+        Item {
+            x: 964 + index * 43
+            y: 92
+            width: 30
+            height: 30
+            visible: NavigationData.active
 
-                Icon {
-                    anchors.centerIn: parent
-                    size: 18
-                    source: index === 0 ? "qrc:/assets/icons/18/mic.png"
-                          : (index === 1 ? "qrc:/assets/icons/18/target.png" : "qrc:/assets/icons/18/layers.png")
-                    color: "#C3C8CA"
-                }
+            Rectangle {
+                anchors.fill: parent
+                radius: 15
+                color: "#2E2E2E"
+                opacity: 0.8
+            }
+
+            Icon {
+                anchors.centerIn: parent
+                size: 18
+                source: index === 0 ? "qrc:/assets/icons/18/mic.png"
+                      : (index === 1 ? "qrc:/assets/icons/18/target.png" : "qrc:/assets/icons/18/layers.png")
+                color: "#C3C8CA"
             }
         }
     }
