@@ -19,7 +19,9 @@ Item {
         visible: opacity > 0
 
         Behavior on opacity {
-            NumberAnimation { duration: Theme.animNormal }
+            NumberAnimation {
+                duration: Theme.animNormal
+            }
         }
 
         Loader {

@@ -59,7 +59,9 @@ Item {
         visible: dock.mapActive || dock.mapFocus
 
         Behavior on color {
-            ColorAnimation { duration: Theme.animFast }
+            ColorAnimation {
+                duration: Theme.animFast
+            }
         }
     }
 
@@ -82,7 +84,9 @@ Item {
         opacity: dock.modeFocus ? 0.42 : 0.16
 
         Behavior on opacity {
-            NumberAnimation { duration: Theme.animNormal }
+            NumberAnimation {
+                duration: Theme.animNormal
+            }
         }
     }
 
@@ -97,7 +101,9 @@ Item {
         color: dock.modeFocus ? Theme.surfaceSelected : "#222222"
 
         Behavior on color {
-            ColorAnimation { duration: Theme.animFast }
+            ColorAnimation {
+                duration: Theme.animFast
+            }
         }
     }
 

@@ -45,16 +45,26 @@ Item {
         height: tabs.cellHeight
         radius: 5
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#2F8A6C" }
-            GradientStop { position: 1.0; color: "#1D5E49" }
+            GradientStop {
+                position: 0.0
+                color: "#2F8A6C"
+            }
+            GradientStop {
+                position: 1.0
+                color: "#1D5E49"
+            }
         }
 
         Behavior on x {
-            NumberAnimation { duration: Theme.animNormal }
+            NumberAnimation {
+                duration: Theme.animNormal
+            }
         }
 
         Behavior on width {
-            NumberAnimation { duration: Theme.animNormal }
+            NumberAnimation {
+                duration: Theme.animNormal
+            }
         }
     }
 

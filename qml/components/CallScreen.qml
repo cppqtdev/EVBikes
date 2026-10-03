@@ -21,7 +21,9 @@ Item {
     visible: opacity > 0
 
     Behavior on opacity {
-        NumberAnimation { duration: Theme.animNormal }
+        NumberAnimation {
+            duration: Theme.animNormal
+        }
     }
 
     onActiveChanged: {
@@ -33,8 +35,20 @@ Item {
         running: call.visible && call.ringing
         loops: Animation.Infinite
 
-        NumberAnimation { target: call; property: "pulse"; to: 1.0; duration: 750; easing.type: Easing.OutCubic }
-        NumberAnimation { target: call; property: "pulse"; to: 0.0; duration: 750; easing.type: Easing.InCubic }
+        NumberAnimation {
+            target: call
+            property: "pulse"
+            to: 1.0
+            duration: 750
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: call
+            property: "pulse"
+            to: 0.0
+            duration: 750
+            easing.type: Easing.InCubic
+        }
     }
 
     Rectangle {

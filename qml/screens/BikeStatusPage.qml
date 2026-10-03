@@ -132,8 +132,18 @@ PageBase {
                 fillColor: "transparent"
                 startX: 100
                 startY: 15
-                PathArc { x: 100; y: 185; radiusX: 85; radiusY: 85 }
-                PathArc { x: 100; y: 15; radiusX: 85; radiusY: 85 }
+                PathArc {
+                    x: 100
+                    y: 185
+                    radiusX: 85
+                    radiusY: 85
+                }
+                PathArc {
+                    x: 100
+                    y: 15
+                    radiusX: 85
+                    radiusY: 85
+                }
             }
 
             // Each wedge is drawn as two half-sweeps. A single arc over 180

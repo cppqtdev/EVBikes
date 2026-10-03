@@ -137,9 +137,27 @@ PageBase {
             font.pixelSize: 10
         }
 
-        Icon { x: 580; y: 252; size: 18; source: "qrc:/assets/icons/18/prev.png"; color: "#8C9194" }
-        Icon { x: 636; y: 251; size: 18; source: PhoneData.mediaPlaying ? "qrc:/assets/icons/18/pause.png" : "qrc:/assets/icons/18/play.png"; color: Theme.textPrimary }
-        Icon { x: 692; y: 252; size: 18; source: "qrc:/assets/icons/18/next.png"; color: "#8C9194" }
+        Icon {
+            x: 580
+            y: 252
+            size: 18
+            source: "qrc:/assets/icons/18/prev.png"
+            color: "#8C9194"
+        }
+        Icon {
+            x: 636
+            y: 251
+            size: 18
+            source: PhoneData.mediaPlaying ? "qrc:/assets/icons/18/pause.png" : "qrc:/assets/icons/18/play.png"
+            color: Theme.textPrimary
+        }
+        Icon {
+            x: 692
+            y: 252
+            size: 18
+            source: "qrc:/assets/icons/18/next.png"
+            color: "#8C9194"
+        }
 
         Rectangle {
             x: 560

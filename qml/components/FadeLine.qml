@@ -11,9 +11,21 @@ Rectangle {
     height: 1
     gradient: Gradient {
         orientation: Gradient.Horizontal
-        GradientStop { position: 0.0; color: "#00000000" }
-        GradientStop { position: 0.3; color: line.lineColor }
-        GradientStop { position: 0.7; color: line.lineColor }
-        GradientStop { position: 1.0; color: "#00000000" }
+        GradientStop {
+            position: 0.0
+            color: "#00000000"
+        }
+        GradientStop {
+            position: 0.3
+            color: line.lineColor
+        }
+        GradientStop {
+            position: 0.7
+            color: line.lineColor
+        }
+        GradientStop {
+            position: 1.0
+            color: "#00000000"
+        }
     }
 }

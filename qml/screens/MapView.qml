@@ -79,11 +79,15 @@ Item {
     }
 
     Behavior on routeLateral {
-        NumberAnimation { duration: Theme.animSlow }
+        NumberAnimation {
+            duration: Theme.animSlow
+        }
     }
 
     Behavior on routeNearness {
-        NumberAnimation { duration: Theme.animNormal }
+        NumberAnimation {
+            duration: Theme.animNormal
+        }
     }
 
     Shape {

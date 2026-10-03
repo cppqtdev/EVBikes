@@ -152,18 +152,54 @@ Item {
                     sourceComponent: connectivityPage
                 }
 
-                Component { id: profilePage; ProfilePage {} }
-                Component { id: digilockerPage; DigilockerPage {} }
-                Component { id: seatPage; SeatPage {} }
-                Component { id: chargingPage; ChargingPage {} }
-                Component { id: bikeStatusPage; BikeStatusPage {} }
-                Component { id: securityPage; SecurityPage {} }
-                Component { id: paymentPage; PaymentPage {} }
-                Component { id: customizePage; CustomizePage {} }
-                Component { id: connectivityPage; ConnectivityPage {} }
-                Component { id: miscPage; MiscPage {} }
-                Component { id: classicRide; RideView {} }
-                Component { id: hexRide; HexSpeedoView {} }
+                Component {
+                    id: profilePage
+                    ProfilePage {}
+                }
+                Component {
+                    id: digilockerPage
+                    DigilockerPage {}
+                }
+                Component {
+                    id: seatPage
+                    SeatPage {}
+                }
+                Component {
+                    id: chargingPage
+                    ChargingPage {}
+                }
+                Component {
+                    id: bikeStatusPage
+                    BikeStatusPage {}
+                }
+                Component {
+                    id: securityPage
+                    SecurityPage {}
+                }
+                Component {
+                    id: paymentPage
+                    PaymentPage {}
+                }
+                Component {
+                    id: customizePage
+                    CustomizePage {}
+                }
+                Component {
+                    id: connectivityPage
+                    ConnectivityPage {}
+                }
+                Component {
+                    id: miscPage
+                    MiscPage {}
+                }
+                Component {
+                    id: classicRide
+                    RideView {}
+                }
+                Component {
+                    id: hexRide
+                    HexSpeedoView {}
+                }
                 Component {
                     id: powerBar
                     PowerBar {
@@ -177,14 +213,46 @@ Item {
                         redZoneTop: true
                     }
                 }
-                Component { id: menuCarousel; MenuCarousel { y: 303 } }
-                Component { id: tyreAlertOverlay; TyreAlertOverlay {} }
-                Component { id: genericAlertOverlay; GenericAlertOverlay {} }
-                Component { id: callScreen; CallScreen {} }
-                Component { id: notificationToast; NotificationToast { x: 430; y: 250 } }
-                Component { id: menuLockHint; MenuLockHint { x: 470; y: 262 } }
-                Component { id: crashOverlay; CrashOverlay {} }
-                Component { id: overheatOverlay; OverheatOverlay {} }
+                Component {
+                    id: menuCarousel
+                    MenuCarousel {
+                        y: 303
+                    }
+                }
+                Component {
+                    id: tyreAlertOverlay
+                    TyreAlertOverlay {}
+                }
+                Component {
+                    id: genericAlertOverlay
+                    GenericAlertOverlay {}
+                }
+                Component {
+                    id: callScreen
+                    CallScreen {}
+                }
+                Component {
+                    id: notificationToast
+                    NotificationToast {
+                        x: 430
+                        y: 250
+                    }
+                }
+                Component {
+                    id: menuLockHint
+                    MenuLockHint {
+                        x: 470
+                        y: 262
+                    }
+                }
+                Component {
+                    id: crashOverlay
+                    CrashOverlay {}
+                }
+                Component {
+                    id: overheatOverlay
+                    OverheatOverlay {}
+                }
 
                 Loader {
                     active: Router.menuOpen

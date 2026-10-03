@@ -31,7 +31,9 @@ PageBase {
     readonly property int ringSize: 172
 
     Behavior on fraction {
-        NumberAnimation { duration: Theme.animSlow }
+        NumberAnimation {
+            duration: Theme.animSlow
+        }
     }
 
     Text {
@@ -75,8 +77,18 @@ PageBase {
             fillColor: "transparent"
             startX: page.ringSize / 2
             startY: page.ringSize / 2 - page.ringR
-            PathArc { x: page.ringSize / 2; y: page.ringSize / 2 + page.ringR; radiusX: page.ringR; radiusY: page.ringR }
-            PathArc { x: page.ringSize / 2; y: page.ringSize / 2 - page.ringR; radiusX: page.ringR; radiusY: page.ringR }
+            PathArc {
+                x: page.ringSize / 2
+                y: page.ringSize / 2 + page.ringR
+                radiusX: page.ringR
+                radiusY: page.ringR
+            }
+            PathArc {
+                x: page.ringSize / 2
+                y: page.ringSize / 2 - page.ringR
+                radiusX: page.ringR
+                radiusY: page.ringR
+            }
         }
 
         ShapePath {

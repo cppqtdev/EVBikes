@@ -73,7 +73,9 @@ Item {
         clip: true
 
         Behavior on width {
-            NumberAnimation { duration: Theme.animSlow }
+            NumberAnimation {
+                duration: Theme.animSlow
+            }
         }
 
         // Brick at the pointed end fading to pale at the fill edge, in clipped bands
@@ -145,7 +147,9 @@ Item {
         clip: true
 
         Behavior on width {
-            NumberAnimation { duration: Theme.animSlow }
+            NumberAnimation {
+                duration: Theme.animSlow
+            }
         }
 
         ColorizedImage {

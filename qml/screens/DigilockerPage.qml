@@ -38,15 +38,23 @@ PageBase {
             opacity: slot === 1 ? 1.0 : 0.35
 
             Behavior on y {
-                NumberAnimation { duration: Theme.animNormal }
+                NumberAnimation {
+                    duration: Theme.animNormal
+                }
             }
 
             Rectangle {
                 anchors.fill: parent
                 radius: 4
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: "#282828" }
-                    GradientStop { position: 1.0; color: "#1C1C1C" }
+                    GradientStop {
+                        position: 0.0
+                        color: "#282828"
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: "#1C1C1C"
+                    }
                 }
             }
 

@@ -25,7 +25,8 @@ Item {
     height: faultY + iconSize
 
     Telltale {
-        x: 422; y: strip.headerY
+        x: 422
+        y: strip.headerY
         size: strip.iconSize
         source: "qrc:/assets/icons/32/tt_left.png"
         blinking: false
@@ -33,7 +34,8 @@ Item {
         activeColor: Theme.telltaleGreen
     }
     Telltale {
-        x: 866; y: strip.headerY
+        x: 866
+        y: strip.headerY
         size: strip.iconSize
         source: "qrc:/assets/icons/32/tt_right.png"
         blinking: false

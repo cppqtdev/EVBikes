@@ -21,7 +21,9 @@ Item {
         color: row.selected ? "#1D4A3E" : "#00000000"
 
         Behavior on color {
-            ColorAnimation { duration: Theme.animFast }
+            ColorAnimation {
+                duration: Theme.animFast
+            }
         }
     }
 

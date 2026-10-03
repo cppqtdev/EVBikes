@@ -24,7 +24,10 @@ Item {
     }
 
     Text {
-        x: 124; y: 29; width: 10; height: 25
+        x: 124
+        y: 29
+        width: 10
+        height: 25
         text: "."
         color: Theme.textPrimary
         font.pixelSize: 18

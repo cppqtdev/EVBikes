@@ -20,7 +20,9 @@ Item {
         color: row.selected ? Theme.accent : "#6E7375"
 
         Behavior on color {
-            ColorAnimation { duration: Theme.animFast }
+            ColorAnimation {
+                duration: Theme.animFast
+            }
         }
     }
 
@@ -33,7 +35,9 @@ Item {
         color: row.selected ? "#16221F" : "#0E1011"
 
         Behavior on color {
-            ColorAnimation { duration: Theme.animFast }
+            ColorAnimation {
+                duration: Theme.animFast
+            }
         }
     }
 

@@ -36,7 +36,21 @@ Item {
         radius: 7
         color: "#E9ECED"
 
-        Rectangle { x: 3; y: 5; width: 3; height: 3; radius: 1.5; color: "#1C1C1C" }
-        Rectangle { x: 8; y: 5; width: 3; height: 3; radius: 1.5; color: "#1C1C1C" }
+        Rectangle {
+            x: 3
+            y: 5
+            width: 3
+            height: 3
+            radius: 1.5
+            color: "#1C1C1C"
+        }
+        Rectangle {
+            x: 8
+            y: 5
+            width: 3
+            height: 3
+            radius: 1.5
+            color: "#1C1C1C"
+        }
     }
 }

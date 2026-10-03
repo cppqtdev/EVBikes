@@ -183,8 +183,14 @@ Item {
             radius: 30
             visible: !AlertData.sosSent
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#414141" }
-                GradientStop { position: 1.0; color: "#282828" }
+                GradientStop {
+                    position: 0.0
+                    color: "#414141"
+                }
+                GradientStop {
+                    position: 1.0
+                    color: "#282828"
+                }
             }
 
             Rectangle {
@@ -194,8 +200,14 @@ Item {
                 height: 54
                 radius: 27
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: "#55595C" }
-                    GradientStop { position: 1.0; color: "#363636" }
+                    GradientStop {
+                        position: 0.0
+                        color: "#55595C"
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: "#363636"
+                    }
                 }
             }
 

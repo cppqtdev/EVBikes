@@ -27,8 +27,14 @@ Item {
         anchors.fill: parent
         radius: 6
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#2B3A31" }
-            GradientStop { position: 1.0; color: "#344E3E" }
+            GradientStop {
+                position: 0.0
+                color: "#2B3A31"
+            }
+            GradientStop {
+                position: 1.0
+                color: "#344E3E"
+            }
         }
     }
 

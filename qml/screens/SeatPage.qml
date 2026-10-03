@@ -13,7 +13,9 @@ PageBase {
         source: "qrc:/assets/cluster/seat.png"
 
         Behavior on y {
-            NumberAnimation { duration: Theme.animNormal }
+            NumberAnimation {
+                duration: Theme.animNormal
+            }
         }
     }
 

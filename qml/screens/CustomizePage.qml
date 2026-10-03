@@ -54,9 +54,21 @@ PageBase {
             color: "#2D2D2D"
         }
 
-        Icon { x: 352; y: 162; size: 24; source: "qrc:/assets/icons/24/low_beam.png"; color: "#C3C8CA" }
+        Icon {
+            x: 352
+            y: 162
+            size: 24
+            source: "qrc:/assets/icons/24/low_beam.png"
+            color: "#C3C8CA"
+        }
 
-        Rectangle { x: 343; y: 194; width: 42; height: 36; color: "#3E3E3E" }
+        Rectangle {
+            x: 343
+            y: 194
+            width: 42
+            height: 36
+            color: "#3E3E3E"
+        }
 
         Text {
             x: 343
@@ -69,7 +81,13 @@ PageBase {
             font.pixelSize: 16
         }
 
-        Icon { x: 352; y: 238; size: 24; source: "qrc:/assets/icons/24/high_beam.png"; color: "#C3C8CA" }
+        Icon {
+            x: 352
+            y: 238
+            size: 24
+            source: "qrc:/assets/icons/24/high_beam.png"
+            color: "#C3C8CA"
+        }
 
         ColorizedImage {
             x: 425
@@ -78,11 +96,27 @@ PageBase {
             height: 96
             source: "qrc:/assets/cluster/card_tilt.png"
             color: "#2D2D2D"
-            transform: Rotation { origin.x: 100; origin.y: 48; angle: -8 }
+            transform: Rotation {
+                origin.x: 100
+                origin.y: 48
+                angle: -8
+            }
         }
 
-        Icon { x: 462; y: 176; size: 26; source: "qrc:/assets/icons/26/chevron.png"; color: "#C3C8CA" }
-        Icon { x: 452; y: 206; size: 26; source: "qrc:/assets/icons/26/back.png"; color: "#C3C8CA" }
+        Icon {
+            x: 462
+            y: 176
+            size: 26
+            source: "qrc:/assets/icons/26/chevron.png"
+            color: "#C3C8CA"
+        }
+        Icon {
+            x: 452
+            y: 206
+            size: 26
+            source: "qrc:/assets/icons/26/back.png"
+            color: "#C3C8CA"
+        }
 
         Text {
             x: 500
@@ -109,17 +143,73 @@ PageBase {
             height: 96
             source: "qrc:/assets/cluster/card_tilt.png"
             color: "#2D2D2D"
-            transform: Rotation { origin.x: 100; origin.y: 48; angle: 8 }
+            transform: Rotation {
+                origin.x: 100
+                origin.y: 48
+                angle: 8
+            }
         }
 
-        Text { x: 692; y: 160; text: "S"; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
-        Text { x: 732; y: 168; text: "N"; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
-        Text { x: 768; y: 176; text: "E"; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
-        Icon { x: 688; y: 192; size: 18; source: "qrc:/assets/icons/18/back.png"; color: Theme.textPrimary }
-        Text { x: 727; y: 190; text: "+"; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 26 }
-        Icon { x: 764; y: 206; size: 20; source: "qrc:/assets/icons/20/play.png"; color: Theme.textPrimary }
-        Icon { x: 796; y: 180; size: 18; source: "qrc:/assets/icons/18/wrench.png"; color: Theme.textPrimary }
-        Icon { x: 798; y: 210; size: 18; source: "qrc:/assets/icons/18/grid_plus.png"; color: Theme.textPrimary }
+        Text {
+            x: 692
+            y: 160
+            text: "S"
+            color: Theme.textPrimary
+            font.family: Theme.fontFamily
+            font.pixelSize: 14
+        }
+        Text {
+            x: 732
+            y: 168
+            text: "N"
+            color: Theme.textPrimary
+            font.family: Theme.fontFamily
+            font.pixelSize: 14
+        }
+        Text {
+            x: 768
+            y: 176
+            text: "E"
+            color: Theme.textPrimary
+            font.family: Theme.fontFamily
+            font.pixelSize: 14
+        }
+        Icon {
+            x: 688
+            y: 192
+            size: 18
+            source: "qrc:/assets/icons/18/back.png"
+            color: Theme.textPrimary
+        }
+        Text {
+            x: 727
+            y: 190
+            text: "+"
+            color: Theme.textPrimary
+            font.family: Theme.fontFamily
+            font.pixelSize: 26
+        }
+        Icon {
+            x: 764
+            y: 206
+            size: 20
+            source: "qrc:/assets/icons/20/play.png"
+            color: Theme.textPrimary
+        }
+        Icon {
+            x: 796
+            y: 180
+            size: 18
+            source: "qrc:/assets/icons/18/wrench.png"
+            color: Theme.textPrimary
+        }
+        Icon {
+            x: 798
+            y: 210
+            size: 18
+            source: "qrc:/assets/icons/18/grid_plus.png"
+            color: Theme.textPrimary
+        }
 
         Rectangle {
             x: 902
@@ -130,11 +220,29 @@ PageBase {
             color: "#2D2D2D"
         }
 
-        Icon { x: 911; y: 162; size: 24; source: "qrc:/assets/icons/24/joystick.png"; color: "#8C9194" }
+        Icon {
+            x: 911
+            y: 162
+            size: 24
+            source: "qrc:/assets/icons/24/joystick.png"
+            color: "#8C9194"
+        }
 
-        Rectangle { x: 902; y: 194; width: 42; height: 42; color: "#3E3E3E" }
+        Rectangle {
+            x: 902
+            y: 194
+            width: 42
+            height: 42
+            color: "#3E3E3E"
+        }
 
-        Icon { x: 910; y: 199; size: 26; source: "qrc:/assets/icons/26/power.png"; color: Theme.textPrimary }
+        Icon {
+            x: 910
+            y: 199
+            size: 26
+            source: "qrc:/assets/icons/26/power.png"
+            color: Theme.textPrimary
+        }
 
         Text {
             x: 902
@@ -156,7 +264,13 @@ PageBase {
             color: "#2D2D2D"
         }
 
-        Icon { x: 634; y: 255; size: 20; source: "qrc:/assets/icons/20/back_curve.png"; color: Theme.textPrimary }
+        Icon {
+            x: 634
+            y: 255
+            size: 20
+            source: "qrc:/assets/icons/20/back_curve.png"
+            color: Theme.textPrimary
+        }
     }
 
     // Six rows now that units are a setting, so each is 30 tall to keep the

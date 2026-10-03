@@ -14,8 +14,14 @@ Item {
         radius: height / 2
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: toggle.checked ? "#4E9E6E" : "#3D3D3D" }
-            GradientStop { position: 1.0; color: toggle.checked ? "#9CF0B6" : "#4E4E4E" }
+            GradientStop {
+                position: 0.0
+                color: toggle.checked ? "#4E9E6E" : "#3D3D3D"
+            }
+            GradientStop {
+                position: 1.0
+                color: toggle.checked ? "#9CF0B6" : "#4E4E4E"
+            }
         }
     }
 
@@ -26,12 +32,20 @@ Item {
         height: 32
         radius: 16
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#9A9FA2" }
-            GradientStop { position: 1.0; color: "#5C6164" }
+            GradientStop {
+                position: 0.0
+                color: "#9A9FA2"
+            }
+            GradientStop {
+                position: 1.0
+                color: "#5C6164"
+            }
         }
 
         Behavior on x {
-            NumberAnimation { duration: Theme.animNormal }
+            NumberAnimation {
+                duration: Theme.animNormal
+            }
         }
     }
 }

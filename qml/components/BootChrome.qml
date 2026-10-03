@@ -27,7 +27,9 @@ Item {
         color: chrome.printColor
 
         Behavior on color {
-            ColorAnimation { duration: Theme.animNormal }
+            ColorAnimation {
+                duration: Theme.animNormal
+            }
         }
     }
 
@@ -50,8 +52,14 @@ Item {
         height: 14
         radius: 7
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#5F8E6F" }
-            GradientStop { position: 1.0; color: "#7AB08D" }
+            GradientStop {
+                position: 0.0
+                color: "#5F8E6F"
+            }
+            GradientStop {
+                position: 1.0
+                color: "#7AB08D"
+            }
         }
     }
 
@@ -71,8 +79,14 @@ Item {
         height: 14
         radius: 7
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#91E4C3" }
-            GradientStop { position: 1.0; color: "#7FF074" }
+            GradientStop {
+                position: 0.0
+                color: "#91E4C3"
+            }
+            GradientStop {
+                position: 1.0
+                color: "#7FF074"
+            }
         }
     }
 }

@@ -29,7 +29,9 @@ Item {
         opacity: splash.step < 13 ? 1.0 : 0.0
 
         Behavior on opacity {
-            NumberAnimation { duration: 600 }
+            NumberAnimation {
+                duration: 600
+            }
         }
 
         Repeater {
@@ -48,7 +50,9 @@ Item {
                 opacity: splash.step > index ? 1.0 : 0.0
 
                 Behavior on opacity {
-                    NumberAnimation { duration: 200 }
+                    NumberAnimation {
+                        duration: 200
+                    }
                 }
             }
         }
@@ -59,7 +63,9 @@ Item {
             opacity: splash.step >= 9 ? 1.0 : 0.0
 
             Behavior on opacity {
-                NumberAnimation { duration: 500 }
+                NumberAnimation {
+                    duration: 500
+                }
             }
         }
     }
@@ -71,7 +77,9 @@ Item {
         visible: opacity > 0
 
         Behavior on opacity {
-            NumberAnimation { duration: 400 }
+            NumberAnimation {
+                duration: 400
+            }
         }
 
         Text {

@@ -22,10 +22,24 @@ Item {
         running: telltale.visible && telltale.flashing
         loops: Animation.Infinite
 
-        NumberAnimation { target: telltale; property: "blinkPhase"; to: 1.0; duration: 80 }
-        PauseAnimation { duration: 330 }
-        NumberAnimation { target: telltale; property: "blinkPhase"; to: 0.0; duration: 80 }
-        PauseAnimation { duration: 330 }
+        NumberAnimation {
+            target: telltale
+            property: "blinkPhase"
+            to: 1.0
+            duration: 80
+        }
+        PauseAnimation {
+            duration: 330
+        }
+        NumberAnimation {
+            target: telltale
+            property: "blinkPhase"
+            to: 0.0
+            duration: 80
+        }
+        PauseAnimation {
+            duration: 330
+        }
     }
 
     Icon {
@@ -37,7 +51,9 @@ Item {
         opacity: telltale.flashing ? telltale.blinkPhase : 1.0
 
         Behavior on color {
-            ColorAnimation { duration: Theme.animFast }
+            ColorAnimation {
+                duration: Theme.animFast
+            }
         }
     }
 }

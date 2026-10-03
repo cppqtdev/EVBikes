@@ -33,7 +33,9 @@ Item {
         visible: opacity > 0
 
         Behavior on opacity {
-            NumberAnimation { duration: Theme.animNormal }
+            NumberAnimation {
+                duration: Theme.animNormal
+            }
         }
     }
 
@@ -41,8 +43,14 @@ Item {
         anchors.fill: parent
         radius: 4
         gradient: Gradient {
-            GradientStop { position: 0.0; color: button.topColor }
-            GradientStop { position: 1.0; color: button.bottomColor }
+            GradientStop {
+                position: 0.0
+                color: button.topColor
+            }
+            GradientStop {
+                position: 1.0
+                color: button.bottomColor
+            }
         }
     }
 

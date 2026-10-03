@@ -15,14 +15,16 @@ Item {
     height: Theme.screenHeight
 
     ColorizedImage {
-        x: 95; y: 108
+        x: 95
+        y: 108
         source: "qrc:/assets/cluster/trimmed/battery_edge_outer.png"
         color: "#3F9C80"
         opacity: 0.8
     }
 
     ColorizedImage {
-        x: 143; y: 96
+        x: 143
+        y: 96
         source: "qrc:/assets/cluster/trimmed/battery_edge_inner.png"
         color: "#3A4A46"
         opacity: 0.8
@@ -33,7 +35,8 @@ Item {
     }
 
     ColorizedImage {
-        x: 126; y: 109
+        x: 126
+        y: 109
         source: "qrc:/assets/cluster/trimmed/battery_tall_gloss.png"
         color: "#FFFFFF"
         opacity: 0.2
@@ -187,10 +190,16 @@ Item {
     // and with every lamp lit it runs to x 902, and this starts at 866. The
     // row ends at y 84 whatever is lit, so 92 clears it for good.
     Item {
-        x: 836; y: 92; width: 260; height: 66
+        x: 836
+        y: 92
+        width: 260
+        height: 66
         visible: NavigationData.active
         Text {
-            x: 14; y: 5; width: 164; height: 24
+            x: 14
+            y: 5
+            width: 164
+            height: 24
             verticalAlignment: Text.AlignVCenter
             text: NavigationData.roadName
             elide: Text.ElideRight
@@ -201,7 +210,9 @@ Item {
                 unicodeCoverage: [" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~…"] })
         }
         Icon {
-            x: 14; y: 34; size: 24
+            x: 14
+            y: 34
+            size: 24
             source: Format.turnIcon(NavigationData.maneuver)
             color: Theme.teal
             fillMode: Image.PreserveAspectFit
@@ -210,11 +221,15 @@ Item {
         //  Inside the guidance, so the two travel together and cannot drift
         //  apart by a stray offset.
         MapButtons {
-            x: 194; y: 2
+            x: 194
+            y: 2
         }
 
         Text {
-            x: 50; y: 31; width: 140; height: 30
+            x: 50
+            y: 31
+            width: 140
+            height: 30
             verticalAlignment: Text.AlignVCenter
             text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
                   + Format.distanceUnit(NavigationData.distanceToManeuverM)
@@ -224,7 +239,10 @@ Item {
         }
     }
     Text {
-        x: 866; y: 108; width: 260; height: 48
+        x: 866
+        y: 108
+        width: 260
+        height: 48
         visible: !NavigationData.active
         text: PhoneData.connected ? qsTr("Start a route in the app") : qsTr("Connect phone for navigation")
         wrapMode: Text.WordWrap

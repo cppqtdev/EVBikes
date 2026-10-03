@@ -34,32 +34,53 @@ Item {
     }
 
     Icon {
-        x: 433; y: 8; size: 18
+        x: 433
+        y: 8
+        size: 18
         source: "qrc:/assets/icons/18/chevron.png"
         color: Theme.textSecondary
-        transform: Scale { origin.x: 9; origin.y: 9; xScale: -1 }
+        transform: Scale {
+            origin.x: 9
+            origin.y: 9
+            xScale: -1
+        }
     }
     MouseArea {
-        x: 420; y: -5; width: 44; height: 44
+        x: 420
+        y: -5
+        width: 44
+        height: 44
         onClicked: Router.moveMenu(-1)
     }
     Icon {
-        x: 839; y: 8; size: 18
+        x: 839
+        y: 8
+        size: 18
         source: "qrc:/assets/icons/18/chevron.png"
         color: Theme.textSecondary
     }
     MouseArea {
-        x: 826; y: -5; width: 44; height: 44
+        x: 826
+        y: -5
+        width: 44
+        height: 44
         onClicked: Router.moveMenu(1)
     }
 
     Repeater {
         model: 10
         Rectangle {
-            x: 583 + index * 13; y: 44
-            width: 5; height: 5; radius: 2
+            x: 583 + index * 13
+            y: 44
+            width: 5
+            height: 5
+            radius: 2
             color: index === Router.menuIndex ? Theme.textPrimary : "#5C5C5C"
         }
     }
-    FadeLine { x: 500; y: 57; width: 280 }
+    FadeLine {
+        x: 500
+        y: 57
+        width: 280
+    }
 }

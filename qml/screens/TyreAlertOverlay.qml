@@ -99,8 +99,14 @@ Item {
         radius: 3
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: "#7A1622" }
-            GradientStop { position: 1.0; color: "#E3263A" }
+            GradientStop {
+                position: 0.0
+                color: "#7A1622"
+            }
+            GradientStop {
+                position: 1.0
+                color: "#E3263A"
+            }
         }
     }
 
