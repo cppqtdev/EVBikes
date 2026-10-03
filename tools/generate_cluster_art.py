@@ -688,7 +688,7 @@ def make_alert_cards():
 #  picture. That only holds with the ground flat -- the hills in make_terrain
 #  have a period of their own and would not come back round with the rows --
 #  so the moving version has none, and the still one keeps them.
-TERRAIN_FRAMES = 4
+TERRAIN_FRAMES = 8
 
 
 def make_terrain_frames():

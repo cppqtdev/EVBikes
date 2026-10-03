@@ -17,8 +17,15 @@ Item {
     //
     //  Stepped by the bike, not by a timer: at a standstill the road should
     //  stand still too. The counter takes the speed on every runtime tick and
-    //  advances a frame each time it has gathered enough, which makes the
-    //  flow follow the speed without anything here knowing the tick rate.
+    //  advances a frame once it has gathered 30, so thirty is where it
+    //  reaches one frame per tick -- twenty a second, which is every tick
+    //  there is -- and above that it saturates rather than skipping frames
+    //  and juddering. Sixteen a second arrives at twenty-four.
+    //
+    //  Eight pictures, not four. Frame rate and road speed are the same knob
+    //  with this technique: a step is a fixed slice of ground, so going
+    //  smoother at the same speed means cutting the slice finer. Four put a
+    //  quarter of a row on screen at a time and ran at four a second.
     property int roadFrame: 0
     property int roadCarry: 0
 
@@ -26,9 +33,9 @@ Item {
         target: SystemData
         function onUptimeMsChanged(uptimeMs: int) {
             map.roadCarry = map.roadCarry + VehicleData.speedKmh
-            if (map.roadCarry >= 250) {
-                map.roadCarry = map.roadCarry - 250
-                map.roadFrame = (map.roadFrame + 1) % 4
+            if (map.roadCarry >= 30) {
+                map.roadCarry = 0
+                map.roadFrame = (map.roadFrame + 1) % 8
             }
         }
     }

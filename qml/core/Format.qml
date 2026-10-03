@@ -214,6 +214,10 @@ QtObject {
         if (frame === 1) return "qrc:/assets/cluster/terrain_move1.png"
         if (frame === 2) return "qrc:/assets/cluster/terrain_move2.png"
         if (frame === 3) return "qrc:/assets/cluster/terrain_move3.png"
+        if (frame === 4) return "qrc:/assets/cluster/terrain_move4.png"
+        if (frame === 5) return "qrc:/assets/cluster/terrain_move5.png"
+        if (frame === 6) return "qrc:/assets/cluster/terrain_move6.png"
+        if (frame === 7) return "qrc:/assets/cluster/terrain_move7.png"
         return "qrc:/assets/cluster/terrain_move0.png"
     }
     function hexRouteImage(active: bool, maneuver: int) : string {
