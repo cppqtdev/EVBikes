@@ -79,10 +79,17 @@ Item {
         }
     }
 
+    //  Out of the way while an alert card is up. Every one of those cards
+    //  starts between y 65 and 81 and this row ends at 84, so they always
+    //  meet. The card is modal, it dims everything behind it and it names the
+    //  fault in large type, so the row has nothing to add while it is there
+    //  -- and it comes straight back when the card is dismissed, because the
+    //  lamps are the standing state and the card was only the event.
     VehicleWarnings {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 16
         y: strip.faultY
+        visible: !AlertData.popupVisible
         iconSize: strip.iconSize
         spacing: strip.iconGap
     }
