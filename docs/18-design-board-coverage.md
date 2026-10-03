@@ -15,8 +15,8 @@ Typography and palette on the board match what is in the tree: Inter, and
 | On the board | Here |
 |---|---|
 | Bike switched on, splash screen | **Built** — `SplashScreen.qml` |
-| No key: press toggle, enter PIN | **Backend only, no UI** — `SystemData::submitPin` is written and unit tested, but no QML calls it. There is no keypad screen, so a PIN can never be entered |
-| Three wrong tries and the bike locks | **Backend only, no UI** — `kMaxPinAttempts` is 3 and the counter works, but nothing reads `locked` or `pinAttemptsLeft`. `AuthScreen` unlocks by fingerprint only |
+| No key: press toggle, enter PIN | **Built** — MODE on `AuthScreen` opens a four-box keypad: up and down change the digit under the cursor, left and right move it, OK submits |
+| Three wrong tries and the bike locks | **Built** — the keypad spends a try on each wrong PIN and shows the count left |
 | Connectivity symbols: time, Bluetooth, SIM | **Built** — `StatusCorners` draws Bluetooth, signal and the clock. The board's flow also says "date"; no reference frame shows one, so the frames were followed |
 | Speedometer | **Built**, two styles |
 | Mode, toggled between Eco, Normal and Sport | **Built** |
@@ -38,9 +38,9 @@ Typography and palette on the board match what is in the tree: Inter, and
 | Accessibility: Language | **Not built** |
 | Accessibility: Units | **Built** — Customize page, kilometres or miles |
 | Accessibility: Customise widgets | **Not built** |
-| Navigation: pair, choose a destination, widget appears, clears on arrival | **Part built** — the widget appears and clears with the phone's route. Choosing a destination happens on the phone, not the cluster |
+| Navigation: pair, choose a destination, widget appears, clears on arrival | **Part built** — the widget appears and clears with the phone's route, and now carries the arrival time, the distance left, the roundabout exit and lane guidance. Choosing a destination still happens on the phone, not the cluster |
 | Navigation: favourites, maps stored offline on the bike | **Not built** |
-| Motorcycle status: tyre pressure, power consumption, range, battery temperature, errors | **Part built** — every one of those readings exists in `VehicleData` and most are on the riding screen or in an alert, but there is no page that lists them together. `BikeStatusPage` is the savings summary, not this |
+| Motorcycle status: tyre pressure, power consumption, range, battery temperature, errors | **Built** — the Vitals page, the eleventh menu entry. It is not called "Bike status" because that name is taken by the savings summary |
 | Bluetooth | **Part built** — connection state only |
 
 ## Menu, part two
@@ -83,11 +83,6 @@ done; only a place to show them is missing. Counted in the tree, not guessed.
 
 | Property | Where it comes from |
 |---|---|
-| `NavigationData.distanceRemainingM` | phone link |
-| `NavigationData.etaMinutes` | phone link |
-| `NavigationData.roundaboutExit` | phone link |
-| `NavigationData.laneMask` | phone link |
-| `NavigationData.recommendedLaneMask` | phone link |
 | `PhoneData.signalBars` | phone link |
 | `PhoneData.internet` | phone link |
 | `PhoneData.volume` | phone link |
@@ -100,9 +95,9 @@ done; only a place to show them is missing. Counted in the tree, not guessed.
 | `ConnectivityData.wifiAvailable` | platform |
 | `SystemData.softwareDimming` | settings |
 
-The five navigation ones are the notable group: lane guidance and the arrival
-estimate already arrive over the Bluetooth link on every route update, and the
-cluster draws none of it.
+The five navigation ones that used to head this list -- `distanceRemainingM`,
+`etaMinutes`, `roundaboutExit`, `laneMask` and `recommendedLaneMask` -- are on
+the guidance cards now, so they have come off it.
 
 `VehicleData.crashDetected`, `lampsStale` and `motorTempC` are also unread by
 QML, but they are read in C++ by `AlertData`, which is where they belong.
