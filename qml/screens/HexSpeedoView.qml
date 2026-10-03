@@ -175,12 +175,12 @@ Item {
         font.pixelSize: 14
     }
 
-    // Compact guidance stays above the route and clear of the gauge labels,
-    // and now below the fault row as well.
-    Rectangle {
-        x: 866; y: 102; width: 260; height: 66
-        radius: 6
-        color: Theme.surfaceSunken
+    // Compact guidance stays above the route and clear of the gauge labels.
+    // No card behind it: the fault row is centred and never reaches this far
+    // right, so there was nothing for a background to separate it from, and
+    // without one the text can sit back up where it reads against the sky.
+    Item {
+        x: 866; y: 68; width: 260; height: 66
         visible: NavigationData.active
         Text {
             x: 14; y: 5; width: 232; height: 24
@@ -206,7 +206,7 @@ Item {
         }
     }
     Text {
-        x: 866; y: 118; width: 260; height: 48
+        x: 866; y: 84; width: 260; height: 48
         visible: !NavigationData.active
         text: PhoneData.connected ? qsTr("Start a route in the app") : qsTr("Connect phone for navigation")
         wrapMode: Text.WordWrap
