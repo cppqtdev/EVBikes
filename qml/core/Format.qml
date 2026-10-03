@@ -207,23 +207,6 @@ QtObject {
         return ""
     }
 
-    function routeImage(maneuver: int) : string {
-        if (maneuver === NavigationData.SlightLeft || maneuver === NavigationData.ForkLeft || maneuver === NavigationData.MergeLeft)
-            return "qrc:/assets/cluster/route_slight_left.png"
-        if (maneuver === NavigationData.SlightRight || maneuver === NavigationData.ForkRight || maneuver === NavigationData.MergeRight)
-            return "qrc:/assets/cluster/route_slight_right.png"
-        if (maneuver === NavigationData.Left) return "qrc:/assets/cluster/route_left.png"
-        if (maneuver === NavigationData.Right) return "qrc:/assets/cluster/route_right.png"
-        if (maneuver === NavigationData.SharpLeft) return "qrc:/assets/cluster/route_sharp_left.png"
-        if (maneuver === NavigationData.SharpRight) return "qrc:/assets/cluster/route_sharp_right.png"
-        if (maneuver === NavigationData.UTurnLeft) return "qrc:/assets/cluster/route_uturn_left.png"
-        if (maneuver === NavigationData.UTurnRight) return "qrc:/assets/cluster/route_uturn_right.png"
-        if (maneuver === NavigationData.RoundaboutEnter || maneuver === NavigationData.RoundaboutExit)
-            return "qrc:/assets/cluster/route_roundabout.png"
-        if (maneuver === NavigationData.Destination) return "qrc:/assets/cluster/route_destination.png"
-        return "qrc:/assets/cluster/route_straight.png"
-    }
-
     function hexRouteImage(active: bool, maneuver: int) : string {
         if (!active) return "qrc:/assets/cluster/hexroute_straight.png"
         if (maneuver === NavigationData.SlightLeft || maneuver === NavigationData.ForkLeft || maneuver === NavigationData.MergeLeft)

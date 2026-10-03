@@ -104,9 +104,13 @@ Item {
         opacity: 0.6
     }
 
+    //  The route layers are cropped to one shared box inside the map area --
+    //  they go through a single Image whose source changes, so they cannot
+    //  each have their own. 880, 134 is the map box plus that box's corner;
+    //  generate_cluster_art.py fails the build if any of them outgrows it.
     ColorizedImage {
-        x: 700
-        y: 40
+        x: 880
+        y: 134
         source: Format.hexRouteImage(NavigationData.active, NavigationData.maneuver)
         color: Theme.white
     }

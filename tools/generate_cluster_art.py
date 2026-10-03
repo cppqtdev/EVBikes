@@ -778,6 +778,11 @@ def draw_route(points):
 
 # Hexagon view map (frame_086): terrain and a smaller route, clipped to the inside of the frame.
 HEX_MAP_BOX = (700, 40, 1195, 345)
+#  The eleven hex route layers all go through one Image whose source changes,
+#  so they have to share a size and an origin: one box, not each one's own
+#  bounding box. These are offsets inside HEX_MAP_BOX; HexSpeedoView draws the
+#  result at x 880, y 134, which is HEX_MAP_BOX plus this corner.
+HEX_ROUTE_CROP = (180, 94, 407, 244)
 HEX_MAP_CURSOR_TIP = (993, 280)
 HEX_ROUTE_SCALE = 0.62
 
@@ -813,7 +818,13 @@ def make_hex_map():
         tip_x = HEX_MAP_CURSOR_TIP[0] - int(ROUTE_START[0] * HEX_ROUTE_SCALE)
         tip_y = HEX_MAP_CURSOR_TIP[1] - int(ROUTE_START[1] * HEX_ROUTE_SCALE)
         full.paste(small, (tip_x, tip_y))
-        save(alpha_image(ImageChops.multiply(full.crop(HEX_MAP_BOX), mask.point(lambda v: min(255, v * 2)))), "hex" + f[:-4])
+        layer = ImageChops.multiply(full.crop(HEX_MAP_BOX), mask.point(lambda v: min(255, v * 2)))
+        ink = layer.getbbox()
+        if ink and not (ink[0] >= HEX_ROUTE_CROP[0] and ink[1] >= HEX_ROUTE_CROP[1]
+                        and ink[2] <= HEX_ROUTE_CROP[2] and ink[3] <= HEX_ROUTE_CROP[3]):
+            raise ValueError(f"{f}: ink {ink} outside HEX_ROUTE_CROP {HEX_ROUTE_CROP}; "
+                             "widen the box and move HexSpeedoView's x and y by the same amount")
+        save(alpha_image(layer.crop(HEX_ROUTE_CROP)), "hex" + f[:-4])
 
 
 def make_routes():
