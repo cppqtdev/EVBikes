@@ -19,7 +19,7 @@ Item {
 
     // Indicator cadence: about 1.2 Hz, the rate a real flasher relay runs at.
     SequentialAnimation {
-        running: telltale.flashing
+        running: telltale.visible && telltale.flashing
         loops: Animation.Infinite
 
         NumberAnimation { target: telltale; property: "blinkPhase"; to: 1.0; duration: 80 }

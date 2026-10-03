@@ -71,3 +71,38 @@ The companion is refreshed after each Debug link. Keep it beside `EVBikes` for f
 Use `-DEVB_SEPARATE_DEBUG_SYMBOLS=OFF` and rebuild to retain symbols inside the executable again. If a companion is manually deleted, relink/rebuild the executable to regenerate it.
 
 Latest stripped Release package: 3,907,928 bytes (3.73 MiB). A 25-second Release smoke run reached the hex cluster; speed/RPM and navigation distance continued updating. Captured renderer metrics: 60.6 FPS, sampled minimum 58.8, mean 59.9, repaint 0.8%. This brief run does not cover every page or establish long-duration stability.
+
+## RAM and allocation pass — 3 October 2026
+
+### Changes without layout changes
+
+- Phone navigation, caller, media and notification handlers now compare incoming text against the existing property before constructing a temporary `std::string`. Repeated long text no longer allocates that temporary. Text lengths, UTF-8 handling, notification sequence increments and numeric updates are preserved.
+- Contact/reminder initials are recomputed only when the name changes.
+- Telltale blinking and call pulsing run only while their component is visible. Visible cadence and animation durations are unchanged.
+- Numeric QUL properties already compare values before assigning/dirtying dependencies (`Property::setValueAndBypassBinding` in the installed SDK). No redundant per-signal comparison layer was added.
+- Existing screen loaders already restrict instantiated pages. No aggressive unloading, image-format conversion, framebuffer change or cache-limit reduction was made.
+
+### Measurements and limits
+
+Two 40-second Release runs used the same automatic simulator workload. During seconds 25–40:
+
+| Linux process metric | Before | After |
+| --- | ---: | ---: |
+| Resident set (RSS) | 51,332 KiB | 51,284 KiB |
+| Private dirty memory | 22,100 KiB | 22,100 KiB |
+
+Both intervals were flat. The small RSS difference is not evidence of a meaningful RAM reduction. The implemented benefit is avoiding repeat work/temporary allocations; allocator retention means this need not lower resident memory. These figures include the desktop Qt renderer/libraries and are not MCU heap or framebuffer measurements. Short runs cannot prove absence of leaks.
+
+The current referenced-asset audit estimates 10,142,807 decoded bytes (9.67 MiB). This includes prior user asset changes, is not this pass's saving, and is not peak cache occupancy. The desktop cache cap remains 16 MiB per allocation type. The installed public `PerformanceMetrics` interface exposes heap/stack/CPU but not resource-cache occupancy; its desktop heap/stack values are unavailable. SDK cache statistics require the library's console-performance instrumentation. Do not tune cache limits from RSS alone.
+
+Debug and Release builds passed. Existing core/backend tests passed with AddressSanitizer, UndefinedBehaviorSanitizer and LeakSanitizer outside the sandbox (the sandbox tracer prevents LeakSanitizer from running). These tests do not exercise the full QUL renderer or establish MCU leak freedom.
+
+### Repeatable process sampling
+
+```sh
+python3 tools/sample_process_memory.py <simulator-pid> --seconds 300 --output /tmp/evb-memory.json
+```
+
+The read-only sampler records RSS, PSS, private clean/dirty pages and swap in KiB. It saves partial results if the process exits and detects PID reuse. Use matching workloads and separate startup warming from steady-state comparisons. On hardware, measure resource/glyph caches, framebuffer allocation, stack high-water and heap independently before changing memory limits.
+
+A further roughly one-minute keyboard/navigation smoke run showed the map and live road/distance updates, with captured FPS about 59–60. RSS stayed at 51,436 KiB and private dirty pages at 22,304 KiB from sample 25 through sample 60. Automated keyboard input did not reliably traverse the intended settings carousel, so this is **not** an all-settings-page leak check. Full carousel/alert/call coverage and a long-duration hardware soak remain to be verified before reducing cache budgets.

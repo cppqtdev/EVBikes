@@ -24,6 +24,15 @@ namespace {
 
 constexpr uint32_t kPhoneLinkTimeoutMs = 5000;
 
+// Compare the parser's terminated text before constructing a string. Most
+// navigation/media packets change numeric fields but repeat the same text.
+void setTextIfChanged(Qul::Property<std::string> &property, const char *text)
+{
+    if (property.value() != text)
+        property.setValue(std::string(text));
+}
+
+
 struct PhoneChunk
 {
     uint8_t len = 0;
@@ -52,7 +61,7 @@ public:
         nav.etaMinutes.setValue(n.etaMinutes);
         nav.laneMask.setValue(n.laneMask);
         nav.recommendedLaneMask.setValue(n.recommendedLaneMask);
-        nav.roadName.setValue(std::string(n.roadName));
+        setTextIfChanged(nav.roadName, n.roadName);
         nav.active.setValue(n.maneuver != evb::link::Maneuver::None);
     }
 
@@ -62,7 +71,7 @@ public:
     {
         PhoneData &p = PhoneData::instance();
         p.callStatus.setValue(static_cast<uint8_t>(c.status));
-        p.callerName.setValue(std::string(c.caller));
+        setTextIfChanged(p.callerName, c.caller);
     }
 
     void onMediaState(const evb::link::MediaState &m) override
@@ -72,15 +81,15 @@ public:
         p.volume.setValue(m.volume);
         p.trackPositionS.setValue(m.positionS);
         p.trackDurationS.setValue(m.durationS);
-        p.trackTitle.setValue(std::string(m.title));
-        p.trackArtist.setValue(std::string(m.artist));
+        setTextIfChanged(p.trackTitle, m.title);
+        setTextIfChanged(p.trackArtist, m.artist);
     }
 
     void onNotification(const evb::link::Notification &n) override
     {
         PhoneData &p = PhoneData::instance();
-        p.notificationSender.setValue(std::string(n.sender));
-        p.notificationText.setValue(std::string(n.text));
+        setTextIfChanged(p.notificationSender, n.sender);
+        setTextIfChanged(p.notificationText, n.text);
         p.notificationSeq.setValue(p.notificationSeq.value() + 1);
     }
 

@@ -25,9 +25,11 @@ void PhoneListData::setEntry(uint8_t list, uint8_t slot, const std::string &name
     if (list > 1 || slot > 2)
         return;
 
-    names[list][slot]->setValue(name);
+    if (names[list][slot]->value() != name) {
+        names[list][slot]->setValue(name);
+        initials[list][slot]->setValue(firstLetter(name));
+    }
     texts[list][slot]->setValue(text);
-    initials[list][slot]->setValue(firstLetter(name));
 
     Qul::Property<uint8_t> &count = list == 0 ? contactCount : reminderCount;
     if (!name.empty() && slot + 1 > count.value())

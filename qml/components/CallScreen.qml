@@ -30,7 +30,7 @@ Item {
     }
 
     SequentialAnimation {
-        running: call.ringing
+        running: call.visible && call.ringing
         loops: Animation.Infinite
 
         NumberAnimation { target: call; property: "pulse"; to: 1.0; duration: 750; easing.type: Easing.OutCubic }
