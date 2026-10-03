@@ -162,7 +162,7 @@ Item {
         }
 
         Text {
-            y: 108
+            y: 96
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("ENTER PIN")
@@ -180,7 +180,7 @@ Item {
                 readonly property bool here: Router.pinCursor === index
 
                 x: pad.firstX + index * (pad.boxWidth + pad.boxGap)
-                y: 136
+                y: 120
                 width: pad.boxWidth
                 height: pad.boxHeight
 
@@ -224,7 +224,7 @@ Item {
         }
 
         Text {
-            y: 236
+            y: 216
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: SystemData.pinAttemptsLeft === 1 ? qsTr("1 try left")
@@ -236,7 +236,7 @@ Item {
         }
 
         Text {
-            y: 266
+            y: 244
             width: Theme.screenWidth
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("↑ ↓ digit   ← → move   OK unlock   BACK cancel")
@@ -246,9 +246,10 @@ Item {
         }
     }
 
-    //  How to get to the keypad when there is no key.
+    //  How to get to the keypad when there is no key. Under the fingerprint,
+    //  which occupies y 283 to 359; the loading bar starts at 422.
     Text {
-        y: 300
+        y: 376
         width: Theme.screenWidth
         horizontalAlignment: Text.AlignHCenter
         visible: auth.authState === SystemData.AuthIdle && !Router.pinMode
