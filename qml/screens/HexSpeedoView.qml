@@ -228,7 +228,7 @@ Item {
         Text {
             x: 50
             y: 31
-            width: 140
+            width: 92
             height: 30
             verticalAlignment: Text.AlignVCenter
             text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
@@ -236,6 +236,47 @@ Item {
             color: Theme.textPrimary
             font.family: Theme.fontFamily
             font.pixelSize: 22
+        }
+
+        //  Which exit to take, on the roundabout icon. The number is the part
+        //  the rider needs and it is the part a narrow card would elide away.
+        Rectangle {
+            x: 30
+            y: 32
+            width: 16
+            height: 16
+            radius: 8
+            visible: NavigationData.maneuver === NavigationData.RoundaboutEnter
+            color: Theme.teal
+        }
+
+        Text {
+            x: 30
+            y: 33
+            width: 16
+            horizontalAlignment: Text.AlignHCenter
+            visible: NavigationData.maneuver === NavigationData.RoundaboutEnter
+            text: "" + NavigationData.roundaboutExit
+            color: Theme.black
+            font.family: Theme.fontFamily
+            font.pixelSize: 13
+        }
+
+        //  Arrival, beside the turn distance rather than under it: the route
+        //  picture starts at y 134 and this card cannot grow downwards.
+        //  Lane guidance is on the map view only for the same reason.
+        Text {
+            x: 146
+            y: 31
+            width: 108
+            height: 30
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+            visible: NavigationData.etaMinutes > 0
+            text: Format.etaText(NavigationData.etaMinutes)
+            color: Theme.textSecondary
+            font.family: Theme.fontFamily
+            font.pixelSize: 16
         }
     }
     Text {

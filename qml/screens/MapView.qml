@@ -144,7 +144,7 @@ Item {
         x: 140
         y: map.guidanceTop - 66
         width: Theme.screenWidth
-        height: 120
+        height: 170
         visible: NavigationData.active
 
         Icon {
@@ -221,6 +221,67 @@ Item {
             color: Theme.textPrimary
             font.family: Theme.fontFamily
             font.pixelSize: 26
+        }
+
+        //  Which exit to take, on the roundabout icon itself. The number is
+        //  the part the rider needs; spelling the instruction out does not
+        //  fit this corner and would elide away the one digit that matters.
+        Rectangle {
+            x: 606
+            y: 90
+            width: 18
+            height: 18
+            radius: 9
+            visible: NavigationData.maneuver === NavigationData.RoundaboutEnter
+            color: Theme.teal
+        }
+
+        Text {
+            x: 606
+            y: 92
+            width: 18
+            horizontalAlignment: Text.AlignHCenter
+            visible: NavigationData.maneuver === NavigationData.RoundaboutEnter
+            text: "" + NavigationData.roundaboutExit
+            color: Theme.black
+            font.family: Theme.fontFamily
+            font.pixelSize: 13
+        }
+
+        //  Arrival: how long and how far is left of the whole route, not of
+        //  the next turn. Both arrive on every route update from the phone.
+        Text {
+            x: 560
+            y: 124
+            width: 162
+            elide: Text.ElideRight
+            visible: NavigationData.etaMinutes > 0 || NavigationData.distanceRemainingM > 0
+            text: Format.etaText(NavigationData.etaMinutes) + "   "
+                  + Format.distanceValue(NavigationData.distanceRemainingM) + " "
+                  + Format.distanceUnit(NavigationData.distanceRemainingM)
+            color: Theme.textSecondary
+            font.family: Theme.fontFamily
+            font.pixelSize: 16
+        }
+
+        //  Lane guidance. One bar per lane the road has, the ones to be in
+        //  picked out. Eight is the width of the mask, and the model stays a
+        //  constant so the delegates are laid out once at build time.
+        Repeater {
+            model: 8
+
+            Rectangle {
+                readonly property bool present: (NavigationData.laneMask & (1 << index)) !== 0
+                readonly property bool wanted: (NavigationData.recommendedLaneMask & (1 << index)) !== 0
+
+                x: 560 + index * 13
+                y: 150
+                width: 10
+                height: 12
+                radius: 2
+                visible: present
+                color: wanted ? Theme.teal : "#4A4A4A"
+            }
         }
 
     }
