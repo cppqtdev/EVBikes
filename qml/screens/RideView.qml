@@ -36,7 +36,7 @@ Item {
 
         BikeOrbit {
             x: 505
-            y: 90
+            y: 108
             visible: Router.centerView === Router.viewBike
         }
 
