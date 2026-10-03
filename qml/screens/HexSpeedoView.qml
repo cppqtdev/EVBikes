@@ -183,7 +183,7 @@ Item {
     // and with every lamp lit it runs to x 902, and this starts at 866. The
     // row ends at y 84 whatever is lit, so 92 clears it for good.
     Item {
-        x: 866; y: 92; width: 260; height: 66
+        x: 836; y: 92; width: 260; height: 66
         visible: NavigationData.active
         Text {
             x: 14; y: 5; width: 232; height: 24
@@ -202,11 +202,12 @@ Item {
         //  The controls share the distance line. Inside the guidance, so the
         //  two travel together and cannot drift apart by a stray offset.
         MapButtons {
-            x: 156; y: 31
+            x: 140; y: 31
         }
 
         Text {
-            x: 50; y: 31; width: 90; height: 30
+            x: 50; y: 31; width: 76; height: 30
+            verticalAlignment: Text.AlignVCenter
             text: Format.distanceValue(NavigationData.distanceToManeuverM) + " "
                   + Format.distanceUnit(NavigationData.distanceToManeuverM)
             color: Theme.textPrimary
