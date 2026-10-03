@@ -20,6 +20,14 @@ QtObject {
         console.log("[route] stage=" + name)
     }
 
+    // PIN entry, the fallback when the rider has no key. Four digits carried
+    // as one int: up and down change the digit under the cursor, left and
+    // right move the cursor, OK submits.
+    property bool pinMode: false
+    property int pinValue: 0
+    property int pinCursor: 0
+    property int pinRejectSeq: 0
+
     // Centre view while riding
     property int viewBike: 0
     property int viewMap: 1
@@ -210,12 +218,65 @@ QtObject {
     function handleAuthButton(button: int) {
         if (SystemData.authState === SystemData.AuthScanning)
             return
+        if (pinMode) {
+            handlePinButton(button)
+            return
+        }
+        if (button === ClusterInput.Mode) {
+            startPinEntry()
+            return
+        }
         if (button === ClusterInput.Left)
             SystemData.selectProfile(SystemData.profileIndex - 1)
         else if (button === ClusterInput.Right)
             SystemData.selectProfile(SystemData.profileIndex + 1)
         else if (button === ClusterInput.Ok)
             SystemData.startScan()
+    }
+
+    function startPinEntry() {
+        pinValue = 0
+        pinCursor = 0
+        pinMode = true
+    }
+
+    function handlePinButton(button: int) {
+        if (button === ClusterInput.Back) {
+            pinMode = false
+            return
+        }
+        if (button === ClusterInput.Left) {
+            pinCursor = (pinCursor + 3) % 4
+            return
+        }
+        if (button === ClusterInput.Right) {
+            pinCursor = (pinCursor + 1) % 4
+            return
+        }
+        if (button === ClusterInput.Up || button === ClusterInput.Down) {
+            // Box 0 is the leftmost digit, which is the most significant, so
+            // it is position 3 counting from the right.
+            var pos = 3 - pinCursor
+            var cur = Format.digitValue(pinValue, pos)
+            var next = button === ClusterInput.Up ? (cur + 1) % 10 : (cur + 9) % 10
+            pinValue = Format.setDigit(pinValue, pos, next)
+            return
+        }
+        if (button === ClusterInput.Ok)
+            confirmPin()
+    }
+
+    function confirmPin() {
+        if (SystemData.submitPin(pinValue)) {
+            pinMode = false
+            pinValue = 0
+            pinCursor = 0
+            finishAuth()
+            return
+        }
+        pinValue = 0
+        pinCursor = 0
+        pinRejectSeq = pinRejectSeq + 1
     }
 
     function handleMenuButton(button: int) {

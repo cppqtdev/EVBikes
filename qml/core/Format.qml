@@ -138,6 +138,23 @@ QtObject {
         return "" + (v % 10)
     }
 
+    function digitValue(value: int, position: int) : int {
+        var v = Math.floor(value)
+        for (var i = 0; i < position; i++)
+            v = Math.floor(v / 10)
+        return v % 10
+    }
+
+    //  Rebuilds the number with one digit replaced. The PIN is carried as a
+    //  single int rather than four properties, so this is how a keypad press
+    //  changes the digit under the cursor.
+    function setDigit(value: int, position: int, digit: int) : int {
+        var unit = 1
+        for (var i = 0; i < position; i++)
+            unit = unit * 10
+        return value + (digit - digitValue(value, position)) * unit
+    }
+
     // Contacts and reminders come off the phone link, three slots each. An
     // unpaired phone leaves them empty, which is the truth rather than a list
     // of people the firmware made up.
