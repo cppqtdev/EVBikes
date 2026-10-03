@@ -38,6 +38,7 @@ struct SimState
     uint8_t navStep = 0;
     uint8_t rideMode = 0;
     uint16_t phoneTimerMs = 0;
+    uint32_t lampMs = 0;
     uint16_t blinkMs = 0;
     bool blinkOn = false;
 };
@@ -78,6 +79,32 @@ constexpr NavStep kRoute[] = {
     {evb::link::Maneuver::Destination, 150, "Office"},
 };
 constexpr uint8_t kRouteLen = sizeof(kRoute) / sizeof(kRoute[0]);
+
+//  The lamp test used to light one fault at a time off the forty second
+//  phase counter, which divided to ten steps and so never reached the last
+//  lamp at all. It also never showed two at once, and two at once is where
+//  the questions are: whether the row still spaces evenly, and how wide it
+//  grows before it runs into anything.
+//
+//  So it sweeps in three parts, a step every 1.2 seconds. Each lamp alone,
+//  so every drawing gets looked at. Then a group widening one lamp at a time
+//  to the full row, which is the spacing and the worst case. Then a few
+//  arbitrary mixes, because a real fault never arrives in a tidy block.
+//
+//  Bits 5 to 15 are the eleven the electric bike can show; 0 to 4 are the
+//  petrol lamps, which PetrolDemo covers.
+uint16_t lampSweep(uint32_t elapsedMs)
+{
+    g.lampMs += elapsedMs;
+    const uint32_t step = (g.lampMs / 1200u) % 30u;
+    if (step < 11u)
+        return static_cast<uint16_t>(1u << (5u + step));
+    if (step < 22u)
+        return static_cast<uint16_t>(((1u << (step - 10u)) - 1u) << 5u);
+    uint32_t seed = (step + 1u) * 1103515245u + 12345u;
+    seed ^= seed >> 13;
+    return static_cast<uint16_t>(((seed >> 7) & 0x7FFu) << 5u);
+}
 
 void sendPhoneTraffic()
 {
@@ -282,6 +309,7 @@ void Simulator::nextScenario()
     g.rearPsiX10 = 320;
     g.packTemp = 34;
     g.motorTemp = 48;
+    g.lampMs = 0;
 }
 
 void Simulator::step(uint32_t elapsedMs)
@@ -370,7 +398,7 @@ void Simulator::step(uint32_t elapsedMs)
     if (sc == PetrolDemo)
         warnings = static_cast<uint16_t>(1u << ((phase / 4u) % 6u));
     else if (sc == LampTest)
-        warnings = static_cast<uint16_t>(1u << (5u + ((phase / 4u) % 11u)));
+        warnings = lampSweep(elapsedMs);
     if (sc == Overheat) warnings |= (1u << 7) | (1u << 8);
     evb::canSetBitsLE(powertrain.data, 16, 16, warnings);
     Backend::postCanFrame(powertrain);
