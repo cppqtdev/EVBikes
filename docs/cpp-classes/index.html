@@ -1,0 +1,1222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Qt for MCUs C++ Classes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+/* Same datasheet treatment as the first guide — this is its companion volume. */
+:root{
+  --paper:#F6F5F1; --card:#FFFFFF; --ink:#15191C; --ink-2:#565C62; --ink-3:#848A90;
+  --rule:#DFDCD4; --rule-2:#EDEBE5;
+  --accent:#0C6670; --accent-soft:#E2EFF0;
+  --flag:#B33C1B; --flag-soft:#F7E8E3;
+  --good:#2F6B3C;
+  --display:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --data:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1215; --card:#161B1F; --ink:#E7E9EA; --ink-2:#A3AAB0; --ink-3:#777E85;
+  --rule:#272E34; --rule-2:#1E242A;
+  --accent:#4FB6C0; --accent-soft:#102A2E;
+  --flag:#F08A66; --flag-soft:#2C1912;
+  --good:#7FC08C;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#0E1215; --card:#161B1F; --ink:#E7E9EA; --ink-2:#A3AAB0; --ink-3:#777E85;
+  --rule:#272E34; --rule-2:#1E242A;
+  --accent:#4FB6C0; --accent-soft:#102A2E;
+  --flag:#F08A66; --flag-soft:#2C1912;
+  --good:#7FC08C;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+a{color:var(--accent)}
+code,kbd{font-family:var(--data);font-size:.87em}
+
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+.masthead{border-bottom:1px solid var(--rule);background:var(--card)}
+.masthead .wrap{padding-block:34px 28px}
+.kicker{font-family:var(--data);font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font-size:clamp(30px,5.4vw,50px);font-weight:600;letter-spacing:-.02em;max-width:17ch}
+.standfirst{font-size:clamp(16px,2.2vw,19px);color:var(--ink-2);max-width:62ch;margin:16px 0 0}
+.meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;
+  font-family:var(--data);font-size:11.5px;color:var(--ink-3);
+  letter-spacing:.04em;text-transform:uppercase}
+
+.cols{display:grid;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1000px){.cols{grid-template-columns:216px minmax(0,1fr);gap:52px}}
+
+.rail{display:none}
+@media(min-width:1000px){
+  .rail{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);
+    align-self:start;padding-block:40px;max-height:calc(100vh - 80px);overflow-y:auto}
+}
+.rail h4{font-family:var(--data);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+.rail ol{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:1px}
+.rail a{display:grid;grid-template-columns:24px 1fr;gap:9px;align-items:baseline;
+  padding:5px 7px;border-radius:3px;text-decoration:none;color:var(--ink-2);
+  font-family:var(--display);font-size:13px;line-height:1.3}
+.rail a:hover{background:var(--accent-soft);color:var(--ink)}
+.rail .n{font-family:var(--data);font-size:11px;color:var(--ink-3)}
+
+main{padding-block:40px 80px;min-width:0}
+section{scroll-margin-top:30px}
+.ch{border-top:1px solid var(--rule);padding-block:34px 10px}
+.ch:first-of-type{border-top:none}
+.ch-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;margin-bottom:6px}
+.ch-num{font-family:var(--data);font-size:12px;font-weight:600;color:var(--accent);
+  letter-spacing:.06em;padding-top:4px}
+.ch h2{font-size:clamp(22px,3.4vw,30px);font-weight:600;letter-spacing:-.015em}
+.ch .lede{font-size:17px;color:var(--ink-2);max-width:62ch;margin:10px 0 0;font-style:italic}
+.ch > p,.ch > ul,.ch > ol{max-width:66ch}
+p{margin:16px 0}
+ul,ol{max-width:66ch;padding-left:20px}
+li{margin:7px 0}
+h3{font-family:var(--display);font-size:16px;font-weight:600;margin:30px 0 4px;letter-spacing:-.005em}
+h3 + p{margin-top:8px}
+h4.grp{font-family:var(--data);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin:26px 0 8px}
+
+.rule-box{border:1px solid var(--rule);border-left:3px solid var(--accent);
+  background:var(--card);padding:16px 18px;margin:22px 0;border-radius:2px}
+.rule-box p{margin:0;max-width:62ch}
+.rule-box p + p{margin-top:12px}
+.rule-box .tag{font-family:var(--data);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.cost{border-left-color:var(--flag)}
+.cost .tag{color:var(--flag)}
+
+.fig{margin:26px 0;border:1px solid var(--rule);background:var(--card);border-radius:2px;overflow:hidden}
+.fig figcaption{font-family:var(--data);font-size:11px;color:var(--ink-3);
+  letter-spacing:.07em;text-transform:uppercase;padding:11px 16px;border-top:1px solid var(--rule-2)}
+.fig svg{display:block;width:100%;height:auto;max-width:100%}
+
+.scroller{overflow-x:auto;margin:22px 0;border:1px solid var(--rule);border-radius:2px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-family:var(--display);font-size:13.5px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--rule-2);vertical-align:top}
+th{font-weight:600;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);background:var(--paper);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.num,th.num{font-family:var(--data);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td code{white-space:nowrap}
+
+pre{font-family:var(--data);font-size:12.5px;line-height:1.55;background:var(--card);
+  border:1px solid var(--rule);border-radius:2px;padding:14px 16px;overflow-x:auto;margin:20px 0}
+pre code{font-size:inherit}
+:not(pre) > code{background:var(--rule-2);padding:1px 5px;border-radius:2px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin:24px 0;border-radius:2px;overflow:hidden}
+.stat{background:var(--card);padding:14px 16px}
+.stat .v{font-family:var(--data);font-size:21px;font-weight:600;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;display:block}
+.stat .k{font-family:var(--display);font-size:11.5px;color:var(--ink-3);
+  letter-spacing:.05em;text-transform:uppercase;display:block;margin-top:5px}
+.stat.hi .v{color:var(--accent)}
+
+.check{font-family:var(--data);font-size:12.5px;background:var(--accent-soft);
+  border:1px solid var(--rule);border-radius:2px;padding:13px 16px;margin:22px 0}
+.check .tag{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:7px}
+.check pre{background:transparent;border:none;padding:0;margin:0;font-size:12.5px}
+
+footer{border-top:1px solid var(--rule);background:var(--card);margin-top:10px}
+footer .wrap{padding-block:28px 40px}
+footer h4{font-family:var(--data);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+footer ul{columns:2;column-gap:36px;list-style:none;padding:0;max-width:none;
+  font-size:13.5px;font-family:var(--display)}
+@media(max-width:620px){footer ul{columns:1}}
+footer li{margin:0 0 6px;break-inside:avoid}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Qt for MCUs 2.12 · the C++ side</p>
+    <h1>Qt for MCUs C++ Classes</h1>
+    <p class="standfirst">Every class Qt for MCUs gives you, what it is for, and how to
+      actually wire it to QML. Written for someone who has not used the C++ side before,
+      and checked line by line against the reference.</p>
+    <div class="meta">
+      <span>25 application classes</span><span>58 porting classes</span><span>14 chapters</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap cols">
+
+  <nav class="rail" aria-label="Chapters">
+    <h4>Start here</h4>
+    <ol>
+      <li><a href="#c1"><span class="n">01</span><span>How C++ reaches QML</span></a></li>
+      <li><a href="#c2"><span class="n">02</span><span>Object, Singleton</span></a></li>
+      <li><a href="#c3"><span class="n">03</span><span>Property</span></a></li>
+      <li><a href="#c4"><span class="n">04</span><span>Signal</span></a></li>
+    </ol>
+    <h4>When you need it</h4>
+    <ol>
+      <li><a href="#c5"><span class="n">05</span><span>Lists and models</span></a></li>
+      <li><a href="#c6"><span class="n">06</span><span>EventQueue</span></a></li>
+      <li><a href="#c7"><span class="n">07</span><span>Timer</span></a></li>
+      <li><a href="#c8"><span class="n">08</span><span>Application, startup</span></a></li>
+      <li><a href="#c9"><span class="n">09</span><span>Images</span></a></li>
+      <li><a href="#c10"><span class="n">10</span><span>Resources, files</span></a></li>
+      <li><a href="#c11"><span class="n">11</span><span>String, Status, Flags</span></a></li>
+      <li><a href="#c12"><span class="n">12</span><span>Location, maps</span></a></li>
+    </ol>
+    <h4>Reference</h4>
+    <ol>
+      <li><a href="#c13"><span class="n">13</span><span>The platform layer</span></a></li>
+      <li><a href="#c14"><span class="n">14</span><span>Putting it together</span></a></li>
+      <li><a href="#lookup"><span class="n">—</span><span>I want to…</span></a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- ============================================ 01 -->
+  <section class="ch" id="c1">
+    <div class="ch-head"><span class="ch-num">01</span><h2>How C++ reaches QML</h2></div>
+    <p class="lede">Before any individual class makes sense you need the mechanism. It is
+      small, and once you have seen it you know where every other class plugs in.</p>
+
+    <p>Desktop Qt does this with <code>Q_OBJECT</code>, <code>Q_PROPERTY</code>, moc,
+      <code>qmlRegisterType</code> and a <code>QVariant</code> round trip. Qt for MCUs
+      throws all of it away. You write a plain struct, list its header in the
+      <code>.qmlproject</code>, and a build tool writes the QML type for you.
+      <strong>There is no registration call anywhere in your code.</strong></p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 880 330" role="img" aria-label="Your header is read by qmlinterfacegenerator, which writes a generated QML singleton shim; qmltocpp compiles that with the rest of your QML into the binary. At runtime setValue marks bindings dirty and the frame redraws.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g font-family="IBM Plex Mono, monospace" font-size="12">
+          <text x="20" y="26" font-size="11" fill="var(--ink-3)" letter-spacing="1.4">BUILD TIME</text>
+
+          <rect x="20" y="40" width="186" height="60" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+          <text x="113" y="64" text-anchor="middle" fill="var(--ink)">VehicleData.h</text>
+          <text x="113" y="84" text-anchor="middle" fill="var(--ink-3)" font-size="11">your plain struct</text>
+
+          <line x1="212" y1="70" x2="254" y2="70" stroke="var(--rule)" stroke-width="1.5" marker-end="url(#a1)" color="var(--ink-3)"/>
+
+          <rect x="260" y="40" width="210" height="60" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.2"/>
+          <text x="365" y="64" text-anchor="middle" fill="var(--accent)" font-weight="600">qmlinterfacegenerator</text>
+          <text x="365" y="84" text-anchor="middle" fill="var(--ink-3)" font-size="11">reads InterfaceFiles</text>
+
+          <line x1="476" y1="70" x2="518" y2="70" stroke="var(--rule)" stroke-width="1.5" marker-end="url(#a1)" color="var(--ink-3)"/>
+
+          <rect x="524" y="40" width="186" height="60" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+          <text x="617" y="64" text-anchor="middle" fill="var(--ink)">VehicleData.qml</text>
+          <text x="617" y="84" text-anchor="middle" fill="var(--ink-3)" font-size="11">generated shim</text>
+
+          <path d="M617 106 V128 H365" fill="none" stroke="var(--rule)" stroke-width="1.5"/>
+          <line x1="365" y1="128" x2="365" y2="146" stroke="var(--rule)" stroke-width="1.5" marker-end="url(#a1)" color="var(--ink-3)"/>
+          <rect x="260" y="152" width="210" height="46" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+          <text x="365" y="180" text-anchor="middle" fill="var(--ink)">qmltocpp → binary</text>
+
+          <line x1="20" y1="222" x2="860" y2="222" stroke="var(--rule)" stroke-width="1"/>
+          <text x="20" y="248" font-size="11" fill="var(--ink-3)" letter-spacing="1.4">RUN TIME</text>
+
+          <g>
+            <rect x="20" y="262" width="170" height="44" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="105" y="289" text-anchor="middle" fill="var(--ink)" font-size="11.5">setValue(52)</text>
+            <line x1="196" y1="284" x2="232" y2="284" stroke="var(--rule)" stroke-width="1.5" marker-end="url(#a1)" color="var(--ink-3)"/>
+            <rect x="238" y="262" width="170" height="44" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="323" y="289" text-anchor="middle" fill="var(--ink)" font-size="11.5">bindings dirty</text>
+            <line x1="414" y1="284" x2="450" y2="284" stroke="var(--rule)" stroke-width="1.5" marker-end="url(#a1)" color="var(--ink-3)"/>
+            <rect x="456" y="262" width="170" height="44" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="541" y="289" text-anchor="middle" fill="var(--ink)" font-size="11.5">re-evaluated</text>
+            <line x1="632" y1="284" x2="668" y2="284" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#a1)" color="var(--accent)"/>
+            <rect x="674" y="262" width="186" height="44" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.2"/>
+            <text x="767" y="289" text-anchor="middle" fill="var(--accent)" font-size="11.5" font-weight="600">pixels</text>
+          </g>
+        </g>
+      </svg>
+      <figcaption>Figure 1 — the wiring happens at build time; at runtime it is just a write</figcaption>
+    </figure>
+
+    <h3>Three steps, start to finish</h3>
+<pre><code>// 1. a plain struct — no Q_OBJECT, no macros at all
+#include &lt;qul/property.h&gt;
+#include &lt;qul/singleton.h&gt;
+
+struct VehicleData : public Qul::Singleton&lt;VehicleData&gt;
+{
+    Qul::Property&lt;int&gt;  speedKmh;
+    Qul::Property&lt;bool&gt; absFault;
+};</code></pre>
+
+<pre><code>// 2. list the header — backend.qmlproject
+Project {
+    MCU.Module { uri: "ClusterBackend" }
+    InterfaceFiles { files: [ "VehicleData.h" ] }
+}</code></pre>
+
+<pre><code>// 3. use it. no import of the type, no instantiation.
+import ClusterBackend
+Text { text: VehicleData.speedKmh + " km/h" }</code></pre>
+
+    <p>And from C++, <code>VehicleData::instance().speedKmh.setValue(52)</code>. The
+      <code>Text</code> updates. You did not call anything on the UI.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">The first thing to check, every time</span>
+      <p>A header that is not in <code>InterfaceFiles</code> is invisible to QML,
+        however correct it looks. "The type does not exist" almost always means this.</p>
+    </div>
+
+    <h3>The four building blocks</h3>
+    <div class="scroller"><table>
+      <thead><tr><th>You want</th><th>Use</th><th>Chapter</th></tr></thead>
+      <tbody>
+        <tr><td>A value QML can read and bind to</td><td><code>Qul::Property&lt;T&gt;</code></td><td>3</td></tr>
+        <tr><td>One global object, reachable by name</td><td><code>Qul::Singleton&lt;T&gt;</code></td><td>2</td></tr>
+        <tr><td>Many instances, created in QML</td><td><code>Qul::Object</code></td><td>2</td></tr>
+        <tr><td>To tell QML "this just happened"</td><td><code>Qul::Signal&lt;T&gt;</code></td><td>4</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="rule-box">
+      <span class="tag">The direction of travel</span>
+      <p><strong>C++ pushes values in. QML pulls them out through bindings.</strong> You
+        do not reach into QML to update the screen. If you want to, the answer is almost
+        always a property you have not declared yet. The one exception is a signal, for
+        things that are events rather than states.</p>
+    </div>
+  </section>
+
+  <!-- ============================================ 02 -->
+  <section class="ch" id="c2">
+    <div class="ch-head"><span class="ch-num">02</span><h2>Object and Singleton</h2></div>
+    <p class="lede">Two classes, one decision: does your type exist once, or many times?</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th></th><th><code>Qul::Singleton&lt;T&gt;</code></th><th><code>Qul::Object</code></th></tr></thead>
+      <tbody>
+        <tr><td>Header</td><td><code>qul/singleton.h</code></td><td><code>qul/object.h</code></td></tr>
+        <tr><td>API</td><td><code>static T&amp; instance()</code></td><td>none — it is a marker</td></tr>
+        <tr><td>Instances</td><td>exactly one</td><td>as many as QML declares</td></tr>
+        <tr><td>Reached from QML as</td><td>a name: <code>VehicleData.speed</code></td><td>a type you instantiate</td></tr>
+        <tr><td>Exported to QML as</td><td><code>pragma Singleton</code></td><td><code>QtObject</code></td></tr>
+      </tbody>
+    </table></div>
+
+<pre><code>struct VehicleData : public Qul::Singleton&lt;VehicleData&gt;   // the type, twice. not a typo.
+{
+    Qul::Property&lt;int&gt; speedKmh;
+};</code></pre>
+
+    <p>That repetition is the Curiously Recurring Template Pattern — it is how the base
+      knows what it is making a singleton <em>of</em>. The docs suggest a private
+      constructor with the base as <code>friend</code>, so nobody creates a second one.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">Qul::Object does not give you runtime creation</span>
+      <p>No heap means "many instances" still means a count fixed at build time — the
+        objects QML declares, laid out statically. Reach for <code>Qul::Object</code>
+        when QML genuinely owns the instances; otherwise <code>Singleton</code> serves
+        you better. This project has ten singletons and no <code>Qul::Object</code>
+        at all.</p>
+    </div>
+
+    <h3>From this project — the split that matters</h3>
+    <p>Ten singletons, one per subsystem: <code>VehicleData</code>,
+      <code>ConnectivityData</code>, <code>NavigationData</code>, <code>PhoneData</code>,
+      <code>PhoneListData</code>, <code>SystemData</code>, <code>TripData</code>,
+      <code>AlertData</code>, <code>ClusterInput</code>, <code>Simulator</code>.</p>
+    <p>That split is the useful lesson, more than the API. <strong>One singleton per
+      subsystem, named for what it holds.</strong> A page reads the singletons it needs
+      and never talks to the bus.</p>
+  </section>
+
+  <!-- ============================================ 03 -->
+  <section class="ch" id="c3">
+    <div class="ch-head"><span class="ch-num">03</span><h2>Property</h2></div>
+    <p class="lede">The one you will use most. In this project it appears 131 times;
+      everything else combined appears twelve.</p>
+
+    <div class="stats">
+      <div class="stat hi"><span class="v">131</span><span class="k">Qul::Property</span></div>
+      <div class="stat"><span class="v">10</span><span class="k">Qul::Singleton</span></div>
+      <div class="stat"><span class="v">1</span><span class="k">Qul::Signal</span></div>
+      <div class="stat"><span class="v">1</span><span class="k">Qul::Timer</span></div>
+    </div>
+
+    <p>The complete API, and that is not a joke:</p>
+<pre><code>#include &lt;qul/property.h&gt;
+
+Property()                        // zero-initialised
+explicit Property(const T &amp;value)
+void setValue(const T &amp;v)
+const T &amp;value()
+const T &amp;value() const</code></pre>
+
+    <p>A plain <code>int</code> member is just a number. A <code>Qul::Property&lt;int&gt;</code>
+      is a number <strong>the engine watches</strong>: call <code>setValue</code> and
+      every binding that reads it is marked dirty and re-evaluated before the next frame.
+      You write one line and never mention the elements that change.</p>
+
+    <p>Read with <code>.value()</code>, write with <code>.setValue()</code>. A property
+      is not an <code>int</code> with extra powers; it is a box. Forgetting
+      <code>.value()</code> is the most common compile error of week one.</p>
+
+    <div class="rule-box">
+      <span class="tag">One constraint from the docs</span>
+      <p>"Property type T that does not have built-in comparison operator must be
+        provided with a user-defined <code>operator==</code>." The engine compares old
+        and new to decide whether anything changed. Without one you get a compile error
+        — the good outcome. The bad one would be a property that updates every frame
+        forever.</p>
+    </div>
+
+    <div class="rule-box cost">
+      <span class="tag">The integer trap</span>
+      <p><strong>QML has exactly one integer type.</strong> Properties of narrow types
+        work, but a desktop bridge mirroring narrow types across the boundary corrupted
+        every number on screen in this project: 8-bit and 32-bit survived,
+        <strong>16-bit did not</strong>.</p>
+      <p>The rule: narrow inside your own code, <code>int</code> at the QML boundary for
+        anything in a signal signature. The comment in <code>ClusterInput.h</code> is the
+        scar — <em>"QML signal slots use its canonical int type; the hardware API stays
+        byte-sized."</em></p>
+    </div>
+
+    <h3>From this project</h3>
+<pre><code>struct NavigationData : public Qul::Singleton&lt;NavigationData&gt;
+{
+    enum Maneuver : uint8_t { None = 0, Straight, SlightLeft, /* ... */ Destination };
+
+    Qul::Property&lt;bool&gt;        active;
+    Qul::Property&lt;uint8_t&gt;     maneuver;
+    Qul::Property&lt;uint32_t&gt;    distanceToManeuverM;
+    Qul::Property&lt;uint16_t&gt;    etaMinutes;
+    Qul::Property&lt;uint8_t&gt;     laneMask;
+    Qul::Property&lt;std::string&gt; roadName;
+};</code></pre>
+    <p>Three things to copy: <strong>the enum lives beside the property that uses it</strong>
+      so QML writes <code>NavigationData.SharpLeft</code> and no screen knows that sharp
+      left is 7; <strong>units are in the names</strong> so nobody divides by a thousand
+      twice; and <strong>a bitfield is one property</strong>, not eight booleans — fewer
+      properties means fewer bindings to re-evaluate.</p>
+  </section>
+
+  <!-- ============================================ 04 -->
+  <section class="ch" id="c4">
+    <div class="ch-head"><span class="ch-num">04</span><h2>Signal</h2></div>
+    <p class="lede">A property says what is true. A signal says what just happened.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>The thing</th><th>It is a</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>The speed is 52</td><td>state</td><td><code>Property</code></td></tr>
+        <tr><td>The rider pressed OK</td><td>event</td><td><code>Signal</code></td></tr>
+        <tr><td>The battery is at 80%</td><td>state</td><td><code>Property</code></td></tr>
+        <tr><td>A text message arrived</td><td>event</td><td><code>Signal</code></td></tr>
+        <tr><td>The trip counter was reset</td><td>event</td><td><code>Signal</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <p>The test: <strong>if you missed it, does it matter?</strong> A state you can read
+      any time. An event you miss is gone. Model a button press as a boolean and you get
+      a UI that drops fast double presses and occasionally latches on.</p>
+
+<pre><code>// ClusterInput.h                                from this project
+struct ClusterInput : public Qul::Singleton&lt;ClusterInput&gt;
+{
+    enum Button : uint8_t { Up = 0, Down, Left, Right, Ok, Mode, Back };
+    enum Action : uint8_t { Press = 0, LongPress };
+
+    Qul::Signal&lt;void(int button, int action)&gt; buttonEvent;
+
+    void inject(uint8_t button, uint8_t action);
+};</code></pre>
+
+<pre><code>Connections {
+    target: ClusterInput
+    onButtonEvent: {
+        if (button === ClusterInput.Ok &amp;&amp; action === ClusterInput.Press)
+            Router.activate()
+    }
+}</code></pre>
+
+    <p>Emit by calling it: <code>buttonEvent(button, action)</code>. The whole input
+      system here is one signal, and <code>inject()</code> is the seam — the real driver
+      calls it from a GPIO handler, the desktop simulator from a keyboard event, and QML
+      cannot tell.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">Two traps</span>
+      <p><strong>Unnamed parameters.</strong> <code>Signal&lt;void(int, int)&gt;</code>
+        compiles, but the QML handler has nothing sensible to call them. The names you
+        declare are the names in scope.</p>
+      <p><strong>Emitting from an interrupt.</strong> Handlers run synchronously, which
+        puts QML on the interrupt stack. Post to an <code>EventQueue</code> and emit from
+        its <code>onEvent</code> instead.</p>
+    </div>
+  </section>
+
+  <!-- ============================================ 05 -->
+  <section class="ch" id="c5">
+    <div class="ch-head"><span class="ch-num">05</span><h2>Lists and models</h2></div>
+    <p class="lede">For when you have several of something and QML needs to repeat over it.</p>
+
+    <h4 class="grp">Qul::ListModel — rows for a view</h4>
+<pre><code>#include &lt;qul/model.h&gt;
+
+virtual int count() const = 0;        // how many
+virtual T data(int index) const = 0;  // the row
+T get(int index) const;
+
+Qul::Signal&lt;void (int)&gt; dataChanged;  // row `index` changed
+Qul::Signal&lt;void ()&gt;    modelReset;   // the row COUNT changed</code></pre>
+
+    <p>Two pure virtuals, two signals. The row struct's public fields become the roles
+      QML reads as <code>model.name</code>, <code>model.number</code>.</p>
+
+    <p><strong>Which signal matters.</strong> <code>dataChanged(3)</code> reloads one row
+      and is cheap. <code>modelReset()</code> rebuilds the view and is not. Emit the
+      cheap one whenever you can — and emit the expensive one whenever the count changes,
+      or you see stale rows.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">The constraint nobody warns you about</span>
+      <p>A <code>Repeater</code>'s delegates are allocated <strong>at build time</strong>
+        from a compile-time estimate. No heap means a row that appears at runtime has
+        nowhere to come from. Keep the model constant and hide what you are not using:</p>
+<pre style="margin-top:12px"><code>Repeater {
+    model: 8                                   // constant. always 8 delegates.
+    ContactRow { visible: index &lt; ContactModel.count }
+}</code></pre>
+      <p>The desktop build creates delegates on demand and will not warn you. The device
+        froze.</p>
+    </div>
+
+    <h4 class="grp">Qul::ListProperty — a list as a property</h4>
+<pre><code>#include &lt;qul/listproperty.h&gt;
+
+void append(T *t);   T at(int index);   void clear();
+int  count() const;  void removeLast(); void replace(int index, T newValue);
+bool isStatic() const;  bool isDynamic() const;  bool isNull() const;
+void setList(Qul::StaticList&lt;T&gt; *l);
+void setList(Qul::DynamicList&lt;T&gt; *l);</code></pre>
+
+    <p>Rule of thumb: if a <code>Repeater</code> or <code>ListView</code> consumes it,
+      you want <code>ListModel</code>. If it is just "this object has several of those",
+      you want <code>ListProperty</code>. And on a system with no heap, prefer a
+      <code>StaticList</code>.</p>
+
+    <p>This project has neither — the contact list is a count property plus indexed
+      accessor functions and a constant <code>Repeater</code>. Less elegant, completely
+      predictable in memory, and it is why the UI does not freeze. For three to eight
+      fixed rows, which is most of a cluster, the plain version wins.</p>
+  </section>
+
+  <!-- ============================================ 06 -->
+  <section class="ch" id="c6">
+    <div class="ch-head"><span class="ch-num">06</span><h2>EventQueue</h2></div>
+    <p class="lede">The safe way to get data from an interrupt or another thread into the UI.</p>
+
+<pre><code>#include &lt;qul/eventqueue.h&gt;
+
+template &lt;typename EventType_,
+          Qul::EventQueueOverrunPolicy overrunPolicy = EventQueueOverrunPolicy_Discard,
+          size_t queueSize = 5&gt;
+class Qul::EventQueue
+
+void postEvent(const EventType &amp;event);
+void postEventFromInterrupt(const EventType &amp;event);
+virtual void onEvent(const EventType &amp;event) = 0;      // you implement this
+virtual void onEventDiscarded(const EventType &amp;event);
+virtual void onQueueOverrun();
+bool isOverrun() const;    void clearOverrun();        // since 2.3</code></pre>
+
+    <p>A CAN frame arrives in an interrupt. You must not touch the UI there — the engine
+      is not reentrant. So the interrupt does a memcpy and returns; the main loop picks
+      it up and calls your <code>onEvent</code>, where writing properties is safe.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">The default size of 5 is the trap</span>
+      <p>In this project eight CAN frames were posted per tick into a queue of five.
+        Three were dropped every tick, silently, forever — and the desktop shim delivers
+        synchronously, so the bug existed only on hardware and showed only as data that
+        was quietly wrong.</p>
+      <p>Size it from your real rate: count the worst-case events between two drains — a
+        drain is once per frame, so 16 ms at 60 fps — then double it. And
+        <strong>override <code>onQueueOverrun()</code></strong>, so a drop is a number
+        you can see rather than data you cannot trust.</p>
+    </div>
+
+<pre><code>// src/backend/Backend.cpp                       from this project
+class CanQueue : public Qul::EventQueue&lt;evb::CanFrame,
+                                        Qul::EventQueueOverrunPolicy_Discard, 16&gt;
+{
+public:
+    void onEvent(const evb::CanFrame &amp;frame) override { g_decoder.decode(frame); }
+};
+
+class PhoneQueue : public Qul::EventQueue&lt;PhoneChunk,
+                                          Qul::EventQueueOverrunPolicy_Discard, 32&gt;
+{ /* ... */ };</code></pre>
+
+    <h3>Choosing the overrun policy</h3>
+    <ul>
+      <li><strong>Discard</strong> for a stream where every item matters and losing a
+        recent one is as bad as losing an old one — protocol chunks, keypresses.</li>
+      <li><strong>Overwrite</strong> for a sampled value where only the latest matters —
+        a sensor reading. Losing an old sample is free.</li>
+    </ul>
+
+    <h3>Interrupt and thread safety, exactly</h3>
+    <p>On baremetal the DoubleQueue backend "is interrupt-safe as long as there is a
+      single writer, because writes and reads are directed to different lists." Two
+      interrupts posting to one queue is <strong>not</strong> safe without your own
+      synchronisation. With threads or an RTOS the queue is thread-safe through mutexes
+      or RTOS queues. Draining is safe to interrupt either way.</p>
+
+    <div class="rule-box">
+      <span class="tag">When NOT to use it</span>
+      <p>An <code>EventQueue</code> is for crossing a boundary, not a general message
+        bus. If both ends are already on the main loop, call the function — a queue adds
+        a frame of latency, a fixed buffer that can overflow, and a POD restriction, in
+        exchange for nothing. Events are memcpy'd, so a <code>std::string</code> in an
+        event compiles and then corrupts.</p>
+    </div>
+  </section>
+
+  <!-- ============================================ 07 -->
+  <section class="ch" id="c7">
+    <div class="ch-head"><span class="ch-num">07</span><h2>Timer</h2></div>
+    <p class="lede">Run something later, or every N milliseconds.</p>
+
+<pre><code>#include &lt;qul/timer.h&gt;
+
+Timer(int interval = 0);          virtual ~Timer() override;   // destructor STOPS it
+void setInterval(int msec);       int  interval() const;
+void setSingleShot(bool s);       bool isSingleShot() const;
+void start();  void start(int msec);  void stop();  bool isActive() const;
+template &lt;typename FuncArg&gt; void onTimeout(const FuncArg &amp;f);</code></pre>
+
+    <h3>Four behaviours from the docs, each of which has bitten somebody</h3>
+    <ul>
+      <li><strong>It does not start by itself.</strong> Constructing with an interval
+        does not start it.</li>
+      <li><strong>"Setting the interval of an active timer does not change the next
+        event."</strong> The current countdown finishes on the old interval.</li>
+      <li><strong>"Only the last callback stays active."</strong> Calling
+        <code>onTimeout()</code> twice replaces; it does not add.</li>
+      <li><strong>The destructor stops it.</strong> Which is why a timer must be a
+        member, never a local.</li>
+    </ul>
+
+    <div class="rule-box cost">
+      <span class="tag">Always clamp the elapsed time</span>
+      <p>Your callback computes "how long since last time" and advances something by
+        that much. The first tick after startup, after a long frame, or after a debugger
+        pause can be enormous.</p>
+<pre style="margin-top:12px"><code>const uint32_t gap     = nowMs - m_lastTickMs;
+const uint32_t elapsed = gap &gt; kMaxTickMs ? kMaxTickMs : gap;</code></pre>
+      <p>And watch for unsigned wraparound in that subtraction. Here a timestamp one
+        millisecond ahead of the comparison time wrapped to four billion and every node
+        was declared dead, several times a second.</p>
+    </div>
+
+    <p><strong>One timer can drive several rates.</strong> This project runs a single
+      16 ms timer and accumulates <code>m_pollElapsedMs</code> and
+      <code>m_clockElapsedMs</code>, acting when each passes its own threshold — a 16 ms
+      animation, a 200 ms poll and a 1000 ms clock from one timer. Three timers would
+      cost three times the bookkeeping for nothing.</p>
+  </section>
+
+  <!-- ============================================ 08 -->
+  <section class="ch" id="c8">
+    <div class="ch-head"><span class="ch-num">08</span><h2>Application and startup</h2></div>
+    <p class="lede">Four classes own the beginning and end of your program.</p>
+
+<pre><code>// src/main.cpp                                  from this project
+int main()
+{
+    Qul::initHardware();          // 1. clocks, pins, peripherals
+    Qul::initPlatform();          // 2. display, framebuffer, input
+    Backend::init();              // 3. your own setup
+
+    Qul::Application app;         // 4. constructing it initialises QUL
+    static struct ::Main item;    // 5. root item, STATICALLY
+    app.setRootItem(&amp;item);       // 6. hand it over
+
+    Backend::startRuntime();      // 7. your timers and queues
+    app.exec();                   // 8. the frame loop, forever
+    Backend::stopRuntime();
+    return 0;
+}</code></pre>
+
+    <p>The order is not negotiable. If you get a blank screen, walk this list — this
+      project added a boot trace that prints before each step, because
+      <strong>the last line printed names the call that did not return</strong>.</p>
+
+    <p><code>Main</code> is generated from <code>Main.qml</code> by
+      <code>qmltocpp</code>; a pointer to it converts to <code>Qul::RootItem *</code>,
+      which is the only thing <code>RootItem</code> is for. Note <code>static</code> —
+      it must outlive <code>exec()</code>, and on an MCU the stack is the scarcest memory
+      you have.</p>
+
+    <h3>The five static extension points</h3>
+    <div class="scroller"><table>
+      <thead><tr><th>Static</th><th>For</th><th>Chapter</th></tr></thead>
+      <tbody>
+        <tr><td><code>addImageProvider(id, p)</code></td><td>serve images from C++</td><td>9</td></tr>
+        <tr><td><code>addImageDecoder(d)</code></td><td>decode a format at runtime</td><td>10</td></tr>
+        <tr><td><code>addFilesystem(fs)</code></td><td>SD card, external flash</td><td>10</td></tr>
+        <tr><td><code>registerGeoPositionSource(s)</code></td><td>GPS</td><td>12</td></tr>
+        <tr><td><code>addMapTileFetcher(t)</code></td><td>map tiles</td><td>12</td></tr>
+      </tbody>
+    </table></div>
+    <p>The application <strong>does not take ownership</strong> of any of them. Keep them
+      alive yourself — in practice, file-scope statics.</p>
+
+    <h3>Getting 96 KB of VRAM back</h3>
+    <p>The text cache defaults to <strong>192 KB</strong>. With the static font engine
+      the glyphs are already in flash, so the cache only holds text that changes — on a
+      cluster, a handful of readouts.</p>
+<pre><code>#include &lt;qul/application.h&gt;        // same header. there is no applicationconfiguration.h
+
+Qul::ApplicationConfiguration config;
+config.setTextCacheSize(96 * 1024);
+Qul::Application app(config);         // passed to the CONSTRUCTOR, not set statically</code></pre>
+
+    <div class="rule-box cost">
+      <span class="tag">A warning worth the space</span>
+      <p>Inventing the header name <code>qul/applicationconfiguration.h</code> stopped
+        this project's build outright. The class lives in <code>qul/application.h</code>
+        and has existed since Qt Quick Ultralite <strong>2.1</strong>. Check the real
+        header before you include it — thirty seconds of grep against hours of a failed
+        build round.</p>
+    </div>
+
+    <p><code>Qul::ApplicationSettings</code> (since 2.0) is reached through the
+      application, and its documented property is the UI language:
+      <code>app.settings().uiLanguage.setValue("pl_PL")</code>. If you ship more than one
+      language, that is the switch.</p>
+  </section>
+
+  <!-- ============================================ 09 -->
+  <section class="ch" id="c9">
+    <div class="ch-head"><span class="ch-num">09</span><h2>Images from C++</h2></div>
+    <p class="lede">Five classes, two jobs: hand pixels to QML, or draw an item yourself.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>Class</th><th>Header</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td><code>Qul::Image</code></td><td><code>qul/image.h</code></td><td>a pixel buffer you own</td></tr>
+        <tr><td><code>Qul::SharedImage</code></td><td><code>qul/image.h</code></td><td>what <code>Image.source</code> actually holds</td></tr>
+        <tr><td><code>Qul::ImageWriteGuard</code></td><td><code>qul/image.h</code></td><td>RAII around editing pixels</td></tr>
+        <tr><td><code>Qul::ImageProvider</code></td><td><code>qul/imageprovider.h</code></td><td>serve images by URL</td></tr>
+        <tr><td><code>Qul::PaintedItemDelegate</code></td><td><code>qul/painteditemdelegate.h</code></td><td>draw an item with your own code</td></tr>
+      </tbody>
+    </table></div>
+
+    <p>On an MCU you usually want the constructor that <strong>wraps memory you already
+      have</strong> — a DMA target, a buffer in a specific RAM section — rather than the
+      one that allocates:</p>
+<pre><code>alignas(32) static uint8_t g_cameraBuffer[320 * 240 * 2];
+
+Qul::Image cameraImage(g_cameraBuffer, 320, 240, Qul::PixelFormat_RGB16);</code></pre>
+
+    <p>Mind <code>Image::requiredAlignment</code> and
+      <code>requiredPixelWidthAlignment</code>. Ignoring them gets you a corrupted image
+      or a fault, depending on the chip.</p>
+
+    <h3>The pixel formats, by their real names</h3>
+    <p>Worth printing, because the names are not the ones you would guess — there is no
+      <code>PixelFormat_RGB565</code>; the 16-bit one is <code>RGB16</code>.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>Enumerator</th><th class="num">Bytes/px</th><th>Enumerator</th></tr></thead>
+      <tbody>
+        <tr><td><code>PixelFormat_ARGB32_Premultiplied</code></td><td class="num">4</td><td><code>PixelFormat_RLE_ARGB32</code></td></tr>
+        <tr><td><code>PixelFormat_ARGB32</code></td><td class="num">4</td><td><code>PixelFormat_RLE_ARGB32_Premultiplied</code></td></tr>
+        <tr><td><code>PixelFormat_RGB32</code></td><td class="num">4</td><td><code>PixelFormat_RLE_RGB32</code></td></tr>
+        <tr><td><code>PixelFormat_RGB16</code></td><td class="num">2</td><td><code>PixelFormat_RLE_RGB888</code></td></tr>
+        <tr><td><code>PixelFormat_ARGB4444_Premultiplied</code></td><td class="num">2</td><td><code>PixelFormat_Custom</code></td></tr>
+        <tr><td><code>PixelFormat_ARGB4444</code></td><td class="num">2</td><td><code>PixelFormat_Invalid</code></td></tr>
+        <tr><td><code>PixelFormat_RGB332</code></td><td class="num">1</td><td></td></tr>
+        <tr><td><code>PixelFormat_Alpha8</code></td><td class="num">1</td><td></td></tr>
+        <tr><td><code>PixelFormat_Alpha1</code></td><td class="num">⅛</td><td></td></tr>
+      </tbody>
+    </table></div>
+    <p>Keep the byte counts in your head: a buffer costs
+      <code>width × height × bytes</code>, and that is memory you will not get back.
+      <code>Alpha8</code> over <code>ARGB32</code> for a mask is a straight four-times
+      saving.</p>
+
+    <h3>An image provider, start to finish</h3>
+<pre><code>struct CameraProvider : public Qul::ImageProvider
+{
+    Qul::SharedImage requestImage(const char *uri, size_t uriLength) override
+    {
+        if (uriLength == 4 &amp;&amp; memcmp(uri, "live", 4) == 0)
+            return cameraImage;        // Image converts implicitly to SharedImage
+        return Qul::SharedImage();     // falsy: nothing to draw
+    }
+};
+
+static CameraProvider g_cameraProvider;                      // static: no ownership taken
+Qul::Application::addImageProvider("camera", &amp;g_cameraProvider);</code></pre>
+<pre><code>Image { source: "image://camera/live" }</code></pre>
+    <p>The provider id is the host part, and <strong>the <code>uri</code> you receive is
+      everything after it</strong> — <code>"live"</code>, not the whole string.</p>
+
+    <p>When you edit pixels that are already on screen, bracket it. The guard does
+      <code>beginWrite()</code>/<code>endWrite()</code> with RAII so you cannot forget
+      the second half:</p>
+<pre><code>{
+    Qul::ImageWriteGuard guard(cameraImage);
+    memcpy(cameraImage.bits(), newFrame, frameSize);
+}   // endWrite() happens here, even on an early return</code></pre>
+
+    <div class="rule-box">
+      <span class="tag">PaintedItemDelegate — rarely, and that is the point</span>
+<pre style="margin:0 0 12px"><code>virtual Rect boundingRect(Size size) const = 0;
+virtual void paint(DrawingDevice *device, const Rect &amp;clip,
+                   const Transform &amp;transform, Size size,
+                   float opacity) const = 0;
+void update();  void update(int x, int y, int width, int height);</code></pre>
+      <p>Pairs with the <code>PaintedItem</code> QML type. Reach for it when the thing
+        genuinely cannot be images and QML items — a waveform, a live plot. A
+        <code>paint()</code> runs on the CPU every dirty frame; an image is a blit. This
+        project draws its gauges as pre-rendered layers for exactly that reason and has
+        no painted items at all.</p>
+    </div>
+  </section>
+
+  <!-- ============================================ 10 -->
+  <section class="ch" id="c10">
+    <div class="ch-head"><span class="ch-num">10</span><h2>Resources and files</h2></div>
+    <p class="lede">Bytes you shipped in flash, and filesystems Qt did not know it had.</p>
+
+<pre><code>#include &lt;qul/binaryresource.h&gt;
+
+BinaryResource(const char *uri);
+const uchar *data() const;   size_t size() const;   size_t alignment() const;</code></pre>
+<pre><code>Project { BinaryFiles { files: [ "data/lookup_table.bin" ] } }</code></pre>
+
+    <p>The data is <strong>already in flash, mapped, addressable</strong>.
+      <code>data()</code> is a pointer to it — no read, no copy, no buffer. Perfect for
+      calibration tables, lookup curves, audio samples. Check <code>alignment()</code>
+      before casting the pointer to a struct; flash does not care, your CPU does.</p>
+
+    <p>For a few hundred bytes a <code>static const uint8_t[]</code> is simpler.
+      <code>BinaryResource</code> wins when the data is big, tool-generated, or should be
+      swappable without recompiling — a 200 KB table as a C array is a miserable
+      compile.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>Where the bytes are</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>In the binary, used by QML</td><td>a <code>qrc:</code> path — nothing to write</td></tr>
+        <tr><td>In the binary, used by C++</td><td><code>BinaryResource</code> + <code>BinaryFiles</code></td></tr>
+        <tr><td>On an SD card or external flash</td><td>implement <code>Filesystem</code> and <code>File</code></td></tr>
+        <tr><td>Arriving at runtime, compressed</td><td>implement <code>ImageDecoder</code></td></tr>
+        <tr><td>Updated separately from the firmware</td><td>resource sections, <code>ResourceStorageSectionInfo</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <p>Note the division of labour: images you ship are decoded <strong>at build
+      time</strong> by <code>qulrcc</code> and stored ready to draw. An
+      <code>ImageDecoder</code> is only for pixels that show up while the program runs.
+      And <code>ResourceStorageSectionInfo</code>'s two version pairs — application and
+      resource — exist so an over-the-air update can ship new art without reflashing the
+      application.</p>
+  </section>
+
+  <!-- ============================================ 11 -->
+  <section class="ch" id="c11">
+    <div class="ch-head"><span class="ch-num">11</span><h2>String, Status, Flags</h2></div>
+    <p class="lede">Three small types. Each solves one problem, and each has a sharp edge.</p>
+
+    <h4 class="grp">Qul::String — <code>qul/unicodestring.h</code></h4>
+    <p>"Designed as an interface type. Its main use case is as a function parameter
+      type." One function that accepts a literal, a <code>std::string</code> or a buffer,
+      with no overload for each.</p>
+    <div class="rule-box cost">
+      <span class="tag">It does not own the data</span>
+      <p>The UTF-8 constructor creates "a view on a UTF-8 string". Treat it like
+        <code>std::string_view</code>: fine as a parameter, dangerous as a return value
+        or a stored member.</p>
+<pre style="margin-top:12px"><code>Qul::String makeLabel() {
+    char buf[32]; formatInto(buf);
+    return Qul::String(buf);        // buf dies here. the String points at it.
+}</code></pre>
+      <p>For storage use <code>std::string</code> in the property, as this project does:
+        <code>Qul::Property&lt;std::string&gt; roadName;</code>. The
+        <code>std::string</code> constructors need <code>QUL_STD_STRING_SUPPORT</code>
+        defined in the core library — if they do not compile, that is why.</p>
+    </div>
+
+    <h4 class="grp">Qul::Status&lt;ErrorEnum&gt; — since 2.10</h4>
+    <p>Success or a typed error code, without exceptions and without a bare
+      <code>return -1</code> the caller has to decode. <code>hasError()</code>,
+      <code>error()</code>, <code>setError()</code>, <code>clearError()</code>, and
+      <code>operator bool()</code> which is <strong>true on success</strong> — the
+      opposite of an integer return code. Mixing the two conventions in one codebase is
+      how you ship an inverted check.</p>
+
+    <h4 class="grp">Qul::Flags&lt;Enum&gt; — since 2.12</h4>
+    <p>A bitmask the compiler checks: <code>testFlag</code>, <code>setFlag</code>,
+      <code>toUnderlyingType</code>, and the bitwise operators. New in 2.12; on 2.11 and
+      earlier you write the bit twiddling by hand, which is what this project does with a
+      single <code>uint32_t telltaleFlags</code> property. That is worth noting on its
+      own — one flags property is cheaper than sixteen booleans, because it is one value
+      for the engine to track.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">Confirm these two headers yourself</span>
+      <p>The reference shows module-style includes — <code>&lt;Status&gt;</code> and
+        <code>&lt;Flags&gt;</code> — rather than a path, and <code>Qul::String</code> is
+        <code>qul/unicodestring.h</code>, which is not what most people would guess.
+        Check your own installation before you include:</p>
+<pre style="margin-top:12px"><code>grep -rln "class Status\|class Flags" ~/QtForMCU/QtMCUs/*/include/qul/</code></pre>
+    </div>
+  </section>
+
+  <!-- ============================================ 12 -->
+  <section class="ch" id="c12">
+    <div class="ch-head"><span class="ch-num">12</span><h2>Location and maps</h2></div>
+    <p class="lede">Three classes feed QtPositioning and QtLocation. Both are marked
+      experimental.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>Class</th><th>You implement</th><th>Registered with</th><th>QML consumer</th></tr></thead>
+      <tbody>
+        <tr><td><code>GeoPositionInfo</code></td><td>— (a data carrier)</td><td>—</td><td>—</td></tr>
+        <tr><td><code>GeoPositionSource</code></td><td><code>getCurrentPosition()</code></td><td><code>registerGeoPositionSource()</code></td><td><code>PositionSource</code></td></tr>
+        <tr><td><code>MapTileFetcher</code></td><td><code>getTileImage()</code></td><td><code>addMapTileFetcher()</code></td><td><code>Map</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <p>Note the shape: the engine <strong>pulls</strong> from you. Your job is to answer
+      "where are we right now" quickly from whatever your GNSS driver last parsed — not
+      to block on a serial port inside a call that runs on the main loop.</p>
+
+    <p><code>GeoPositionInfo</code>'s <code>hasLatitude()</code>,
+      <code>hasDirection()</code> and <code>hasSpeed()</code> matter: a GPS with a weak
+      lock gives a position but no heading, and a stationary one gives no meaningful
+      speed. Check before you use, or the compass needle points north every time the
+      signal dips. <code>speed</code> and <code>timestamp</code> only exist from 2.12.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">Do the tile arithmetic before you start</span>
+      <p>A map is the most expensive thing an MCU cluster can draw. A 256×256 tile at
+        4 bytes per pixel is <strong>256 KB decoded, per tile</strong>, and a 1280×480
+        screen wants fifteen or more to cover it.</p>
+      <p>This project draws navigation as pre-rendered turn arrows and route images, not
+        live tiles, precisely because that arithmetic did not work. A turn arrow is a few
+        KB. If your need is "which way do I turn", pre-rendered art is cheaper and
+        clearer.</p>
+    </div>
+  </section>
+
+  <!-- ============================================ 13 -->
+  <section class="ch" id="c13">
+    <div class="ch-head"><span class="ch-num">13</span><h2>The platform layer, class by class</h2></div>
+    <p class="lede">All fifty-eight of them. You almost certainly do not need to write
+      any — but a name in a stack trace should never be a mystery.</p>
+
+    <p>These matter in three situations: you are bringing Qt up on a board with no port,
+      you are writing a <code>PaintedItemDelegate</code> and need the drawing types, or
+      you are reading a backtrace. Descriptions below are Qt's own.</p>
+
+    <h4 class="grp">Qul::PlatformInterface — drawing</h4>
+    <div class="scroller"><table>
+      <tbody>
+        <tr><td><code>DrawingDevice</code></td><td>"defines a device which can be drawn onto"</td></tr>
+        <tr><td><code>DrawingEngine</code></td><td>"provides an abstract interface for blending functions"</td></tr>
+        <tr><td><code>Brush</code></td><td>"Represents the fill pattern of shapes drawn using DrawingEngine"</td></tr>
+        <tr><td><code>LinearGradient</code></td><td>"Represents a linear gradient used by Brush"</td></tr>
+        <tr><td><code>GradientStop</code></td><td>"Represents a single gradient stop in a gradient"</td></tr>
+        <tr><td><code>GradientStops</code></td><td>"Represents a set of stop points used to define the color transitions of gradients"</td></tr>
+        <tr><td><code>Texture</code></td><td>"A class containing information about a texture"</td></tr>
+        <tr><td><code>PixelDataPointer</code></td><td>"information about precise (bit perfect) pixel data location"</td></tr>
+        <tr><td><code>Rgba32</code></td><td>"provides storage space for RGBA colors"</td></tr>
+      </tbody>
+    </table></div>
+    <p><code>DrawingDevice</code> is the one you meet first — it is the parameter to
+      <code>PaintedItemDelegate::paint()</code>.</p>
+
+    <h4 class="grp">Qul::PlatformInterface — geometry</h4>
+    <div class="scroller"><table>
+      <tbody>
+        <tr><td><code>Point</code> / <code>PointF</code></td><td>"defines a point in the plane" — integer / floating point precision</td></tr>
+        <tr><td><code>Rect</code> / <code>RectF</code></td><td>"defines a rectangle in the plane" — integer / floating point</td></tr>
+        <tr><td><code>Size</code> / <code>SizeF</code></td><td>"defines the size of a two-dimensional object" — integer / floating point</td></tr>
+        <tr><td><code>Transform</code></td><td>"specifies 2D transformations of a coordinate system"</td></tr>
+        <tr><td><code>GenericMatrix</code></td><td>"a template class representing a matrix"</td></tr>
+      </tbody>
+    </table></div>
+
+    <h4 class="grp">Qul::PlatformInterface — vector paths</h4>
+    <p>Fifteen of the fifty-eight are path machinery: the pieces a vector shape is
+      decomposed into before stroking or filling.</p>
+    <div class="scroller"><table>
+      <tbody>
+        <tr><td><code>PathData</code></td><td>"represents vector path data"</td></tr>
+        <tr><td><code>PathDataSegment</code></td><td>"a single path data segment of the PathData class"</td></tr>
+        <tr><td><code>PathDataIterator</code></td><td>"A convenience class for iterating over path data segments"</td></tr>
+        <tr><td><code>PathDataMoveSegment</code></td><td>move</td></tr>
+        <tr><td><code>PathDataLineSegment</code></td><td>line</td></tr>
+        <tr><td><code>PathDataQuadraticBezierSegment</code></td><td>quadratic bezier</td></tr>
+        <tr><td><code>PathDataCubicBezierSegment</code></td><td>cubic bezier</td></tr>
+        <tr><td><code>PathDataArcSegment</code></td><td>arc</td></tr>
+        <tr><td><code>PathDataSmallClockWiseArcSegment</code></td><td>small clockwise arc</td></tr>
+        <tr><td><code>PathDataSmallCounterClockWiseArcSegment</code></td><td>small counterclockwise arc</td></tr>
+        <tr><td><code>PathDataLargeClockWiseArcSegment</code></td><td>large clockwise arc</td></tr>
+        <tr><td><code>PathDataLargeCounterClockWiseArcSegment</code></td><td>large counterclockwise arc</td></tr>
+        <tr><td><code>PathDataPathSeparatorSegment</code></td><td>path separator</td></tr>
+        <tr><td><code>PathDataStroker</code></td><td>"generates stroke representation for a shape"</td></tr>
+        <tr><td><code>DefaultPathDataStroker</code></td><td>"a default implementation of PathDataStroker"</td></tr>
+      </tbody>
+    </table></div>
+    <p>The four arc variants exist because an SVG arc needs two flags — large or small
+      sweep, clockwise or counter — and separate types keep the segment data flat and
+      branch-free. Using <code>Shapes</code> in QML does not require touching any of
+      them.</p>
+
+    <h4 class="grp">Qul::PlatformInterface — layers, memory, system</h4>
+    <div class="scroller"><table>
+      <tbody>
+        <tr><td><code>LayerEngine</code></td><td>"provides an abstract interface for managing hardware layers"</td></tr>
+        <tr><td><code>MemoryAllocator</code></td><td>"provides an abstract interface for memory allocation"</td></tr>
+        <tr><td><code>Allocator</code></td><td>"A memory allocator for use with the C++ standard containers"</td></tr>
+        <tr><td><code>Filesystem</code></td><td>"provides an abstract API to implement custom file systems"</td></tr>
+        <tr><td><code>File</code></td><td>"provides an abstract API to implement access to files"</td></tr>
+        <tr><td><code>ImageDecoder</code></td><td>"provides an abstract API to implement custom image decoders"</td></tr>
+        <tr><td><code>DateTime</code></td><td>"a native representation of data and time values in milliseconds"</td></tr>
+        <tr><td><code>Screen</code></td><td>"holds information about display size in pixels"</td></tr>
+        <tr><td><code>TouchPoint</code></td><td>"Represents single touch point"</td></tr>
+        <tr><td><code>StrokeProperties</code></td><td>"A struct specifying the stroke properties of a path"</td></tr>
+      </tbody>
+    </table></div>
+    <p><code>LayerEngine</code> is the interesting one: it is where on-the-fly rendering
+      versus a framebuffer is actually decided, and that choice costs more memory than
+      everything else in your application combined — 327,680 bytes against 4,915,200 for
+      a 1280×480 screen at 32 bpp.</p>
+
+    <h4 class="grp">Qul::Platform — the lower half of a port</h4>
+    <div class="scroller"><table>
+      <tbody>
+        <tr><td><code>PlatformContext</code></td><td>"provides an abstract interface to implement platform context"</td></tr>
+        <tr><td><code>Config</code></td><td>"provides runtime representation of platform configuration"</td></tr>
+        <tr><td><code>FramebufferFormat</code></td><td>"contains information about a framebuffer"</td></tr>
+        <tr><td><code>FramebufferDataChunk</code></td><td>"contains information about framebuffer data chunks"</td></tr>
+        <tr><td><code>ChunkedFramebufferDataTransferSizes</code></td><td>"information about chunked framebuffer data transfer sizes"</td></tr>
+        <tr><td><code>FrameStatistics</code></td><td>"Provides frame rendering statistics"</td></tr>
+        <tr><td><code>PerformanceMetrics</code></td><td>"Provides performance metrics"</td></tr>
+        <tr><td><code>MessageQueue</code></td><td>"A convenience class used to interface with the queue implementation"</td></tr>
+        <tr><td><code>MessageQueueInterface</code></td><td>"Interface class providing platform-specific queues to Qt Quick Ultralite"</td></tr>
+        <tr><td><code>DeviceLink</code></td><td>"provides functionality for communication between host and device"</td></tr>
+        <tr><td><code>DeviceLinkInterface</code></td><td>"This provides the interface to implement by the platform"</td></tr>
+        <tr><td><code>SinglePointTouchEvent</code></td><td>"information related to a single point touch event"</td></tr>
+        <tr><td><code>SinglePointTouchEventDispatcher</code></td><td>"A convenience class for handling single point touch from the platform"</td></tr>
+        <tr><td><code>StackAllocator</code></td><td>"a simple memory allocator for functions that might temporarily require some extra memory for caching"</td></tr>
+      </tbody>
+    </table></div>
+    <p><code>PlatformContext</code> is the root of a port — bring-up starts there.
+      <code>FrameStatistics</code> and <code>PerformanceMetrics</code> are the two you
+      might use without porting anything: they are what the profiling overlay reads.
+      And <code>MessageQueueInterface</code> is what <code>Qul::EventQueue</code> sits on
+      top of, which is why the queue is thread-safe on an RTOS and merely interrupt-safe
+      on baremetal.</p>
+
+    <h4 class="grp">Tvii — TRAVEO T2G</h4>
+    <div class="scroller"><table>
+      <tbody>
+        <tr><td><code>Tvii::Configuration::Config</code></td><td>platform configuration for the TRAVEO port</td></tr>
+        <tr><td><code>Tvii::Warping::WarpInfo</code></td><td>display warping information</td></tr>
+      </tbody>
+    </table></div>
+    <p><code>WarpInfo</code> describes geometric warping — correcting for a display that
+      is curved or viewed at an angle, which is normal in a motorcycle cluster.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>If you are</th><th>You care about</th></tr></thead>
+      <tbody>
+        <tr><td>Writing an application</td><td><strong>nothing in this chapter</strong></td></tr>
+        <tr><td>Writing a custom painted item</td><td><code>DrawingDevice</code>, <code>Rect</code>, <code>Size</code>, <code>Transform</code>, <code>Rgba32</code></td></tr>
+        <tr><td>Adding an SD card</td><td><code>Filesystem</code>, <code>File</code></td></tr>
+        <tr><td>Decoding images at runtime</td><td><code>ImageDecoder</code></td></tr>
+        <tr><td>Tuning memory on a layered board</td><td><code>LayerEngine</code></td></tr>
+        <tr><td>Measuring performance</td><td><code>FrameStatistics</code>, <code>PerformanceMetrics</code></td></tr>
+        <tr><td>Porting to a new board</td><td><code>PlatformContext</code> first, then the rest</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============================================ 14 -->
+  <section class="ch" id="c14">
+    <div class="ch-head"><span class="ch-num">14</span><h2>Putting it together</h2></div>
+    <p class="lede">The shape a working backend takes, and why each layer exists.</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 880 400" role="img" aria-label="Four layers: an interrupt posts to an EventQueue; onEvent runs on the main loop and calls your decoder; the decoder calls setValue on a singleton; QML bindings read the singleton and produce pixels.">
+        <defs>
+          <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g font-family="IBM Plex Sans, sans-serif" font-size="13">
+          <rect x="250" y="16" width="380" height="48" rx="3" fill="var(--card)" stroke="var(--flag)" stroke-width="1.4"/>
+          <text x="440" y="39" text-anchor="middle" fill="var(--flag)" font-weight="600">interrupt / other thread</text>
+          <text x="440" y="56" text-anchor="middle" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">must not touch the UI</text>
+
+          <line x1="440" y1="66" x2="440" y2="96" stroke="var(--ink-3)" stroke-width="1.6" marker-end="url(#a2)" color="var(--ink-3)"/>
+          <text x="452" y="86" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">postEventFromInterrupt()</text>
+
+          <rect x="250" y="102" width="380" height="48" rx="3" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+          <text x="440" y="125" text-anchor="middle" fill="var(--accent)" font-weight="600">Qul::EventQueue</text>
+          <text x="440" y="142" text-anchor="middle" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">fixed size · overruns counted</text>
+
+          <line x1="440" y1="152" x2="440" y2="182" stroke="var(--ink-3)" stroke-width="1.6" marker-end="url(#a2)" color="var(--ink-3)"/>
+          <text x="452" y="172" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">onEvent() — main loop from here down</text>
+
+          <rect x="250" y="188" width="380" height="48" rx="3" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+          <text x="440" y="211" text-anchor="middle" fill="var(--ink)" font-weight="600">your decoder</text>
+          <text x="440" y="228" text-anchor="middle" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">no Qt types · unit tested on a host</text>
+
+          <line x1="440" y1="238" x2="440" y2="268" stroke="var(--ink-3)" stroke-width="1.6" marker-end="url(#a2)" color="var(--ink-3)"/>
+          <text x="452" y="258" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">setValue()</text>
+
+          <rect x="250" y="274" width="380" height="48" rx="3" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+          <text x="440" y="297" text-anchor="middle" fill="var(--ink)" font-weight="600">Qul::Singleton of Qul::Property</text>
+          <text x="440" y="314" text-anchor="middle" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">state only · no protocol knowledge</text>
+
+          <line x1="440" y1="324" x2="440" y2="352" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#a2)" color="var(--accent)"/>
+          <text x="452" y="344" fill="var(--ink-3)" font-size="11" font-family="IBM Plex Mono, monospace">binding</text>
+
+          <rect x="250" y="358" width="380" height="36" rx="3" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+          <text x="440" y="381" text-anchor="middle" fill="var(--accent)" font-weight="600">QML — reads singletons, never the bus</text>
+        </g>
+      </svg>
+      <figcaption>Figure 2 — four layers, each testable on its own</figcaption>
+    </figure>
+
+    <div class="rule-box">
+      <span class="tag">The rule worth more than any class here</span>
+      <p><strong>Pages never touch the bus; decoders never touch QML.</strong> The
+        decoder is a pure transformation from bytes to properties, so you can unit test
+        it on a host with no board. Bit packing is miserable to debug on hardware and
+        trivial to test off it.</p>
+    </div>
+
+    <h3>The eight habits</h3>
+    <ol>
+      <li><strong>One singleton per subsystem</strong>, named for what it holds.</li>
+      <li><strong>Units in property names</strong> — <code>distanceToManeuverM</code>,
+        <code>etaMinutes</code>.</li>
+      <li><strong>Enums beside the properties that use them</strong>, so QML never writes
+        a bare number.</li>
+      <li><strong>Widen to <code>int</code> at the QML boundary.</strong> Narrow inside
+        your own code.</li>
+      <li><strong>Size every <code>EventQueue</code> from your real data rate</strong>
+        and override <code>onQueueOverrun</code>.</li>
+      <li><strong>Clamp elapsed time</strong> in every timer callback.</li>
+      <li><strong>Decoders never touch QML; pages never touch the bus.</strong></li>
+      <li><strong>Verify the header before you include it.</strong> Guessing has cost
+        this project a build round already.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================ lookup -->
+  <section class="ch" id="lookup">
+    <div class="ch-head"><span class="ch-num">—</span><h2>I want to…</h2></div>
+    <div class="scroller"><table>
+      <thead><tr><th>I want to</th><th>Use</th><th class="num">Ch.</th></tr></thead>
+      <tbody>
+        <tr><td>Show a C++ value on screen</td><td><code>Qul::Property</code> in a <code>Qul::Singleton</code></td><td class="num">2, 3</td></tr>
+        <tr><td>Tell QML something happened</td><td><code>Qul::Signal</code></td><td class="num">4</td></tr>
+        <tr><td>Have several instances QML creates</td><td><code>Qul::Object</code></td><td class="num">2</td></tr>
+        <tr><td>Feed a <code>Repeater</code> or <code>ListView</code></td><td><code>Qul::ListModel</code>, or a constant model plus <code>visible</code></td><td class="num">5</td></tr>
+        <tr><td>Expose a list of child objects</td><td><code>Qul::ListProperty</code></td><td class="num">5</td></tr>
+        <tr><td>Get data in from an interrupt</td><td><code>Qul::EventQueue</code></td><td class="num">6</td></tr>
+        <tr><td>Do something every N ms</td><td><code>Qul::Timer</code></td><td class="num">7</td></tr>
+        <tr><td>Start the engine</td><td><code>Qul::Application</code></td><td class="num">8</td></tr>
+        <tr><td>Shrink the 192 KB text cache</td><td><code>Qul::ApplicationConfiguration</code></td><td class="num">8</td></tr>
+        <tr><td>Change the UI language</td><td><code>Qul::ApplicationSettings</code></td><td class="num">8</td></tr>
+        <tr><td>Show pixels I produced</td><td><code>Qul::Image</code> + <code>Qul::ImageProvider</code></td><td class="num">9</td></tr>
+        <tr><td>Edit pixels while they are on screen</td><td><code>Qul::ImageWriteGuard</code></td><td class="num">9</td></tr>
+        <tr><td>Draw something procedurally</td><td><code>Qul::PaintedItemDelegate</code></td><td class="num">9</td></tr>
+        <tr><td>Read a blob I shipped in flash</td><td><code>Qul::BinaryResource</code></td><td class="num">10</td></tr>
+        <tr><td>Read from an SD card</td><td>implement <code>Filesystem</code> and <code>File</code></td><td class="num">10, 13</td></tr>
+        <tr><td>Decode an image at runtime</td><td>implement <code>ImageDecoder</code></td><td class="num">10, 13</td></tr>
+        <tr><td>Accept any string type in a function</td><td><code>Qul::String</code></td><td class="num">11</td></tr>
+        <tr><td>Return success-or-error</td><td><code>Qul::Status</code> (2.10+)</td><td class="num">11</td></tr>
+        <tr><td>Hold a type-safe bitmask</td><td><code>Qul::Flags</code> (2.12+)</td><td class="num">11</td></tr>
+        <tr><td>Feed GPS</td><td><code>Qul::GeoPositionSource</code></td><td class="num">12</td></tr>
+        <tr><td>Feed map tiles</td><td><code>Qul::MapTileFetcher</code></td><td class="num">12</td></tr>
+        <tr><td>Port to a new board</td><td><code>Qul::Platform::PlatformContext</code></td><td class="num">13</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <h4>Sources — every claim here was checked against these</h4>
+    <ul>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-cppclasses.html">C++ Classes and Namespaces</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-integratecppqml.html">Integrating C++ code with QML</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul.html">Qul namespace</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-property.html">Qul::Property</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-singleton.html">Qul::Singleton</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-object.html">Qul::Object</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-signal.html">Qul::Signal</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-eventqueue.html">Qul::EventQueue</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-timer.html">Qul::Timer</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-application.html">Qul::Application</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-applicationconfiguration.html">Qul::ApplicationConfiguration</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-applicationsettings.html">Qul::ApplicationSettings</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-rootitem.html">Qul::RootItem</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-listmodel.html">Qul::ListModel</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-listproperty.html">Qul::ListProperty</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-image.html">Qul::Image</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-sharedimage.html">Qul::SharedImage</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-imagewriteguard.html">Qul::ImageWriteGuard</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-imageprovider.html">Qul::ImageProvider</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-painteditemdelegate.html">Qul::PaintedItemDelegate</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-binaryresource.html">Qul::BinaryResource</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-resourcestoragesectioninfo.html">Qul::ResourceStorageSectionInfo</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-string.html">Qul::String</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-status.html">Qul::Status</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-flags.html">Qul::Flags</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-geopositioninfo.html">Qul::GeoPositionInfo</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-geopositionsource.html">Qul::GeoPositionSource</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-maptilefetcher.html">Qul::MapTileFetcher</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-platforminterface.html">Qul::PlatformInterface</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-platform.html">Qul::Platform</a></li>
+    </ul>
+  </div>
+</footer>
+
+</body>
+</html>
