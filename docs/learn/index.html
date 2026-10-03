@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root{color-scheme:light}
+  body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>Qt for MCUs Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+/* Layout: a datasheet — sticky chapter rail on the left, one measured column of
+   text, and every number set as a figure the way a reference manual sets them. */
+:root{
+  --paper:#F6F5F1; --card:#FFFFFF; --ink:#15191C; --ink-2:#565C62; --ink-3:#848A90;
+  --rule:#DFDCD4; --rule-2:#EDEBE5;
+  --accent:#0C6670; --accent-soft:#E2EFF0;
+  --flag:#B33C1B; --flag-soft:#F7E8E3;
+  --good:#2F6B3C;
+  --display:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --data:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1215; --card:#161B1F; --ink:#E7E9EA; --ink-2:#A3AAB0; --ink-3:#777E85;
+  --rule:#272E34; --rule-2:#1E242A;
+  --accent:#4FB6C0; --accent-soft:#102A2E;
+  --flag:#F08A66; --flag-soft:#2C1912;
+  --good:#7FC08C;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#0E1215; --card:#161B1F; --ink:#E7E9EA; --ink-2:#A3AAB0; --ink-3:#777E85;
+  --rule:#272E34; --rule-2:#1E242A;
+  --accent:#4FB6C0; --accent-soft:#102A2E;
+  --flag:#F08A66; --flag-soft:#2C1912;
+  --good:#7FC08C;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:16.5px;line-height:1.62;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+a{color:var(--accent)}
+code,kbd{font-family:var(--data);font-size:.87em}
+
+/* ---- shell ---------------------------------------------------------- */
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:0}
+.masthead{border-bottom:1px solid var(--rule);background:var(--card)}
+.masthead .wrap{padding-block:34px 28px}
+.kicker{font-family:var(--data);font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font-size:clamp(30px,5.4vw,50px);font-weight:600;letter-spacing:-.02em;max-width:17ch}
+.standfirst{font-size:clamp(16px,2.2vw,19px);color:var(--ink-2);max-width:60ch;margin:16px 0 0}
+.meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;
+  font-family:var(--data);font-size:11.5px;color:var(--ink-3);
+  letter-spacing:.04em;text-transform:uppercase}
+
+.cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+@media(min-width:1000px){.cols{grid-template-columns:216px minmax(0,1fr);gap:52px}}
+
+/* ---- rail ----------------------------------------------------------- */
+.rail{display:none}
+@media(min-width:1000px){
+  .rail{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);
+    align-self:start;padding-block:40px;max-height:calc(100vh - 80px);overflow-y:auto}
+}
+.rail h4{font-family:var(--data);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+.rail ol{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:1px}
+.rail a{display:grid;grid-template-columns:24px 1fr;gap:9px;align-items:baseline;
+  padding:5px 7px;border-radius:3px;text-decoration:none;color:var(--ink-2);
+  font-family:var(--display);font-size:13px;line-height:1.3}
+.rail a:hover{background:var(--accent-soft);color:var(--ink)}
+.rail .n{font-family:var(--data);font-size:11px;color:var(--ink-3)}
+
+/* ---- body ----------------------------------------------------------- */
+main{padding-block:40px 80px;min-width:0}
+section{scroll-margin-top:30px}
+.ch{border-top:1px solid var(--rule);padding-block:34px 10px}
+.ch:first-of-type{border-top:none}
+.ch-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;margin-bottom:6px}
+.ch-num{font-family:var(--data);font-size:12px;font-weight:600;color:var(--accent);
+  letter-spacing:.06em;padding-top:4px}
+.ch h2{font-size:clamp(22px,3.4vw,30px);font-weight:600;letter-spacing:-.015em}
+.ch .lede{font-size:17px;color:var(--ink-2);max-width:62ch;margin:10px 0 0;font-style:italic}
+.ch > p,.ch > ul,.ch > ol{max-width:66ch}
+p{margin:16px 0}
+ul,ol{max-width:66ch;padding-left:20px}
+li{margin:7px 0}
+h3{font-family:var(--display);font-size:16px;font-weight:600;margin:30px 0 4px;
+  letter-spacing:-.005em}
+h3 + p{margin-top:8px}
+
+/* ---- devices -------------------------------------------------------- */
+.rule-box{border:1px solid var(--rule);border-left:3px solid var(--accent);
+  background:var(--card);padding:16px 18px;margin:22px 0;border-radius:2px}
+.rule-box p{margin:0;max-width:62ch}
+.rule-box .tag{font-family:var(--data);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.cost{border-left-color:var(--flag)}
+.cost .tag{color:var(--flag)}
+
+.fig{margin:26px 0;border:1px solid var(--rule);background:var(--card);border-radius:2px;
+  overflow:hidden}
+.fig figcaption{font-family:var(--data);font-size:11px;color:var(--ink-3);
+  letter-spacing:.07em;text-transform:uppercase;padding:11px 16px;
+  border-top:1px solid var(--rule-2)}
+.fig svg{display:block;width:100%;height:auto;max-width:100%}
+
+.scroller{overflow-x:auto;margin:22px 0;border:1px solid var(--rule);border-radius:2px;
+  background:var(--card)}
+table{border-collapse:collapse;width:100%;font-family:var(--display);font-size:13.5px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--rule-2);vertical-align:top}
+th{font-weight:600;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);background:var(--paper);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.num,th.num{font-family:var(--data);font-variant-numeric:tabular-nums;text-align:right;
+  white-space:nowrap}
+td strong{font-weight:600}
+
+pre{font-family:var(--data);font-size:12.5px;line-height:1.55;background:var(--card);
+  border:1px solid var(--rule);border-radius:2px;padding:14px 16px;overflow-x:auto;
+  margin:20px 0}
+pre code{font-size:inherit}
+:not(pre) > code{background:var(--rule-2);padding:1px 5px;border-radius:2px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin:24px 0;border-radius:2px;
+  overflow:hidden}
+.stat{background:var(--card);padding:14px 16px}
+.stat .v{font-family:var(--data);font-size:21px;font-weight:600;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;display:block}
+.stat .k{font-family:var(--display);font-size:11.5px;color:var(--ink-3);
+  letter-spacing:.05em;text-transform:uppercase;display:block;margin-top:5px}
+.stat.hi .v{color:var(--accent)}
+.stat.down .v{color:var(--good)}
+
+.check{font-family:var(--data);font-size:12.5px;background:var(--accent-soft);
+  border:1px solid var(--rule);border-radius:2px;padding:13px 16px;margin:22px 0}
+.check .tag{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:7px}
+.check pre{background:transparent;border:none;padding:0;margin:0;font-size:12.5px}
+
+/* ---- checklist ------------------------------------------------------ */
+.levels{display:grid;gap:18px;margin:26px 0}
+.level{border:1px solid var(--rule);background:var(--card);border-radius:2px;padding:18px}
+.level h3{margin:0 0 3px;font-size:15px}
+.level .sub{font-size:13.5px;color:var(--ink-2);margin:0 0 12px;font-style:italic}
+.level ul{list-style:none;padding:0;margin:0;display:grid;gap:3px}
+.level li{margin:0}
+.level label{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;
+  font-family:var(--display);font-size:13.5px;line-height:1.45;cursor:pointer;
+  padding:4px 2px;border-radius:2px}
+.level label:hover{background:var(--rule-2)}
+.level input{margin:3px 0 0;accent-color:var(--accent);width:15px;height:15px}
+.level input:checked + span{color:var(--ink-3);text-decoration:line-through}
+.progress{font-family:var(--data);font-size:11px;color:var(--ink-3);
+  letter-spacing:.07em;text-transform:uppercase;margin-top:12px}
+
+footer{border-top:1px solid var(--rule);background:var(--card);margin-top:10px}
+footer .wrap{padding-block:28px 40px}
+footer h4{font-family:var(--data);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+footer ul{columns:2;column-gap:36px;list-style:none;padding:0;max-width:none;font-size:13.5px;
+  font-family:var(--display)}
+@media(max-width:620px){footer ul{columns:1}}
+footer li{margin:0 0 6px;break-inside:avoid}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Qt for MCUs 2.12 · Qt Quick Ultralite</p>
+    <h1>Qt for MCUs Field Guide</h1>
+    <p class="standfirst">Twelve chapters, written against one real instrument cluster that
+      got built, broken and fixed. Every number here was measured; every rule is here
+      because something failed once.</p>
+    <div class="meta">
+      <span>1280 × 480 cluster</span><span>TRAVEO T2G + desktop</span><span>12 chapters</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap cols">
+
+  <nav class="rail" aria-label="Chapters">
+    <h4>Chapters</h4>
+    <ol>
+      <li><a href="#c1"><span class="n">01</span><span>The mental model</span></a></li>
+      <li><a href="#c2"><span class="n">02</span><span>Toolchain and build</span></a></li>
+      <li><a href="#c3"><span class="n">03</span><span>The QML subset</span></a></li>
+      <li><a href="#c4"><span class="n">04</span><span>Properties and bindings</span></a></li>
+      <li><a href="#c5"><span class="n">05</span><span>The C++ bridge</span></a></li>
+      <li><a href="#c6"><span class="n">06</span><span>Images and resources</span></a></li>
+      <li><a href="#c7"><span class="n">07</span><span>Memory</span></a></li>
+      <li><a href="#c8"><span class="n">08</span><span>Layers and bpp</span></a></li>
+      <li><a href="#c9"><span class="n">09</span><span>Fonts and text</span></a></li>
+      <li><a href="#c10"><span class="n">10</span><span>Profiling, debugging</span></a></li>
+      <li><a href="#c11"><span class="n">11</span><span>Safety</span></a></li>
+      <li><a href="#c12"><span class="n">12</span><span>The checklist</span></a></li>
+    </ol>
+    <h4>Also</h4>
+    <ol>
+      <li><a href="#path"><span class="n">—</span><span>Twelve-week path</span></a></li>
+      <li><a href="#costly"><span class="n">—</span><span>What cost the most</span></a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- ===================================================== 01 -->
+  <section class="ch" id="c1">
+    <div class="ch-head"><span class="ch-num">01</span><h2>The mental model</h2></div>
+    <p class="lede">Qt Quick Ultralite is not Qt Quick made smaller. It is a different
+      engine that accepts a subset of the same language.</p>
+
+    <p>Desktop Qt Quick parses QML, builds a scene graph and runs JavaScript, allocating
+      as it goes. Qt for MCUs <strong>compiles your QML to C++ at build time</strong>.
+      No parser on the device, no JavaScript engine, and — the one that bites — no heap.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>Desktop Qt Quick</th><th>Qt for MCUs</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>QML parsed at startup</td><td>Compiled to C++ by <code>qmltocpp</code></td><td>No parser on device</td></tr>
+        <tr><td>Objects created on demand</td><td>Laid out statically at build time</td><td>No heap</td></tr>
+        <tr><td>Full JavaScript</td><td>A small expression subset</td><td>No JS engine</td></tr>
+        <tr><td><code>createObject()</code></td><td>Nothing equivalent</td><td>No heap</td></tr>
+        <tr><td>A <code>Repeater</code> grows</td><td>Delegates pre-allocated from an estimate</td><td>No heap</td></tr>
+        <tr><td>Fonts rasterised at runtime</td><td>Glyphs rasterised at build time</td><td>No font heap</td></tr>
+      </tbody>
+    </table></div>
+
+    <p>The right-hand column is the same reason six times. <strong>There is no heap, so
+      everything must be countable at build time.</strong> Your whole object tree is one
+      static structure — in a backtrace it reads literally as
+      <code>main::item+181960</code>.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">The lie that costs the most</span>
+      <p>The desktop build delivers queued events synchronously, zero-initialises memory,
+        resolves property reads immediately, and <strong>detects binding loops and breaks
+        them with a warning</strong>. The device does none of those. A green desktop run
+        means your QML parses and your logic is roughly right. Nothing about memory,
+        timing or the renderer transfers.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== 02 -->
+  <section class="ch" id="c2">
+    <div class="ch-head"><span class="ch-num">02</span><h2>Toolchain and build</h2></div>
+    <p class="lede">Five tools in a row. When something fails, the useful question is
+      <em>which one</em> — and the error text tells you, if you know the names.</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 880 300" role="img" aria-label="The Qt for MCUs build pipeline: qmlprojectexporter reads the qmlproject, then qmltocpp, qulrcc, qulfontcompiler and qmlinterfacegenerator each feed the linker.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g font-family="IBM Plex Mono, monospace" font-size="12" color="var(--ink-3)">
+          <!-- inputs -->
+          <g fill="var(--ink-2)" text-anchor="end">
+            <text x="120" y="60">.qmlproject</text>
+            <text x="120" y="112">your .qml</text>
+            <text x="120" y="164">images</text>
+            <text x="120" y="216">fonts</text>
+            <text x="120" y="268">interface .h</text>
+          </g>
+          <!-- arrows in -->
+          <g stroke="var(--rule)" stroke-width="1.5" marker-end="url(#ar)" color="var(--ink-3)">
+            <line x1="132" y1="56" x2="186" y2="56"/>
+            <line x1="132" y1="108" x2="186" y2="108"/>
+            <line x1="132" y1="160" x2="186" y2="160"/>
+            <line x1="132" y1="212" x2="186" y2="212"/>
+            <line x1="132" y1="264" x2="186" y2="264"/>
+          </g>
+          <!-- tools -->
+          <g>
+            <rect x="192" y="38" width="208" height="34" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.2"/>
+            <text x="296" y="60" text-anchor="middle" fill="var(--accent)" font-weight="600">qmlprojectexporter</text>
+            <rect x="192" y="90" width="208" height="34" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="296" y="112" text-anchor="middle" fill="var(--ink)">qmltocpp</text>
+            <rect x="192" y="142" width="208" height="34" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="296" y="164" text-anchor="middle" fill="var(--ink)">qulrcc</text>
+            <rect x="192" y="194" width="208" height="34" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="296" y="216" text-anchor="middle" fill="var(--ink)">qulfontcompiler</text>
+            <rect x="192" y="246" width="208" height="34" rx="2" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+            <text x="296" y="268" text-anchor="middle" fill="var(--ink)">qmlinterfacegenerator</text>
+          </g>
+          <!-- outputs -->
+          <g fill="var(--ink-2)">
+            <text x="420" y="60">per-module build files</text>
+            <text x="420" y="112">generated C++</text>
+            <text x="420" y="164">resource blobs (.S)</text>
+            <text x="420" y="216">glyph data (.S)</text>
+            <text x="420" y="268">QML shims</text>
+          </g>
+          <!-- collector -->
+          <g stroke="var(--rule)" stroke-width="1.5" fill="none">
+            <path d="M700 56 H740 V252"/><path d="M700 108 H740"/>
+            <path d="M700 160 H740"/><path d="M700 212 H740"/><path d="M700 264 H740 V252"/>
+          </g>
+          <line x1="740" y1="160" x2="786" y2="160" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#ar)" color="var(--accent)"/>
+          <rect x="792" y="142" width="74" height="34" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.2"/>
+          <text x="829" y="164" text-anchor="middle" fill="var(--accent)" font-weight="600">binary</text>
+        </g>
+      </svg>
+      <figcaption>Figure 1 — each tool runs per module, then the root project merges</figcaption>
+    </figure>
+
+    <div class="scroller"><table>
+      <thead><tr><th>The message mentions</th><th>The tool</th><th>Typical cause</th></tr></thead>
+      <tbody>
+        <tr><td><code>could not be found in the include paths</code></td><td>qmltocpp</td><td>Module missing from <code>MCU.qulModules</code></td></tr>
+        <tr><td><code>Functions cannot be used as values</code></td><td>qmltocpp</td><td>A Qt Quick property Ultralite lacks</td></tr>
+        <tr><td><code>ambiguous type</code></td><td>qmltocpp</td><td>A ternary mixing an enum with an <code>int</code></td></tr>
+        <tr><td>undefined <code>qul_rasterBuffer_*_handle</code></td><td>qulrcc + linker</td><td>An image declared in two modules</td></tr>
+        <tr><td>undefined glyph / raster symbols</td><td>linker</td><td><code>ASM</code> missing from <code>project()</code></td></tr>
+        <tr><td><code>Font.DemiBold</code> undefined</td><td>qulfontcompiler</td><td>A weight enum only Spark has</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="rule-box">
+      <span class="tag">One module owns an image</span>
+      <p>A module must declare <strong>every</strong> image its own QML names — it does
+        not inherit a dependency's — <strong>and</strong> no image may be declared twice.
+        Break the first and <code>qmltocpp</code> fails. Break the second and it links
+        with an undefined raster handle. If two modules want the same picture, put it in
+        one and wrap it in a component the other uses.</p>
+    </div>
+
+    <p><code>ASM</code> is not optional in <code>project(... LANGUAGES C CXX ASM)</code>.
+      Without it CMake silently drops the <code>.S</code> blobs that <code>qulrcc</code>
+      and <code>qulfontcompiler</code> emit — no warning, and a link error pointing
+      nowhere near the cause.</p>
+
+    <div class="check"><span class="tag">Check it yourself</span>
+<pre><code>grep -rho 'assets/[^"]*\.png' qml/*/*.qmlproject | sort | uniq -d</code></pre></div>
+    <p>That should print nothing. Anything it prints is a link error waiting.</p>
+  </section>
+
+  <!-- ===================================================== 03 -->
+  <section class="ch" id="c3">
+    <div class="ch-head"><span class="ch-num">03</span><h2>The QML subset</h2></div>
+    <p class="lede">Large enough to build a real HMI, small enough that you hit its edges
+      in week one.</p>
+
+    <h3>The JavaScript subset</h3>
+    <p>There is no JavaScript engine — expressions are translated to C++, so what survives
+      is what translates. No arrays, object literals, <code>let</code>/<code>const</code>,
+      arrow functions or closures. <code>Math.min</code> and <code>Math.max</code> take
+      <strong>two</strong> arguments. <code>String.length</code> does not exist. Function
+      parameters and return values must be typed.</p>
+
+    <pre><code>function digitAt(value: int, position: int) : string {
+    var v = Math.floor(value)
+    for (var i = 0; i &lt; position; i++)
+        v = Math.floor(v / 10)
+    return "" + (v % 10)
+}</code></pre>
+
+    <h3>Four traps</h3>
+    <ul>
+      <li><strong><code>parent</code> is a plain <code>Item</code>.</strong> Reading a
+        custom property through it does not compile. Give the parent an <code>id</code>.</li>
+      <li><strong>A property may not be called <code>on&lt;Something&gt;</code></strong> —
+        that spelling is a signal handler.</li>
+      <li><strong>A ternary may not mix an enum with an int.</strong> Pass both through a
+        function with a declared return type.</li>
+      <li><strong>Fonts are compile-time configurations.</strong> No binding on
+        <code>font.pixelSize</code>; and a font <em>cannot be read back</em> —
+        <code>someFont.pixelSize</code> does not compile.</li>
+    </ul>
+
+    <div class="rule-box cost">
+      <span class="tag">The one that is not a compile error</span>
+      <p>A <code>Repeater</code>'s delegates are pre-allocated from a compile-time
+        estimate. <strong>The model must not change while the application runs.</strong>
+        There is no heap, so there is nowhere for a new delegate to come from — and the
+        desktop build creates them on demand and never complains.</p>
+<pre style="margin-top:14px"><code>Repeater { model: 3
+    MessageRow { visible: index &lt; PhoneListData.contactCount } }</code></pre>
+    </div>
+  </section>
+
+  <!-- ===================================================== 04 -->
+  <section class="ch" id="c4">
+    <div class="ch-head"><span class="ch-num">04</span><h2>Properties and bindings</h2></div>
+    <p class="lede">The chapter that saves the most time, because the binding engine
+      differs from desktop Qt in a way that is invisible until it is catastrophic.</p>
+
+    <p>Each frame: <code>update()</code> → <code>repaint()</code> →
+      <code>prepareFrame()</code> → <code>emitChangeEvents()</code> →
+      <strong><code>DirtyList::process()</code></strong>. That last one is a
+      <em>while the list is not empty</em> loop. If handling a dirty item puts something
+      back on the list, the loop never drains and the frame never finishes. There is no
+      iteration cap and <strong>no loop detector</strong>.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">A Behavior on a bound property</span>
+      <p>Qt for MCUs re-runs a dirty property's binding <strong>on every read</strong>.
+        A <code>Behavior</code> catches that write and restarts the animation, which
+        dirties the property again. Anything that reads it inside another binding keeps
+        the frame alive forever.</p>
+    </div>
+
+    <pre><code>// hangs — bound and animated, and read by other bindings
+property real shown: value
+Behavior on shown { NumberAnimation { duration: 200 } }
+
+// correct — assigned, so nothing re-runs on read
+property real shown: 0
+onValueChanged: shown = value
+Component.onCompleted: shown = value
+Behavior on shown { NumberAnimation { duration: 200 } }</code></pre>
+
+    <p>In this cluster that chain was <code>shown</code> → <code>shownValue</code> →
+      <code>used</code> → <code>drawn</code> → <code>blanks</code> → each digit's
+      <code>text</code>, across nine readouts. The device stopped after exactly two
+      runtime ticks, every time. The desktop build ran past tick 40, because it caches
+      the read.</p>
+
+    <p>The twenty-odd other <code>Behavior</code>s in the same project were fine, and the
+      difference is precise: they animate <code>opacity</code>, <code>color</code>,
+      <code>x</code>, <code>width</code> — leaf visual properties no binding reads back.</p>
+  </section>
+
+  <!-- ===================================================== 05 -->
+  <section class="ch" id="c5">
+    <div class="ch-head"><span class="ch-num">05</span><h2>The C++ bridge</h2></div>
+    <p class="lede">This part is genuinely good. No <code>Q_OBJECT</code>, no moc, no
+      <code>qmlRegisterType</code>, no <code>QVariant</code>.</p>
+
+    <pre><code>struct VehicleData : public Qul::Singleton&lt;VehicleData&gt;
+{
+    enum RideMode { Eco, City, Sport };
+    Qul::Property&lt;int&gt;      speedKmh;
+    Qul::Property&lt;bool&gt;     absFault;
+};</code></pre>
+
+    <p>List the header in <code>InterfaceFiles</code> and
+      <code>qmlinterfacegenerator</code> does the rest. No registration call anywhere.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>Class</th><th>Header</th><th>For</th></tr></thead>
+      <tbody>
+        <tr><td><code>Qul::Object</code></td><td>object.h</td><td>The base everything exposed derives from</td></tr>
+        <tr><td><code>Qul::Singleton&lt;T&gt;</code></td><td>singleton.h</td><td>One global instance</td></tr>
+        <tr><td><code>Qul::Property&lt;T&gt;</code></td><td>property.h</td><td>A bindable property</td></tr>
+        <tr><td><code>Qul::Signal&lt;Fn&gt;</code></td><td>signal.h</td><td>A signal QML connects to</td></tr>
+        <tr><td><code>Qul::ListModel&lt;T&gt;</code></td><td>—</td><td>A model to expose</td></tr>
+        <tr><td><code>Qul::EventQueue&lt;T&gt;</code></td><td>eventqueue.h</td><td>Crossing a thread or ISR</td></tr>
+        <tr><td><code>Qul::Timer</code></td><td>timer.h</td><td>Repeating and single-shot timers</td></tr>
+        <tr><td><code>Qul::Application</code></td><td>application.h</td><td>Starts the engine</td></tr>
+        <tr><td><code>Qul::ApplicationConfiguration</code></td><td>application.h</td><td>Text cache — since 2.1</td></tr>
+        <tr><td><code>Qul::Image</code>, <code>SharedImage</code></td><td>—</td><td>Direct pixel access</td></tr>
+        <tr><td><code>Qul::ImageProvider</code></td><td>—</td><td>Serve images from C++</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="rule-box cost">
+      <span class="tag">Two that cost days</span>
+      <p><strong>QML has one integer type.</strong> Narrow types mirrored into a desktop
+        bridge corrupt: 8- and 32-bit survived, 16-bit did not, and every number on screen
+        was garbage. Widen at the QML boundary.</p>
+      <p style="margin-top:12px"><strong><code>EventQueue</code> has a fixed capacity and
+        drops.</strong> Eight CAN frames posted per tick into a queue of five — three lost
+        every tick, silently, with the desktop shim delivering synchronously and hiding it
+        completely. The queue is for crossing a boundary, not for ordinary calls.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== 06 -->
+  <section class="ch" id="c6">
+    <div class="ch-head"><span class="ch-num">06</span><h2>Images and resources</h2></div>
+    <p class="lede">Every image has two sizes, and they move independently.</p>
+
+    <p><strong>Flash</strong> is the compressed bytes you store. <strong>Decoded</strong> is
+      <code>width × height × bytes_per_pixel</code>, the space it takes once usable.
+      Compression shrinks the first and does nothing to the second — compressed images are
+      decompressed to be drawn. Measured on this cluster:</p>
+
+    <div class="stats">
+      <div class="stat"><span class="v">252</span><span class="k">images</span></div>
+      <div class="stat"><span class="v">759 KB</span><span class="k">flash</span></div>
+      <div class="stat hi"><span class="v">12.77 MB</span><span class="k">decoded</span></div>
+      <div class="stat"><span class="v">17×</span><span class="k">ratio</span></div>
+    </div>
+
+    <h3>Bytes per pixel is the main lever</h3>
+    <div class="scroller"><table>
+      <thead><tr><th>Format</th><th class="num">Bytes/px</th><th>For</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Alpha8</strong></td><td class="num">1</td><td>Monochrome art tinted at runtime</td></tr>
+        <tr><td>RGB565</td><td class="num">2</td><td>Opaque colour, no alpha</td></tr>
+        <tr><td>RGB888</td><td class="num">3</td><td>Opaque colour, full precision</td></tr>
+        <tr><td>ARGB8888</td><td class="num">4</td><td>Colour with alpha</td></tr>
+      </tbody>
+    </table></div>
+
+    <p>Draw the art as a white mask and tint it with <code>ColorizedImage</code>: one byte
+      a pixel, any colour. Here 247 of 252 images are Alpha8; the five that are not are
+      photographs. And decide it by <strong>looking at the pixels</strong> — an image
+      qualifies only if every visible pixel is pure white. Deciding from the file name is
+      how you silently ship a 4× image.</p>
+
+    <div class="rule-box">
+      <span class="tag">One PNG per size</span>
+      <p>An image is drawn at its own size. A 40 px file shown at 24 px is resampled by a
+        fraction, every frame, and the thin strokes go. Build from a vector master with
+        the sizes in the file name.</p>
+    </div>
+
+    <h3>Trim the transparent border</h3>
+    <p>Lossless — not a pixel changes. Measured here:</p>
+    <div class="scroller"><table>
+      <thead><tr><th>File</th><th class="num">Canvas</th><th class="num">Actual ink</th><th class="num">Empty</th></tr></thead>
+      <tbody>
+        <tr><td><code>route_destination.png</code></td><td class="num">660×270</td><td class="num">20×138</td><td class="num">98%</td></tr>
+        <tr><td><code>hexroute_destination.png</code></td><td class="num">495×305</td><td class="num">12×85</td><td class="num">99%</td></tr>
+        <tr><td><code>route_straight.png</code></td><td class="num">660×270</td><td class="num">20×234</td><td class="num">97%</td></tr>
+      </tbody>
+    </table></div>
+    <p>Forty files: <strong>5.57 MB → 1.12 MB decoded</strong>.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">Dead art hides inside live code</span>
+      <p><code>Format.routeImage()</code> had no caller — but its eleven paths were string
+        literals inside it, and the resource list is built from the paths the QML
+        <em>names</em>. All eleven compiled in: 52 KB of flash and 1.96 MB of cache for
+        pictures nothing drew. Ask which paths are <em>reachable</em>, not which appear.</p>
+    </div>
+
+    <h3>Two things measurement said no to</h3>
+    <p><strong>Mirroring symmetric layers.</strong> A loose test (mean pixel difference)
+      said 40 of 48 layers were symmetric — a 4.8 MB saving. A strict test (max difference,
+      and count the differing pixels) said <strong>four</strong>, worth 570 KB.
+      <code>glow_alert</code> had 53,530 differing pixels. The loose test was the bug.</p>
+    <p><strong>Deleting unreferenced files.</strong> Saves nothing. Flash is built from the
+      paths the QML names, so a file nobody references is already absent.</p>
+  </section>
+
+  <!-- ===================================================== 07 -->
+  <section class="ch" id="c7">
+    <div class="ch-head"><span class="ch-num">07</span><h2>Memory</h2></div>
+    <p class="lede">Desktop Qt has "memory". An MCU has three, and they behave nothing
+      alike.</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 880 330" role="img" aria-label="Three memory regions. Flash holds compiled QML, image resources, glyph data and program code. SRAM holds the static object tree, the stack, C++ state and engine bookkeeping. VRAM holds layer buffers, the image cache, the text cache and vector graphics buffers.">
+        <g font-family="IBM Plex Sans, sans-serif">
+          <!-- FLASH -->
+          <rect x="20" y="22" width="840" height="86" rx="3" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+          <rect x="20" y="22" width="5" height="86" fill="var(--accent)"/>
+          <text x="42" y="47" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="var(--accent)">FLASH</text>
+          <text x="42" y="65" font-size="12" fill="var(--ink-3)">large · read-only · slow</text>
+          <g font-size="12.5" fill="var(--ink-2)">
+            <text x="250" y="47">compiled QML (your bindings, as C++)</text>
+            <text x="250" y="66">image resources</text>
+            <text x="250" y="85">glyph data (static font engine)</text>
+            <text x="600" y="47">program code</text>
+          </g>
+          <!-- SRAM -->
+          <rect x="20" y="120" width="840" height="86" rx="3" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+          <rect x="20" y="120" width="5" height="86" fill="var(--ink-2)"/>
+          <text x="42" y="145" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="var(--ink)">SRAM</text>
+          <text x="42" y="163" font-size="12" fill="var(--ink-3)">small · fast · read-write</text>
+          <g font-size="12.5" fill="var(--ink-2)">
+            <text x="250" y="145">the static object tree — all of main::item</text>
+            <text x="250" y="164">stack (per task under an RTOS)</text>
+            <text x="250" y="183">your C++ state, decoders, queues</text>
+            <text x="600" y="183">engine bookkeeping</text>
+          </g>
+          <!-- VRAM -->
+          <rect x="20" y="218" width="840" height="94" rx="3" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+          <rect x="20" y="218" width="5" height="94" fill="var(--flag)"/>
+          <text x="42" y="243" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="var(--flag)">VRAM</text>
+          <text x="42" y="261" font-size="12" fill="var(--ink-3)">what the display reads</text>
+          <text x="42" y="279" font-size="12" fill="var(--ink-3)">often the tightest</text>
+          <g font-size="12.5" fill="var(--ink-2)">
+            <text x="250" y="243">layer buffers / line buffers</text>
+            <text x="250" y="262">image cache (if the policy caches)</text>
+            <text x="250" y="281">text cache — 192 KB by default</text>
+            <text x="250" y="300">vector graphics buffers (~83 KB with Shapes)</text>
+          </g>
+        </g>
+      </svg>
+      <figcaption>Figure 2 — where everything lives</figcaption>
+    </figure>
+
+    <p>A change can move cost <em>between</em> these and look like a win:</p>
+    <div class="scroller"><table>
+      <thead><tr><th>Change</th><th>Flash</th><th>SRAM</th><th>VRAM</th></tr></thead>
+      <tbody>
+        <tr><td>Compress an image</td><td>↓</td><td>—</td><td><strong>unchanged</strong></td></tr>
+        <tr><td>Alpha8 instead of ARGB8888</td><td>↓</td><td>—</td><td>↓ ×4</td></tr>
+        <tr><td>Trim a transparent border</td><td>↓</td><td>—</td><td>↓</td></tr>
+        <tr><td><code>resourceCachePolicy: NoCaching</code></td><td>—</td><td>—</td><td>↓</td></tr>
+        <tr><td>Bpp24 instead of Bpp32</td><td>—</td><td>—</td><td>↓ 25%</td></tr>
+        <tr><td>Another font size</td><td>↑</td><td>—</td><td>—</td></tr>
+        <tr><td>An extra layer</td><td>—</td><td>—</td><td>↑</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>The text cache</h3>
+    <p>192 KB of VRAM by default. <code>Qul::ApplicationConfiguration</code> lives in
+      <code>qul/application.h</code> — not a header of its own — and has existed since
+      Qt Quick Ultralite <strong>2.1</strong>. It is passed to the
+      <em>constructor</em>, not set statically.</p>
+    <pre><code>Qul::ApplicationConfiguration config;
+config.setTextCacheSize(96 * 1024);
+Qul::Application app(config);</code></pre>
+  </section>
+
+  <!-- ===================================================== 08 -->
+  <section class="ch" id="c8">
+    <div class="ch-head"><span class="ch-num">08</span><h2>Layers and bits per pixel</h2></div>
+    <p class="lede">One decision here is worth more than every other optimisation in this
+      guide combined.</p>
+
+    <p><strong>On-the-fly (OTF)</strong>, the default, keeps no framebuffer — it records a
+      command buffer and replays it through a circular line buffer.
+      <strong>IBO</strong> is double buffered.</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 880 250" role="img" aria-label="Bar chart comparing layer memory for a 1280 by 480 screen at 32 bits per pixel. On-the-fly with a 64 line buffer uses 327,680 bytes. Double buffered uses 4,915,200 bytes, fifteen times more.">
+        <g font-family="IBM Plex Sans, sans-serif">
+          <text x="24" y="30" font-size="13" font-weight="600" fill="var(--ink)">Layer memory, 1280 × 480 at 32 bpp</text>
+          <text x="24" y="50" font-size="12" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">bytes · bars to scale</text>
+
+          <!-- OTF: 327680 / 4915200 of 700px = 46.7px -->
+          <text x="24" y="98" font-size="13" fill="var(--ink-2)">OTF, 64-line buffer</text>
+          <rect x="190" y="82" width="47" height="22" rx="3" fill="var(--accent)"/>
+          <text x="247" y="99" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">327,680</text>
+
+          <text x="24" y="152" font-size="13" fill="var(--ink-2)">Double buffered</text>
+          <rect x="190" y="136" width="700" height="22" rx="3" fill="var(--ink-3)"/>
+          <text x="190" y="180" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">4,915,200</text>
+
+          <line x1="190" y1="200" x2="856" y2="200" stroke="var(--rule)" stroke-width="1"/>
+          <text x="190" y="224" font-size="13" fill="var(--flag)" font-weight="600">15× — decide this before anything else</text>
+        </g>
+      </svg>
+      <figcaption>Figure 3 — the one decision that dominates</figcaption>
+    </figure>
+
+    <p>OTF line buffer is <code>WIDTH × LINE_BUFFER_HEIGHT × BPP + command buffer</code>.
+      At 1280 wide:</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th class="num">Line buffer</th><th class="num">32 bpp</th><th class="num">24 bpp</th><th class="num">Saved</th></tr></thead>
+      <tbody>
+        <tr><td class="num">32</td><td class="num">163,840</td><td class="num">122,880</td><td class="num"><strong>40,960</strong></td></tr>
+        <tr><td class="num">64</td><td class="num">327,680</td><td class="num">245,760</td><td class="num"><strong>81,920</strong></td></tr>
+        <tr><td class="num">128</td><td class="num">655,360</td><td class="num">491,520</td><td class="num"><strong>163,840</strong></td></tr>
+      </tbody>
+    </table></div>
+
+    <p>Qt's guidance: prefer <code>Bpp24</code> for the bottom-most <code>ItemLayer</code>.
+      No alpha, which an opaque bottom layer does not need, and full colour precision kept.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">Don't: 16 bpp on a dark UI</span>
+      <p>RGB565 cannot hold a neutral near-black. Measured on this cluster's background:
+        <code>(6, 8, 9)</code> becomes <code>(0, 8, 8)</code> — the <strong>whole screen
+        picks up a green cast</strong>. In a tinted glow, distinct colours dropped from
+        155 to 61. Max channel error was only 7, which is why a casual look says "fine";
+        the defect is that it applies to every dark pixel at once and shifts the hue.</p>
+    </div>
+
+    <div class="rule-box cost">
+      <span class="tag">Don't: a layer per widget</span>
+      <p>Every layer brings its own buffers and command buffer, so a layer over a
+        full-screen one can cost more than it saves. And a typical cluster has nothing to
+        split along — here the chrome is four roughly 1120×460 layers, all overlapping.
+        There is no rectangle that is "only the header".</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== 09 -->
+  <section class="ch" id="c9">
+    <div class="ch-head"><span class="ch-num">09</span><h2>Fonts and text</h2></div>
+    <p class="lede">The quietest flash consumer. Each addition is invisible; the total only
+      shows up in a map file nobody reads.</p>
+
+    <p>With the <strong>static</strong> engine, glyphs are rasterised at build time with
+      FreeType. Flash holds precomputed bitmaps; nothing rasterises at runtime; and every
+      font configuration must be resolvable at compile time.</p>
+
+    <p>With <code>autoGenerateGlyphs: true</code> the compiler includes every character
+      appearing in a QML string literal — <strong>for every font configuration</strong>.
+      That phrase is the whole cost model. A configuration is a distinct
+      <code>(family, pixelSize, weight, italic)</code>, and each gets its own glyph set.</p>
+
+    <div class="stats">
+      <div class="stat hi"><span class="v">45</span><span class="k">configurations found</span></div>
+      <div class="stat"><span class="v">124 px</span><span class="k">largest</span></div>
+      <div class="stat"><span class="v">~6.9 KB</span><span class="k">per glyph at 124</span></div>
+      <div class="stat"><span class="v">~69 KB</span><span class="k">ten digits, one config</span></div>
+    </div>
+
+    <p>Nobody decided on forty-five. It accumulated one <code>font.pixelSize: 17</code> at
+      a time. Consolidate neighbours — 13/14/15 into one, 16/17/18 into one — and put the
+      sizes in a theme, so a page that cannot name a pixel size cannot invent a
+      forty-sixth.</p>
+
+    <p>Also check which faces are <em>reachable</em>. This project ships six Inter TTFs,
+      but <code>font.weight</code> is banned by its own lint — so SemiBold and
+      SemiBoldItalic, 944 KB, are handed to the font compiler for nothing.</p>
+
+    <div class="check"><span class="tag">Check it yourself</span>
+<pre><code>grep -rn "font.weight" qml/   # nothing? only Regular/Bold × Italic are reachable</code></pre></div>
+  </section>
+
+  <!-- ===================================================== 10 -->
+  <section class="ch" id="c10">
+    <div class="ch-head"><span class="ch-num">10</span><h2>Profiling and debugging</h2></div>
+    <p class="lede">Measure before you assert. This method is worth more than any
+      individual fact in the other chapters.</p>
+
+    <p>The Qt desktop platform build is an ordinary native binary. Debug it like one.</p>
+
+    <pre><code>gdb ./EVBikes
+(gdb) run
+# ...freeze... Ctrl+C
+(gdb) set pagination off
+(gdb) bt 60
+(gdb) b Qul::Private::Application::prepareFrame
+(gdb) c</code></pre>
+
+    <p>Read three things off the backtrace:</p>
+    <ul>
+      <li><strong>Deep or flat?</strong> Flat and bottoming out in <code>main</code> means
+        a loop that is not progressing, not runaway recursion.</li>
+      <li><strong>Which loop?</strong> <code>DirtyList::process</code> means the list is
+        being refilled as fast as it drains.</li>
+      <li><strong>Is the frame advancing?</strong> Sample twice. If
+        <code>Application::update(timestamp=133)</code> is still 133, the engine never
+        finished that frame.</li>
+    </ul>
+
+    <p>Then the breakpoint: hits immediately means frames <em>are</em> completing and the
+      problem is speed; never hits means you are stuck inside one. That one bit halves the
+      search space in thirty seconds.</p>
+
+    <div class="rule-box">
+      <span class="tag">Sample more than once</span>
+      <p>Two samples is a measurement; one is an anecdote. Here, two samples showed
+        different <code>Text</code> objects and different <code>Math.floor</code> arguments
+        — 95.2, then 105.5. That second observation <em>was</em> the diagnosis: the
+        animated value was still moving while the frame was being assembled.</p>
+    </div>
+
+    <p>On a board, printf tracing earns its keep if it names the <em>stage</em>, not the
+      event. The last line printed names the call that did not return. The output that
+      cracked this project's freeze was two lines and a silence:</p>
+    <pre><code>[tick 2] after periodic
+[tick 2] done
+            ← nothing, ever again</code></pre>
+  </section>
+
+  <!-- ===================================================== 11 -->
+  <section class="ch" id="c11">
+    <div class="ch-head"><span class="ch-num">11</span><h2>Safety and certification</h2></div>
+    <p class="lede">The difference between a demo and a product, if you build clusters,
+      medical displays or industrial panels.</p>
+
+    <p>Qt Safe Renderer is a <strong>separate component</strong> running alongside Qt Quick
+      Ultralite. It renders the safety-critical items and verifies the output rather than
+      trusting the main UI stack.</p>
+
+    <div class="scroller"><table>
+      <thead><tr><th>Standard</th><th>Level</th></tr></thead>
+      <tbody>
+        <tr><td>ISO 26262:2018-6</td><td><strong>ASIL D</strong></td></tr>
+        <tr><td>ISO 26262:2018-8 §11</td><td>ASIL D</td></tr>
+        <tr><td>IEC 61508:2010-3</td><td>SIL 3</td></tr>
+        <tr><td>EN 50128:2011 6.7.4</td><td>SIL 4 (railway)</td></tr>
+        <tr><td>IEC 62304:2015</td><td>Class C (medical)</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="rule-box cost">
+      <span class="tag">Read the scope line</span>
+      <p>The certification covers the content inside the <code>SafeRenderer</code>
+        namespace — the certified runtime. <strong>Your application is not certified
+        because you linked it.</strong> Your telltales are rendered and verified by a
+        certified component; your own code and system design are still yours to argue for.</p>
+    </div>
+
+    <p><code>SafeImage</code>, <code>SafePicture</code> and <code>SafeText</code> look like
+      their ordinary counterparts. Constraints that shape the layout: the root needs fixed
+      dimensions, safe items <strong>do not support rotation</strong>, and an invisible safe
+      item still appears as a visible rectangle — a deliberate fail-safe.</p>
+
+    <h3>What it does not cover</h3>
+    <p>Qt Safe Renderer makes sure the lamp you drew is the lamp that reached the glass. It
+      has nothing to say about whether you drew the <em>right</em> lamp. For a road vehicle
+      that is <strong>UNECE Regulation No. 121</strong> (free PDF, official symbol drawings
+      in the annex) and <strong>ISO 2575</strong>.</p>
+
+    <div class="rule-box cost">
+      <span class="tag">Easy to get wrong, invisible when you do</span>
+      <p>In this cluster the engine-malfunction lamp was drawn as an <strong>oil can</strong>
+        — which is the oil pressure symbol — and the brake warning was a power symbol in
+        brackets instead of the specified exclamation. Both had been in the design for
+        months. Each looked plausible alone.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== 12 -->
+  <section class="ch" id="c12">
+    <div class="ch-head"><span class="ch-num">12</span><h2>The professional checklist</h2></div>
+    <p class="lede">Four levels. Tick what you can do today; the gaps are your reading
+      order.</p>
+
+    <div class="levels">
+      <div class="level" data-level="1">
+        <h3>Level 1 — It builds and runs</h3>
+        <p class="sub">You can write QML inside the subset and get it on a board.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>Explain why Qt for MCUs compiles QML to C++, and what follows</span></label></li>
+          <li><label><input type="checkbox"><span>Name the five tools and say which one a given error came from</span></label></li>
+          <li><label><input type="checkbox"><span>Write QML that compiles first time</span></label></li>
+          <li><label><input type="checkbox"><span>Expose a <code>Qul::Singleton</code> and read it in QML</span></label></li>
+          <li><label><input type="checkbox"><span>Set up a <code>.qmlproject</code> with modules, images and fonts</span></label></li>
+          <li><label><input type="checkbox"><span>Know that <code>ASM</code> belongs in <code>project()</code></span></label></li>
+        </ul>
+        <p class="progress" data-progress>0 of 6</p>
+      </div>
+
+      <div class="level" data-level="2">
+        <h3>Level 2 — It survives the device</h3>
+        <p class="sub">You stop being surprised by things that worked on desktop.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>Say the four ways the desktop shim differs from the device</span></label></li>
+          <li><label><input type="checkbox"><span>Never put a <code>Behavior</code> on a bound property another binding reads</span></label></li>
+          <li><label><input type="checkbox"><span>Keep every <code>Repeater</code> model constant</span></label></li>
+          <li><label><input type="checkbox"><span>Widen narrow integer types at the QML boundary</span></label></li>
+          <li><label><input type="checkbox"><span>Use <code>EventQueue</code> only for crossing a boundary, and know its capacity</span></label></li>
+          <li><label><input type="checkbox"><span>Give every image one file per displayed size</span></label></li>
+          <li><label><input type="checkbox"><span>Know a font configuration must resolve at compile time, and cannot be read back</span></label></li>
+        </ul>
+        <p class="progress" data-progress>0 of 7</p>
+      </div>
+
+      <div class="level" data-level="3">
+        <h3>Level 3 — You own the budget</h3>
+        <p class="sub">Handed a memory limit, you meet it with numbers rather than hope.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>Say where every byte lives: flash, SRAM, VRAM</span></label></li>
+          <li><label><input type="checkbox"><span>Compute a layer buffer for OTF and for double buffered</span></label></li>
+          <li><label><input type="checkbox"><span>Know the 15× difference and defend staying on OTF</span></label></li>
+          <li><label><input type="checkbox"><span>Measure decoded image cost, not file size</span></label></li>
+          <li><label><input type="checkbox"><span>Decide Alpha8 by looking at the pixels</span></label></li>
+          <li><label><input type="checkbox"><span>Find art reachable only from dead code</span></label></li>
+          <li><label><input type="checkbox"><span>Count font configurations and know what the big sizes cost</span></label></li>
+          <li><label><input type="checkbox"><span>Choose a <code>resourceCachePolicy</code> per profile and say why</span></label></li>
+          <li><label><input type="checkbox"><span>Set the text cache rather than paying 192 KB</span></label></li>
+          <li><label><input type="checkbox"><span>Know what <code>Shapes</code> costs in VRAM before using it</span></label></li>
+        </ul>
+        <p class="progress" data-progress>0 of 10</p>
+      </div>
+
+      <div class="level" data-level="4">
+        <h3>Level 4 — Trusted with the programme</h3>
+        <p class="sub">The habits, not the facts.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>Find a freeze with gdb in twenty minutes instead of arguing for days</span></label></li>
+          <li><label><input type="checkbox"><span>Design a safety-critical split and know what certification covers</span></label></li>
+          <li><label><input type="checkbox"><span>Check telltales against UNECE R121 rather than against taste</span></label></li>
+          <li><label><input type="checkbox"><span>Generate project files instead of maintaining them</span></label></li>
+          <li><label><input type="checkbox"><span>Write a lint rule for every rule the team keeps forgetting</span></label></li>
+          <li><label><input type="checkbox"><span>Say "I measured it and I was wrong" without it costing you anything</span></label></li>
+        </ul>
+        <p class="progress" data-progress>0 of 6</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== path -->
+  <section class="ch" id="path">
+    <div class="ch-head"><span class="ch-num">—</span><h2>A twelve-week path</h2></div>
+    <p class="lede">Assumes you know Qt Quick and have a board or the desktop platform.</p>
+    <div class="scroller"><table>
+      <thead><tr><th class="num">Weeks</th><th>Do this</th><th>Done when</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1–2</td><td>Build the Qt examples. Chapters 1–3. Port a small Qt Quick screen and fight the subset</td><td>You can predict which of your QML will not compile</td></tr>
+        <tr><td class="num">3–4</td><td>Chapter 5. Expose a backend singleton with properties, a signal and an event queue. Unit-test a decoder on the host</td><td>Data flows C++ → QML and you tested the decode without a board</td></tr>
+        <tr><td class="num">5–6</td><td>Chapters 4 and 10. Deliberately write a binding loop and find it with gdb. Add performance logging</td><td>You have read your own backtrace and understood it</td></tr>
+        <tr><td class="num">7–8</td><td>Chapter 6. Audit images: decoded totals, Alpha8, per-size files, trimming</td><td>You cut the image cache measurably and the UI looks the same or better</td></tr>
+        <tr><td class="num">9–10</td><td>Chapters 7–9. Write the memory budget. Count font configurations. Compute the layer buffer</td><td>You can defend every number in your budget</td></tr>
+        <tr><td class="num">11–12</td><td>Chapter 11. Split safety-critical from the rest. Check symbols against R121</td><td>You know what would be on screen if the UI stack hung</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================================================== costly -->
+  <section class="ch" id="costly">
+    <div class="ch-head"><span class="ch-num">—</span><h2>What cost the most time</h2></div>
+    <p class="lede">From one real project, in the order they hurt. Note how many are
+      invisible on desktop.</p>
+    <div class="scroller"><table>
+      <thead><tr><th class="num">#</th><th>What</th><th>How it showed up</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>A <code>Behavior</code> on a bound property</td><td>Device froze after two ticks; desktop ran forever. Days.</td></tr>
+        <tr><td class="num">2</td><td>A <code>Repeater</code> model that changed at runtime</td><td>Documented; invisible on desktop</td></tr>
+        <tr><td class="num">3</td><td><code>EventQueue</code> of five, eight posted per tick</td><td>Three dropped silently, every tick</td></tr>
+        <tr><td class="num">4</td><td>Narrow integer types in the desktop bridge</td><td>Every number garbage; 8- and 32-bit fine, 16-bit not</td></tr>
+        <tr><td class="num">5</td><td>Unsigned wraparound in a timeout check</td><td>Every node declared dead, several times a second</td></tr>
+        <tr><td class="num">6</td><td>An image declared in two modules</td><td>Built fine; undefined raster handle at link</td></tr>
+        <tr><td class="num">7</td><td><code>ASM</code> missing from <code>project()</code></td><td>Resource and glyph blobs silently dropped</td></tr>
+        <tr><td class="num">8</td><td>One icon shown at five sizes</td><td>Everything looked cheap and nobody could say why</td></tr>
+        <tr><td class="num">9</td><td>Eleven images kept alive by a function with no callers</td><td>1.96 MB of cache for pictures never drawn</td></tr>
+        <tr><td class="num">10</td><td>A circle drawn as an ellipse</td><td>Shipped for months; one line of measurement found it</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="rule-box">
+      <span class="tag">The habit</span>
+      <p>A cheap measurement beats an expensive argument, almost always — and the
+        measurement has to be the right one. A mirror-symmetry test using <em>mean</em>
+        pixel difference promised 4.8 MB; the <em>max</em> difference said 570 KB. One of
+        those numbers would have shipped visible damage.</p>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <h4>Sources</h4>
+    <ul>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-reference-overview.html">Qt for MCUs reference overview</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-qmltypes.html">Qt Quick Ultralite QML types</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-integratecppqml.html">Integrating C++ code with QML</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul.html">Qul namespace</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qul-applicationconfiguration.html">Qul::ApplicationConfiguration</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-resources.html">Managing resources</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-fonts.html">Text rendering and fonts</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-t2g-layer-vram-guide.html">Layer and VRAM optimization — TRAVEO T2G</a></li>
+      <li><a href="https://doc.qt.io/QtForMCUs/qtul-qul-app-with-safety-critical-items.html">Applications with safety-critical items</a></li>
+      <li><a href="https://doc.qt.io/QtSafeRenderer/qtsr-delivery.html">Qt Safe Renderer — certification</a></li>
+      <li><a href="https://unece.org/fileadmin/DAM/trans/main/wp29/wp29regs/R121r1e.pdf">UNECE Regulation No. 121</a></li>
+      <li><a href="https://www.iso.org/standard/68409.html">ISO 2575 — symbols for tell-tales</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var KEY = "qtmcu-checklist-v1";
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.level input[type="checkbox"]'));
+
+  function readSaved() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function save() {
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(
+        boxes.map(function (b) { return b.checked ? 1 : 0; })));
+    } catch (e) { /* private window, blocked storage — the page still works */ }
+  }
+  function paint() {
+    Array.prototype.forEach.call(document.querySelectorAll(".level"), function (lvl) {
+      var inputs = lvl.querySelectorAll('input[type="checkbox"]');
+      var done = 0;
+      Array.prototype.forEach.call(inputs, function (i) { if (i.checked) done++; });
+      var out = lvl.querySelector("[data-progress]");
+      if (out) out.textContent = done + " of " + inputs.length;
+    });
+  }
+
+  var saved = readSaved();
+  boxes.forEach(function (b, i) {
+    b.id = "chk-" + i;
+    if (saved[i]) b.checked = true;
+    b.addEventListener("change", function () { save(); paint(); });
+  });
+  paint();
+})();
+</script>
+
+</body>
+</html>
