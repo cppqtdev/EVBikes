@@ -8,7 +8,7 @@ Item {
     id: strip
 
     property bool selfTest: false
-    readonly property int iconSize: 24
+    readonly property int iconSize: 32
     readonly property int iconGap: 2
 
     width: Theme.screenWidth
@@ -37,32 +37,32 @@ Item {
         spacing: strip.iconGap
         Telltale {
             size: strip.iconSize
-            source: "qrc:/assets/icons/34/tt_high_beam.png"
+            source: "qrc:/assets/icons/32/tt_high_beam.png"
             active: strip.selfTest || VehicleData.highBeam
             activeColor: Theme.telltaleBlue
         }
         Telltale {
             size: strip.iconSize
-            source: "qrc:/assets/icons/34/tt_low_beam.png"
+            source: "qrc:/assets/icons/32/tt_low_beam.png"
             active: strip.selfTest || VehicleData.lowBeam
             activeColor: Theme.telltaleGreen
         }
         Telltale {
             size: strip.iconSize
-            source: "qrc:/assets/icons/28/tt_warning.png"
+            source: "qrc:/assets/icons/32/tt_warning.png"
             active: strip.selfTest || VehicleData.faultCode !== 0 || AlertData.level >= AlertData.LevelWarning
                 || VehicleData.driveStale || VehicleData.batteryStale || VehicleData.powertrainStale
             activeColor: AlertData.level === AlertData.LevelCritical || AlertData.popupVisible ? Theme.telltaleRed : Theme.telltaleAmber
         }
         Telltale {
             size: strip.iconSize
-            source: "qrc:/assets/icons/40/tt_abs.png"
+            source: "qrc:/assets/icons/32/tt_abs.png"
             active: strip.selfTest || VehicleData.absFault
             activeColor: Theme.telltaleAmber
         }
         Telltale {
             size: strip.iconSize
-            source: "qrc:/assets/icons/36/tt_battery.png"
+            source: "qrc:/assets/icons/32/tt_battery.png"
             active: strip.selfTest || VehicleData.batteryPercent <= 15 || VehicleData.chargeState === VehicleData.ChargeFault
                 || AlertData.kind === AlertData.BatteryOverheat
             activeColor: VehicleData.batteryPercent <= 5 || AlertData.kind === AlertData.BatteryOverheat ? Theme.telltaleRed : Theme.telltaleAmber
